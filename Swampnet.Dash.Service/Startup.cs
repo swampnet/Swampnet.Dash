@@ -1,14 +1,7 @@
 ﻿using Owin;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.Owin.Cors;
 using System.Web.Http;
-using Swampnet.Dash.Service.Services;
-using Autofac;
-using Autofac.Integration.WebApi;
+using System.Net.Http.Headers;
 
 namespace Swampnet.Dash.Service
 {
@@ -19,18 +12,19 @@ namespace Swampnet.Dash.Service
     {
         public void Configuration(IAppBuilder app)
         {
-            // Configure Web API for self - host.
-            //var config = new HttpConfiguration();
-
             // Yeah, hate this quite a bit....
-            DashService.Config.Routes.MapHttpRoute(
+            var config = DashService.Config;// new HttpConfiguration();
+
+            config.Routes.MapHttpRoute(
                 name: "DefaultApi",
                 routeTemplate: "api/{controller}/{id}",
                 defaults: new { id = RouteParameter.Optional }
             );
 
+            config.Formatters.JsonFormatter.SupportedMediaTypes.Add(new MediaTypeHeaderValue("text/html"));
+
             app.UseCors(CorsOptions.AllowAll);
-            app.UseWebApi(DashService.Config);
+            app.UseWebApi(config);
             app.MapSignalR();
         }
     }
