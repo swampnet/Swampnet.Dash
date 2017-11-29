@@ -1,19 +1,12 @@
 ﻿using System;
 using Microsoft.AspNet.SignalR;
-using Microsoft.Owin.Cors;
 using Microsoft.Owin.Hosting;
-using Owin;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Diagnostics;
-using System.Linq;
 using System.ServiceProcess;
-using System.Text;
-using System.Threading.Tasks;
 using Serilog;
 using Autofac;
 using Swampnet.Dash.Service.Services;
+using System.Reflection;
+using Autofac.Integration.SignalR;
 
 namespace Swampnet.Dash.Service
 {
@@ -24,7 +17,6 @@ namespace Swampnet.Dash.Service
     {
         void Run(string[] args);
     }
-
 
     /// <summary>
     /// Dash service implementation
@@ -42,10 +34,13 @@ namespace Swampnet.Dash.Service
 
             var builder = new ContainerBuilder();
 
-            builder.RegisterType<DashService>().As<IDashService>();
-            builder.RegisterType<TestService>().As<ITestService>();
+            builder.RegisterHubs(Assembly.GetExecutingAssembly());
+            builder.RegisterType<DashService>().As<IDashService>().InstancePerLifetimeScope();
+            builder.RegisterType<TestService>().As<ITestService>().InstancePerLifetimeScope();
 
             var container = builder.Build();
+
+            GlobalHost.DependencyResolver = new AutofacDependencyResolver(container);
 
             container.Resolve<IDashService>().Run(args);
         }
