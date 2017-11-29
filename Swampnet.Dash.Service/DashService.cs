@@ -7,6 +7,8 @@ using Autofac;
 using Swampnet.Dash.Service.Services;
 using System.Reflection;
 using Autofac.Integration.SignalR;
+using Autofac.Integration.WebApi;
+using System.Web.Http;
 
 namespace Swampnet.Dash.Service
 {
@@ -23,6 +25,9 @@ namespace Swampnet.Dash.Service
     /// </summary>
     public partial class DashService : ServiceBase, IDashService
     {
+        // Yeah, hate this quite a bit....
+        public static HttpConfiguration Config { get; set; }
+
         private IDisposable _webApp;
         private readonly ITestService _testService;
 
@@ -34,6 +39,7 @@ namespace Swampnet.Dash.Service
 
             var builder = new ContainerBuilder();
 
+            builder.RegisterApiControllers(Assembly.GetExecutingAssembly());
             builder.RegisterHubs(Assembly.GetExecutingAssembly());
             builder.RegisterType<DashService>().As<IDashService>().InstancePerLifetimeScope();
             builder.RegisterType<TestService>().As<ITestService>().InstancePerLifetimeScope();
@@ -41,6 +47,11 @@ namespace Swampnet.Dash.Service
             var container = builder.Build();
 
             GlobalHost.DependencyResolver = new AutofacDependencyResolver(container);
+
+            // Get your HttpConfiguration.
+            Config = new HttpConfiguration();
+
+            Config.DependencyResolver = new AutofacWebApiDependencyResolver(container);
 
             container.Resolve<IDashService>().Run(args);
         }
