@@ -8,6 +8,6 @@ namespace Swampnet.Dash.Common.Entities
     {
         public string Category { get; set; }
         public string Name { get; set; }
-        public string Value { get; set; }
+        public object Value { get; set; }
     }
 }
