@@ -11,6 +11,8 @@ using Autofac.Integration.WebApi;
 using System.Web.Http;
 using Swampnet.Dash.Common.Interfaces;
 using Swampnet.Dash.Common;
+using Newtonsoft.Json;
+using Swampnet.Dash.Common.Entities;
 
 namespace Swampnet.Dash.Service
 {
@@ -60,6 +62,8 @@ namespace Swampnet.Dash.Service
             Config.DependencyResolver = new AutofacWebApiDependencyResolver(container);
 
 			//var xml = Mock.Tests.ToXmlString();
+			//var json = JsonConvert.SerializeObject(Mock.Tests);
+			//var x = JsonConvert.DeserializeObject<TestDefinition[]>(json);
 
             container.Resolve<IDashService>().Run(args);
         }
