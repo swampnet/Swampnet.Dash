@@ -28,7 +28,7 @@ namespace Swampnet.Dash.Tests
 				var content = await response.Content.ReadAsStringAsync();
 			}
 
-			var time = timer.Elapsed;
+			var time = timer.Elapsed.TotalMilliseconds;
 
 			// @TODO: Figure out state
 			rs.State = "todo";
@@ -37,5 +37,26 @@ namespace Swampnet.Dash.Tests
 
 			return rs;
 		}
+
+		public TestMeta Meta
+		{
+			get
+			{
+				return new TestMeta()
+				{
+					Type = GetType().Name,
+					Description = "Get the response from an Http GET request",
+					Parameters = new []
+					{
+						new Property("uri", "Request Uri")
+					},
+					Output = new[]
+					{
+						new Property("value", "Response time (ms)")
+					}
+				};
+			}
+		}
+
 	}
 }

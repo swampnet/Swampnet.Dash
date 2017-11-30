@@ -37,5 +37,28 @@ namespace Swampnet.Dash.Tests
             
             return Task.FromResult(update);
         }
-    }
+
+
+		public TestMeta Meta
+		{
+			get
+			{
+				return new TestMeta()
+				{
+					Type = GetType().Name,
+					Description = "Generate a random number between [min] and [max]",
+					Parameters = new []
+					{
+						new Property("min", "Minimum number"),
+						new Property("max", "Maximum number")
+					},
+					Output = new[]
+					{
+						new Property("value", "Random number between [min] and [max]")
+					}
+				};
+			}
+		}
+
+	}
 }

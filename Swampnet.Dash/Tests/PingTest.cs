@@ -28,5 +28,26 @@ namespace Swampnet.Dash.Tests
 
 			return rs;
 		}
+
+
+		public TestMeta Meta
+		{
+			get
+			{
+				return new TestMeta()
+				{
+					Type = GetType().Name,
+					Description = "",
+					Parameters = new []
+					{
+						new Property("host", "Hostname or address")
+					},
+					Output = new []
+					{
+						new	Property("value", "Ping response time (ms)")
+					}
+				};
+			}
+		}
 	}
 }

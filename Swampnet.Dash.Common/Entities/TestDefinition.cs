@@ -7,6 +7,9 @@ using System.Xml.Serialization;
 
 namespace Swampnet.Dash.Common.Entities
 {
+	/// <summary>
+	/// Define a single test
+	/// </summary>
     public class TestDefinition
     {
         public TestDefinition()
