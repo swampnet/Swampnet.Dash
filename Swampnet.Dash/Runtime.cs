@@ -60,12 +60,16 @@ namespace Swampnet.Dash
                         }
                     }
 
-                    Parallel.ForEach(testDefinitions, async test => {
+                    Parallel.ForEach(testDefinitions, async test => 
+					{
                         try
                         {
                             var testRunner = _tests.Single(t => t.GetType().Name == test.Type);
                             var rs = await testRunner.RunAsync(test);
-                            Log.Information("Test {name} " + rs, test.Name);
+
+                            Log.Information("{test} '{name}' " + rs, 
+								testRunner.GetType().Name, 
+								test.Name);
 
 							lock (testDefinitions)
 							{
@@ -78,6 +82,10 @@ namespace Swampnet.Dash
                         }
                     });
                 }
+				catch (ThreadAbortException)
+				{
+					break;
+				}
                 catch (Exception ex)
                 {
                     Log.Error(ex, ex.Message);

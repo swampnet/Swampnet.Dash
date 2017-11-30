@@ -42,16 +42,15 @@ namespace Swampnet.Dash.Service
 
             var builder = new ContainerBuilder();
 
-            builder.RegisterApiControllers(Assembly.GetExecutingAssembly());
+			builder.RegisterAssemblyTypes(typeof(Runtime).Assembly).As<ITest>(); // HACK:
+			builder.RegisterApiControllers(Assembly.GetExecutingAssembly());
             builder.RegisterHubs(Assembly.GetExecutingAssembly());
             builder.RegisterType<DashService>().As<IDashService>().InstancePerLifetimeScope();
             builder.RegisterType<TestService>().As<ITestService>().InstancePerLifetimeScope();
             builder.RegisterType<DashboardRepository>().As<IDashboardRepository>().InstancePerLifetimeScope();
-            builder.RegisterType<Runtime>().As<IRuntime>();
-            // HACK:
-            builder.RegisterAssemblyTypes(typeof(Tests.RandomNumberTest).Assembly).As<ITest>();
+            builder.RegisterType<Runtime>().As<IRuntime>();            
 
-            var container = builder.Build();
+			var container = builder.Build();
 
             GlobalHost.DependencyResolver = new AutofacDependencyResolver(container);
 
@@ -108,7 +107,8 @@ namespace Swampnet.Dash.Service
 
         protected override void OnStart(string[] args)
         {
-            // @TODO: I think I'd actually rather re-build everything here (so do all the DI / container initialisation here) and tear it dopwn in OnStop()
+            // @TODO: I think I'd actually rather re-build everything here (so do all the DI / container initialisation here) and tear it down in OnStop()
+			//        We probably need to resolve IRuntime as our root object rather than DashService
             _runtime.Start();
             var url = "http://localhost:8080/";
             _webApp = WebApp.Start<Startup>(url);

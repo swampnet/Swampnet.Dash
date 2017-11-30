@@ -145,10 +145,6 @@
       <Project>{3bd91733-5ed2-4b64-9daa-47e8050cbbd9}</Project>
       <Name>Swampnet.Dash.Common</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Swampnet.Dash.Tests\Swampnet.Dash.Tests.csproj">
-      <Project>{75b93e5c-290b-42db-9494-d9a7ed3a51e8}</Project>
-      <Name>Swampnet.Dash.Tests</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Swampnet.Dash\Swampnet.Dash.csproj">
       <Project>{be1eb6e7-ae7c-4d4b-837a-78d91f0eae02}</Project>
       <Name>Swampnet.Dash</Name>
