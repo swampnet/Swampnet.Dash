@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Xml.Serialization;
 
 namespace Swampnet.Dash.Common.Entities
 {
@@ -10,8 +11,10 @@ namespace Swampnet.Dash.Common.Entities
         {
             Items = new List<ClientItemMeta>();
         }
+
+		[XmlAttribute]
         public string Id { get; set; }
-        public ICollection<ClientItemMeta> Items { get; set; }
+        public List<ClientItemMeta> Items { get; set; }
     }
 
 
@@ -22,8 +25,12 @@ namespace Swampnet.Dash.Common.Entities
             Meta = new List<Meta>();
         }
 
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public ICollection<Meta> Meta { get; set; }
+		[XmlAttribute]
+		public int Id { get; set; }
+
+		[XmlAttribute]
+		public string Name { get; set; }
+
+		public List<Meta> Meta { get; set; }
     }
 }

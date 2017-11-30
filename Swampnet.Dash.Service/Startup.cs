@@ -12,21 +12,21 @@ namespace Swampnet.Dash.Service
     {
         public void Configuration(IAppBuilder app)
         {
-            // Yeah, hate this quite a bit....
-            var config = DashService.Config;// new HttpConfiguration();
-        
-            config.MapHttpAttributeRoutes();
-            config.Routes.MapHttpRoute(
-                name: "DefaultApi",
-                routeTemplate: "{controller}/{id}",
-                defaults: new { id = RouteParameter.Optional }
-            );
+			// Yeah, hate this quite a bit....
+			var config = DashService.Config;// new HttpConfiguration();
 
-            config.Formatters.JsonFormatter.SupportedMediaTypes.Add(new MediaTypeHeaderValue("text/html"));
+			config.MapHttpAttributeRoutes();
+			config.Routes.MapHttpRoute(
+				name: "DefaultApi",
+				routeTemplate: "{controller}/{id}",
+				defaults: new { id = RouteParameter.Optional }
+			);
 
-            app.UseCors(CorsOptions.AllowAll);
-            app.UseWebApi(config);
-            app.MapSignalR();
+			config.Formatters.JsonFormatter.SupportedMediaTypes.Add(new MediaTypeHeaderValue("text/html"));
+
+			app.UseCors(CorsOptions.AllowAll);
+			app.MapSignalR();
+			app.UseWebApi(config);
         }
     }
 }

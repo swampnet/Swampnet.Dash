@@ -10,6 +10,7 @@ using Autofac.Integration.SignalR;
 using Autofac.Integration.WebApi;
 using System.Web.Http;
 using Swampnet.Dash.Common.Interfaces;
+using Swampnet.Dash.Common;
 
 namespace Swampnet.Dash.Service
 {
@@ -58,6 +59,8 @@ namespace Swampnet.Dash.Service
             Config = new HttpConfiguration();
 
             Config.DependencyResolver = new AutofacWebApiDependencyResolver(container);
+
+			//var xml = Mock.Tests.ToXmlString();
 
             container.Resolve<IDashService>().Run(args);
         }

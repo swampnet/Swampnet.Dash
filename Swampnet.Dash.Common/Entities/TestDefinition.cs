@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Text;
+using System.Xml;
+using System.Xml.Serialization;
 
 namespace Swampnet.Dash.Common.Entities
 {
@@ -13,14 +16,42 @@ namespace Swampnet.Dash.Common.Entities
             States = new List<State>();
         }
 
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public string Description { get; set; }
-        public string Type { get; set; }
-        public TimeSpan Heartbeat { get; set; }
-        public ICollection<Property> Parameters { get; set; }
-        public ICollection<Meta> MetaData { get; set; }
-        public ICollection<State> States { get; set; }
+		[XmlAttribute]
+		public int Id { get; set; }
+
+		[XmlAttribute]
+		public string Name { get; set; }
+
+		[XmlAttribute]
+		public string Description { get; set; }
+
+		[XmlAttribute]
+		public string Type { get; set; }
+
+		[XmlIgnore]
+		public TimeSpan Heartbeat { get; set; }
+
+		// XmlSerializer does not support TimeSpan, so use this property for 
+		// serialization instead.
+		[Browsable(false)]
+		[XmlAttribute(DataType = "duration", AttributeName = "Heartbeat")]
+		public string __heartbeat
+		{
+			get
+			{
+				return XmlConvert.ToString(Heartbeat);
+			}
+			set
+			{
+				Heartbeat = string.IsNullOrEmpty(value) 
+					? TimeSpan.Zero 
+					: XmlConvert.ToTimeSpan(value);
+			}
+		}
+
+		public List<Property> Parameters { get; set; }
+        public List<Meta> MetaData { get; set; }
+        public List<State> States { get; set; }
     }
 
     public class Meta
@@ -36,15 +67,22 @@ namespace Swampnet.Dash.Common.Entities
             Region = region;
         }
 
-        public string Name { get; set; }
-        public string Type { get; set; }  // Possibly VarEnum?
-        public string Region { get; set; }
+		[XmlAttribute]
+		public string Name { get; set; }
+
+		[XmlAttribute]
+		public string Type { get; set; }  // Possibly VarEnum?
+
+		[XmlAttribute]
+		public string Region { get; set; }
     }
 
 
     public class State
     {
-        public string Name { get; set; }
+		[XmlAttribute]
+		public string Name { get; set; }
+
         public string Expression { get; set; } // @TODO: Not a string!
     }
 }

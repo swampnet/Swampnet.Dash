@@ -2,11 +2,12 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Swampnet.Dash.Common.Interfaces
 {
     public interface ITest
     {
-        TestUpdate Update(TestDefinition testDefinition);
+		Task<TestResult> RunAsync(TestDefinition testDefinition);
     }
 }

@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Swampnet.Dash.Tests
 {
@@ -11,11 +12,11 @@ namespace Swampnet.Dash.Tests
     {
         private readonly Random _rnd = new Random();
 
-        public TestUpdate Update(TestDefinition testDefinition)
+        public Task<TestResult> RunAsync(TestDefinition testDefinition)
         {
-            var update = new TestUpdate(testDefinition.Id);
-            var from = Convert.ToInt32(testDefinition.Parameters.Single(p => p.Name == "min").Value);
-            var to = Convert.ToInt32(testDefinition.Parameters.Single(p => p.Name == "max").Value);
+            var update = new TestResult(testDefinition.Id);
+            var from = testDefinition.Parameters.IntValue("min");
+            var to = testDefinition.Parameters.IntValue("max");
             var value = _rnd.Next(from, to);
 
             // HACK
@@ -34,7 +35,7 @@ namespace Swampnet.Dash.Tests
 
             update.Properties.Add(new Property("value", value));
             
-            return update;
+            return Task.FromResult(update);
         }
     }
 }

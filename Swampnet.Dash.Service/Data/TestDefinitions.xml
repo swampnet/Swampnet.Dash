@@ -1,0 +1,43 @@
+﻿<?xml version="1.0" encoding="utf-16"?>
+<ArrayOfTestDefinition xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+	<TestDefinition Id="1" Name="Shake a D6" Description="Shake a D6" Type="RandomNumberTest" Heartbeat="PT5S">
+		<Parameters>
+			<Property Name="min" Value="1" />
+			<Property Name="max" Value="6" />
+		</Parameters>
+		<MetaData>
+			<Meta Name="value" Type="int" Region="main" />
+			<Meta Name="D6" Type="static" Region="header" />
+		</MetaData>
+		<States />
+	</TestDefinition>
+	<TestDefinition Id="2" Name="Shake a D12" Description="Shake a D12" Type="RandomNumberTest" Heartbeat="PT30S">
+		<Parameters>
+			<Property Name="min" Value="1" />
+			<Property Name="max" Value="12" />
+		</Parameters>
+		<MetaData>
+			<Meta Name="value" Type="int" Region="main" />
+			<Meta Name="D12" Type="static" Region="header" />
+		</MetaData>
+		<States />
+	</TestDefinition>
+	<TestDefinition Id="3" Name="Ping the googs" Description="Ping google" Type="PingTest" Heartbeat="PT1M">
+		<Parameters>
+			<Property Name="host" Value="www.google.com" />
+		</Parameters>
+		<MetaData>
+			<Meta Name="value" Type="double" Region="main" />
+		</MetaData>
+		<States />
+	</TestDefinition>
+	<TestDefinition Id="4" Name="Ping localhost" Description="Ping loopback" Type="PingTest" Heartbeat="PT30S">
+		<Parameters>
+			<Property Name="host" Value="localhost" />
+		</Parameters>
+		<MetaData>
+			<Meta Name="value" Type="double" Region="main" />
+		</MetaData>
+		<States />
+	</TestDefinition>
+</ArrayOfTestDefinition>
