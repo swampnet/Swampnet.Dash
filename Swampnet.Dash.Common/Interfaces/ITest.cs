@@ -7,6 +7,6 @@ namespace Swampnet.Dash.Common.Interfaces
 {
     public interface ITest
     {
-        void Update();
+        TestUpdate Update(TestDefinition testDefinition);
     }
 }

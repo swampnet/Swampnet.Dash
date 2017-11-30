@@ -26,39 +26,40 @@ namespace Swampnet.Dash.Common
             new TestDefinition()
             {
                 Id = 1,
-                Type = "ping",
-                Name = "Ping Google",
-                Description = "Ping the googs",
-                Heartbeat = TimeSpan.FromSeconds(2),
+                Type = "RandomNumberTest",
+                Name = "Shake a D6",
+                Description = "Shake a D6",
+                Heartbeat = TimeSpan.FromSeconds(5),
                 Parameters = new List<Property>()
                 {
-                    new Property("endpoint", "http://www.google.com")
+                    new Property("min", "1"),
+                    new Property("max", "6"),
                 },
                 MetaData = new List<Meta>()
                 {
                     new Meta("value", "int", "main"),
-                    new Meta("Google", "static", "header"),
-                    new Meta("Ping", "static", "footer"),
-                }
-            },
-            new TestDefinition()
-            {
-                Id = 2,
-                Type = "ping",
-                Name = "Ping BBC",
-                Description = "Ping the beeb",
-                Heartbeat = TimeSpan.FromSeconds(2),
-                Parameters = new List<Property>()
-                {
-                    new Property("endpoint", "http://www.bbc.co.uk")
-                },
-                MetaData = new List<Meta>()
-                {
-                    new Meta("value", "int", "main"),
-                    new Meta("The Beeb", "static", "header"),
-                    new Meta("Ping", "static", "footer"),
+                    new Meta("D6", "static", "header")
                 }
             }
+            //,
+            //new TestDefinition()
+            //{
+            //    Id = 1,
+            //    Type = "RandomNumberTest",
+            //    Name = "Shake a D12",
+            //    Description = "Shake a D12",
+            //    Heartbeat = TimeSpan.FromSeconds(2),
+            //    Parameters = new List<Property>()
+            //    {
+            //        new Property("min", "1"),
+            //        new Property("max", "12"),
+            //    },
+            //    MetaData = new List<Meta>()
+            //    {
+            //        new Meta("value", "int", "main"),
+            //        new Meta("D12", "static", "header")
+            //    }
+            //}
         };
     }
 }

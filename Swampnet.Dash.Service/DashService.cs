@@ -9,6 +9,7 @@ using System.Reflection;
 using Autofac.Integration.SignalR;
 using Autofac.Integration.WebApi;
 using System.Web.Http;
+using Swampnet.Dash.Common.Interfaces;
 
 namespace Swampnet.Dash.Service
 {
@@ -30,6 +31,7 @@ namespace Swampnet.Dash.Service
 
         private IDisposable _webApp;
         private readonly ITestService _testService;
+        private readonly IRuntime _runtime;
 
         static void Main(string[] args)
         {
@@ -44,6 +46,9 @@ namespace Swampnet.Dash.Service
             builder.RegisterType<DashService>().As<IDashService>().InstancePerLifetimeScope();
             builder.RegisterType<TestService>().As<ITestService>().InstancePerLifetimeScope();
             builder.RegisterType<DashboardRepository>().As<IDashboardRepository>().InstancePerLifetimeScope();
+            builder.RegisterType<Runtime>().As<IRuntime>();
+            // HACK:
+            builder.RegisterAssemblyTypes(typeof(Tests.RandomNumberTest).Assembly).As<ITest>();
 
             var container = builder.Build();
 
@@ -63,10 +68,11 @@ namespace Swampnet.Dash.Service
             InitializeComponent();
         }
 
-        public DashService(ITestService testService)
+        public DashService(ITestService testService, IRuntime runtime)
             : this()
         {
             _testService = testService;
+            _runtime = runtime;
         }
 
         public void Run(string[] args)
@@ -97,10 +103,10 @@ namespace Swampnet.Dash.Service
         }
 
 
-
-
         protected override void OnStart(string[] args)
         {
+            // @TODO: I think I'd actually rather re-build everything here (so do all the DI / container initialisation here) and tear it dopwn in OnStop()
+            _runtime.Start();
             var url = "http://localhost:8080/";
             _webApp = WebApp.Start<Startup>(url);
             Log.Information("Server running on {url}", url);
@@ -109,7 +115,9 @@ namespace Swampnet.Dash.Service
 
         protected override void OnStop()
         {
-            if(_webApp != null)
+            _runtime.Stop();
+
+            if (_webApp != null)
             {
                 _webApp.Dispose();
                 _webApp = null;
