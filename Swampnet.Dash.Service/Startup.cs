@@ -14,10 +14,11 @@ namespace Swampnet.Dash.Service
         {
             // Yeah, hate this quite a bit....
             var config = DashService.Config;// new HttpConfiguration();
-
+        
+            config.MapHttpAttributeRoutes();
             config.Routes.MapHttpRoute(
                 name: "DefaultApi",
-                routeTemplate: "api/{controller}/{id}",
+                routeTemplate: "{controller}/{id}",
                 defaults: new { id = RouteParameter.Optional }
             );
 

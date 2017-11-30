@@ -43,6 +43,7 @@ namespace Swampnet.Dash.Service
             builder.RegisterHubs(Assembly.GetExecutingAssembly());
             builder.RegisterType<DashService>().As<IDashService>().InstancePerLifetimeScope();
             builder.RegisterType<TestService>().As<ITestService>().InstancePerLifetimeScope();
+            builder.RegisterType<DashboardRepository>().As<IDashboardRepository>().InstancePerLifetimeScope();
 
             var container = builder.Build();
 

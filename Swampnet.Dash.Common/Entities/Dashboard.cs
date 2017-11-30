@@ -6,11 +6,14 @@ namespace Swampnet.Dash.Common.Entities
 {
     public class Dashboard
     {
+        public Dashboard()
+        {
+            TestIds = new List<int>();
+        }
+
         public Guid Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
-
-        // @TODO: ItemSource?
-        // Sometimes the items can be dynamic (ie, ArgosDash)
+        public ICollection<int> TestIds { get; set; }
     }
 }

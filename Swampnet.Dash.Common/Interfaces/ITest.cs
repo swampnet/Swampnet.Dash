@@ -7,6 +7,6 @@ namespace Swampnet.Dash.Common.Interfaces
 {
     public interface ITest
     {
-        DashItem Update(DashItem dashItem);
+        void Update();
     }
 }
