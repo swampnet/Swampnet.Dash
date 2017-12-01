@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNet.SignalR.Client;
+using Swampnet.Dash.Common.Entities;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -26,7 +27,7 @@ namespace Swampnet.Dash.Client.Wpf
             _uiFactory = new TaskFactory(TaskScheduler.FromCurrentSynchronizationContext());
 
             _hubConnection = new HubConnection("http://localhost:8080/");
-            _proxy = _hubConnection.CreateHubProxy("ChatHub");
+            _proxy = _hubConnection.CreateHubProxy("DashboardHub");
 
             _proxy.On("broadcastMessage", (string x, string y) => 
             {
@@ -36,7 +37,20 @@ namespace Swampnet.Dash.Client.Wpf
                 });
             });
 
+            _proxy.On("updateDashItems", (IEnumerable<DashItem> dashItems) =>
+            {
+                _uiFactory.StartNew(() =>
+                {
+                    foreach(var d in dashItems)
+                    {
+                        _messages.Add($"[{d.TimestampUtc}] [UPDATE] {d.Id}");
+                    }
+                });
+            });
+
             _hubConnection.Start().Wait();
+
+            _proxy.Invoke("JoinGroup", "dash-01");
         }
 
 

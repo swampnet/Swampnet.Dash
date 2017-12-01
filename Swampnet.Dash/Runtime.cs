@@ -16,11 +16,14 @@ namespace Swampnet.Dash
         private readonly Thread _runtimeThread;
         private readonly IDashboardRepository _dashboardRepository;
         private readonly ITestRunner _testRunner;
+        private readonly IBroadcast _broadcast;
 
         public Runtime(
             ITestRunner testRunner,
-            IDashboardRepository dashboardRepository)
+            IDashboardRepository dashboardRepository,
+            IBroadcast broadcast)
         {
+            _broadcast = broadcast;
             _testRunner = testRunner;
             _dashboardRepository = dashboardRepository;
 
@@ -53,23 +56,19 @@ namespace Swampnet.Dash
 
                     foreach (var dash in dashboards)
                     {
-                        string group = dash.Name;
-
                         // Get all the tests results referenced by tests in this dash:
                         var dashTestUpdates = testResults.Where(r => dash.Tests.Contains(r.TestName));
                         if (dashTestUpdates.Any())
                         {
                             var dashItems = dashTestUpdates.Select(tr => new DashItem()
                             {
-                                Id = $"T:{tr.TestName}", // TODO: Need a better Id?
+                                Id = $"{dash.Name}.test.{tr.TestName}", // TODO: Need a better Id?
                                 State = tr.State,
                                 TimestampUtc = tr.TimestampUtc,
                                 Properties = tr.Properties
                             });
 
-                            Log.Debug("@TODO: Broadcast to '{group}' - {dashItems}", 
-                                group,
-                                string.Join(", ", dashItems.Select(di => di.Id)));
+                            _broadcast.DashboardItems(dash.Name, dashItems);
                         }
                     }
                 }
