@@ -62,7 +62,7 @@ namespace Swampnet.Dash
                         {
                             var dashItems = dashTestUpdates.Select(tr => new DashItem()
                             {
-                                Id = $"{dash.Name}.test.{tr.TestName}", // TODO: Need a better Id?
+                                Id = $"{dash.Name}.test.{tr.TestName}", // TODO: Need a better Id? - Also, this needs to link up to the meta data stuffs
                                 State = tr.State,
                                 TimestampUtc = tr.TimestampUtc,
                                 Properties = tr.Properties
