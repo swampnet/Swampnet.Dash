@@ -12,9 +12,9 @@ namespace Swampnet.Dash.Tests
     {
         private readonly Random _rnd = new Random();
 
-        public Task<TestResult> RunAsync(TestDefinition testDefinition)
+        public Task<DashItem> RunAsync(TestDefinition testDefinition)
         {
-            var update = new TestResult(testDefinition.Id);
+            var update = new DashItem(testDefinition.Id);
             var from = testDefinition.Parameters.IntValue("min");
             var to = testDefinition.Parameters.IntValue("max");
             var value = _rnd.Next(from, to);

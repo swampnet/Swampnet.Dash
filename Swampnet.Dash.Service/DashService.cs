@@ -44,13 +44,11 @@ namespace Swampnet.Dash.Service
 
             var builder = new ContainerBuilder();
 
-			builder.RegisterAssemblyTypes(typeof(Runtime).Assembly).As<ITest>().InstancePerLifetimeScope(); // HACK:
+            builder.UseDashboardRuntime();
 			builder.RegisterApiControllers(Assembly.GetExecutingAssembly());
             builder.RegisterHubs(Assembly.GetExecutingAssembly());
             builder.RegisterType<DashService>().As<IDashService>().InstancePerLifetimeScope();
             builder.RegisterType<TestService>().As<ITestService>().InstancePerLifetimeScope();
-            builder.RegisterType<DashboardRepository>().As<IDashboardRepository>().InstancePerLifetimeScope();
-            builder.RegisterType<Runtime>().As<IRuntime>();            
 
 			var container = builder.Build();
 

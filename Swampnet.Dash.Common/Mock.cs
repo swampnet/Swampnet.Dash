@@ -9,13 +9,13 @@ namespace Swampnet.Dash.Common
 {
     public static class Mock
     {
-        public static Dashboard Dash()
+        public static Dashboard Dash(string name)
         {
             var dash = new Dashboard();
             dash.Id = Guid.NewGuid();
-            dash.Name = "Pings";
-            dash.Description = "All the tests";
-            dash.TestIds = Tests.Select(t => t.Id).ToList();
+            dash.Name = name;
+            dash.Description = name + " (description)";
+            dash.Tests = Tests.Select(t => t.Name).ToList();
             return dash;
         }
 

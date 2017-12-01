@@ -6,9 +6,8 @@ using System.Threading.Tasks;
 
 namespace Swampnet.Dash.Common.Interfaces
 {
-    public interface ITest
+    public interface ITestRunner
     {
-		Task<DashItem> RunAsync(TestDefinition testDefinition);
-		TestMeta Meta { get; }
-	}
+        Task<IEnumerable<DashItem>> RunAsync();
+    }
 }

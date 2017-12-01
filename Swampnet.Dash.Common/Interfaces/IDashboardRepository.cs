@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace Swampnet.Dash.Common.Interfaces
 {
-    public interface ITest
+    public interface IDashboardRepository
     {
-		Task<DashItem> RunAsync(TestDefinition testDefinition);
-		TestMeta Meta { get; }
-	}
+        ClientMeta GetMetaData(string dashId);
+        Task<IEnumerable<Dashboard>> GetActiveDashboardsAsync();
+    }
 }

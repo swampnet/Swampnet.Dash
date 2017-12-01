@@ -8,12 +8,12 @@ namespace Swampnet.Dash.Common.Entities
     {
         public Dashboard()
         {
-			TestIds = new List<int>();
+			Tests = new List<string>();
         }
 
         public Guid Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
-        public List<int> TestIds { get; set; }
+        public List<string> Tests { get; set; }
     }
 }

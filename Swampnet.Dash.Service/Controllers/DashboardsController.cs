@@ -1,4 +1,5 @@
 ﻿using Swampnet.Dash.Common.Entities;
+using Swampnet.Dash.Common.Interfaces;
 using Swampnet.Dash.Service.Services;
 using System;
 using System.Collections.Generic;

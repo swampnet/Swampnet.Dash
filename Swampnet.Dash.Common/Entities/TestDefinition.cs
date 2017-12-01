@@ -22,7 +22,10 @@ namespace Swampnet.Dash.Common.Entities
 		[XmlAttribute]
 		public int Id { get; set; }
 
-		[XmlAttribute]
+        [XmlAttribute]
+        public bool IsEnabled { get; set; }
+
+        [XmlAttribute]
 		public string Name { get; set; }
 
 		[XmlAttribute]

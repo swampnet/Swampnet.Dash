@@ -10,9 +10,9 @@ namespace Swampnet.Dash.Tests
 {
 	class PingTest : ITest
 	{
-		public async Task<TestResult> RunAsync(TestDefinition testDefinition)
+		public async Task<DashItem> RunAsync(TestDefinition testDefinition)
 		{
-			var rs = new TestResult(testDefinition.Id);
+			var rs = new DashItem(testDefinition.Id);
 
 			Ping ping = new Ping();
 

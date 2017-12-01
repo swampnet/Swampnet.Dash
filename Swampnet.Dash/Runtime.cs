@@ -15,10 +15,18 @@ namespace Swampnet.Dash
     {
         private readonly IEnumerable<ITest> _tests;
         private readonly Thread _runtimeThread;
+        private readonly IDashboardRepository _dashboardRepository;
+        private readonly ITestRepository _testRepository;
+        private readonly ITestRunner _testRunner;
 
-        public Runtime(IEnumerable<ITest> tests)
+        public Runtime(
+            ITestRunner testRunner,
+            IDashboardRepository dashboardRepository
+            )
         {
-            _tests = tests;
+            _testRunner = testRunner;
+            _dashboardRepository = dashboardRepository;
+
             _runtimeThread = new Thread(RuntimeThread);
             _runtimeThread.IsBackground = true;
         }
@@ -35,52 +43,22 @@ namespace Swampnet.Dash
             _runtimeThread.Abort();
         }
 
-        private void RuntimeThread()
+        private async void RuntimeThread()
         {
-            var runtime = new Dictionary<int, DateTime>();
-
             while (true)
             {
                 try
                 {
-                    var testDefinitions = new List<TestDefinition>();
+                    var updatedDashItems = await _testRunner.RunAsync();
 
-                    foreach(var testDefinition in Mock.Tests)
+                    // Tests are independant of the dashboards they might appear in.
+                    // @TODO: For each dashboard, fire off updates if they contain any of the tests we've just run...
+                    var dashboards = await _dashboardRepository.GetActiveDashboardsAsync();
+
+                    foreach (var dash in dashboards)
                     {
-                        DateTime lastRun;
-                        if (!runtime.ContainsKey(testDefinition.Id))
-                        {
-                            runtime.Add(testDefinition.Id, DateTime.MinValue);
-                        }
-                        lastRun = runtime[testDefinition.Id];
-
-                        if (lastRun.Add(testDefinition.Heartbeat) < DateTime.UtcNow)
-                        {
-                            testDefinitions.Add(testDefinition);
-                        }
+                        string groupName = dash.Name;
                     }
-
-                    Parallel.ForEach(testDefinitions, async test => 
-					{
-                        try
-                        {
-                            var testRunner = _tests.Single(t => t.GetType().Name == test.Type);
-                            var rs = await testRunner.RunAsync(test);
-
-                            Log.Information("{test} '{name}' " + rs, 
-								testRunner.GetType().Name, 
-								test.Name);
-
-							lock (testDefinitions)
-							{
-								runtime[test.Id] = DateTime.UtcNow;
-							}
-						}
-                        catch (Exception ex)
-                        {
-                            Log.Error(ex, ex.Message);
-                        }
-                    });
                 }
 				catch (ThreadAbortException)
 				{
