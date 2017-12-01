@@ -17,24 +17,15 @@ using Swampnet.Dash.Common.Entities;
 namespace Swampnet.Dash.Service
 {
     /// <summary>
-    /// Dash service
-    /// </summary>
-    public interface IDashService
-    {
-        void Run(string[] args);
-    }
-
-    /// <summary>
     /// Dash service implementation
     /// </summary>
-    public partial class DashService : ServiceBase, IDashService
+    public partial class DashService : ServiceBase
     {
         // Yeah, hate this quite a bit....
         public static HttpConfiguration Config { get; set; }
 
         private IDisposable _webApp;
-        private readonly ITestService _testService;
-        private readonly IRuntime _runtime;
+        private IRuntime _runtime;
 
         static void Main(string[] args)
         {
@@ -43,54 +34,17 @@ namespace Swampnet.Dash.Service
              .MinimumLevel.Debug()
              .CreateLogger();
 
-            var builder = new ContainerBuilder();
+            var dashService = new DashService();
 
-            builder.UseDashboardRuntime();
-			builder.RegisterApiControllers(Assembly.GetExecutingAssembly());
-            builder.RegisterHubs(Assembly.GetExecutingAssembly());
-            builder.RegisterType<DashService>().As<IDashService>().InstancePerLifetimeScope();
-            builder.RegisterType<TestService>().As<ITestService>().InstancePerLifetimeScope();
-
-			var container = builder.Build();
-
-            GlobalHost.DependencyResolver = new AutofacDependencyResolver(container);
-
-            // Get your HttpConfiguration.
-            Config = new HttpConfiguration();
-
-            Config.DependencyResolver = new AutofacWebApiDependencyResolver(container);
-
-			//var xml = Mock.Tests.ToXmlString();
-			//var json = JsonConvert.SerializeObject(Mock.Tests);
-			//var x = JsonConvert.DeserializeObject<TestDefinition[]>(json);
-
-            container.Resolve<IDashService>().Run(args);
-        }
-
-
-        public DashService()
-        {
-            InitializeComponent();
-        }
-
-        public DashService(ITestService testService, IRuntime runtime)
-            : this()
-        {
-            _testService = testService;
-            _runtime = runtime;
-        }
-
-        public void Run(string[] args)
-        {
             if (Environment.UserInteractive)
             {
                 try
                 {
-                    OnStart(args);
+                    dashService.OnStart(args);
                     Console.WriteLine("Service running. (key)");
                     Console.ReadKey(true);
                     Console.Write("Service stopping... ");
-                    OnStop();
+                    dashService.OnStop();
                     Console.WriteLine("Service stopped.");
                 }
                 catch (Exception ex)
@@ -102,19 +56,47 @@ namespace Swampnet.Dash.Service
             }
             else
             {
-                ServiceBase[] servicesToRun = { this };
+                ServiceBase[] servicesToRun = { dashService };
                 Run(servicesToRun);
             }
         }
 
 
+        public DashService()
+        {
+            InitializeComponent();
+        }
+
+
         protected override void OnStart(string[] args)
         {
-            // @TODO: I think I'd actually rather re-build everything here (so do all the DI / container initialisation here) and tear it down in OnStop()
-			//        We probably need to resolve IRuntime as our root object rather than DashService
+            var builder = new ContainerBuilder();
+
+            builder.UseDashboardRuntime();
+            builder.RegisterApiControllers(Assembly.GetExecutingAssembly());
+            builder.RegisterHubs(Assembly.GetExecutingAssembly());
+            builder.RegisterType<TestService>().As<ITestService>().InstancePerLifetimeScope();
+
+            var container = builder.Build();
+
+            _runtime = container.Resolve<IRuntime>();
+
+            GlobalHost.DependencyResolver = new AutofacDependencyResolver(container);
+
+            // Get your HttpConfiguration.
+            Config = new HttpConfiguration();
+
+            Config.DependencyResolver = new AutofacWebApiDependencyResolver(container);
+
+            //var xml = Mock.Tests.ToXmlString();
+            //var json = JsonConvert.SerializeObject(Mock.Tests);
+            //var x = JsonConvert.DeserializeObject<TestDefinition[]>(json);
+
             _runtime.Start();
+
             var url = "http://localhost:8080/";
             _webApp = WebApp.Start<Startup>(url);
+
             Log.Information("Server running on {url}", url);
         }
 
