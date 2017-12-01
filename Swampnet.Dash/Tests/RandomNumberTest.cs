@@ -12,9 +12,9 @@ namespace Swampnet.Dash.Tests
     {
         private readonly Random _rnd = new Random();
 
-        public Task<DashItem> RunAsync(TestDefinition testDefinition)
+        public Task<TestResult> RunAsync(TestDefinition testDefinition)
         {
-            var update = new DashItem(testDefinition.Id);
+            var rs = new TestResult();
             var from = testDefinition.Parameters.IntValue("min");
             var to = testDefinition.Parameters.IntValue("max");
             var value = _rnd.Next(from, to);
@@ -22,20 +22,20 @@ namespace Swampnet.Dash.Tests
             // HACK
             if(value > 5)
             {
-                update.State = "alert";
+                rs.State = "alert";
             }
             else if(value > 4)
             {
-                update.State = "warn";
+                rs.State = "warn";
             }
             else
             {
-                update.State = "ok";
+                rs.State = "ok";
             }
 
-            update.Properties.Add(new Property("value", value));
+            rs.Properties.Add(new Property("value", value));
             
-            return Task.FromResult(update);
+            return Task.FromResult(rs);
         }
 
 

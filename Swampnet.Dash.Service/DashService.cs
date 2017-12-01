@@ -40,6 +40,7 @@ namespace Swampnet.Dash.Service
         {
             Log.Logger = new LoggerConfiguration()
              .WriteTo.Console()
+             .MinimumLevel.Debug()
              .CreateLogger();
 
             var builder = new ContainerBuilder();

@@ -20,9 +20,9 @@ namespace Swampnet.Dash.Services
             _tests = tests;
         }
 
-        public Task<IEnumerable<DashItem>> RunAsync()
+        public Task<IEnumerable<TestResult>> RunAsync()
         {
-            var updatedDashItems = new List<DashItem>();
+            var testResults = new List<TestResult>();
             var testDefinitions = _testRepo.GetPendingTestDefinitions();
 
             Parallel.ForEach(testDefinitions, async test =>
@@ -31,10 +31,11 @@ namespace Swampnet.Dash.Services
                 {
                     var testRunner = _tests.Single(t => t.GetType().Name == test.Type);
                     var rs = await testRunner.RunAsync(test);
+                    rs.TestName = test.Name;
 
-                    lock (updatedDashItems)
+                    lock (testResults)
                     {
-                        updatedDashItems.Add(rs);
+                        testResults.Add(rs);
                     }
 
                     Log.Information("{test} '{name}' " + rs,
@@ -50,7 +51,7 @@ namespace Swampnet.Dash.Services
                 }
             });
 
-            return Task.FromResult(updatedDashItems.AsEnumerable());
+            return Task.FromResult(testResults.AsEnumerable());
         }
     }
 }

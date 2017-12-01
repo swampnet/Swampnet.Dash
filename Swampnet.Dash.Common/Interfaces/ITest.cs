@@ -8,7 +8,7 @@ namespace Swampnet.Dash.Common.Interfaces
 {
     public interface ITest
     {
-		Task<DashItem> RunAsync(TestDefinition testDefinition);
+		Task<TestResult> RunAsync(TestDefinition testDefinition);
 		TestMeta Meta { get; }
 	}
 }
