@@ -13,7 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Swampnet.Dash.Client.Wpf
+namespace Swampnet.Dash.Client.Wpf.Views
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml

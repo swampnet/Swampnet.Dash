@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNet.SignalR.Client;
+using Prism.Mvvm;
+using Swampnet.Dash.Client.Wpf.ViewModels;
 using Swampnet.Dash.Common.Entities;
 using System;
 using System.Collections.Generic;
@@ -10,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Swampnet.Dash.Client.Wpf
 {
-    class MainViewModel
+    class MainViewModel : BindableBase
     {
 		public MainViewModel()
 		{

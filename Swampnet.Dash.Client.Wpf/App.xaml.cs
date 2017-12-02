@@ -19,7 +19,10 @@ namespace Swampnet.Dash.Client.Wpf
             base.OnStartup(e);
 
             Log.Logger = new LoggerConfiguration()
-             .CreateLogger();
-        }
-    }
+								.CreateLogger();
+
+			var bootstrapper = new Boot();
+			bootstrapper.Run();
+		}
+	}
 }

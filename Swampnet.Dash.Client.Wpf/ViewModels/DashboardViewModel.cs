@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNet.SignalR.Client;
+using Prism.Mvvm;
 using Swampnet.Dash.Common.Entities;
 using System;
 using System.Collections.Generic;
@@ -7,33 +8,42 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Swampnet.Dash.Client.Wpf
+namespace Swampnet.Dash.Client.Wpf.ViewModels
 {
-	class DashboardViewModel
+	class DashboardViewModel : BindableBase
 	{
-		private HubConnection _hubConnection;
+		private readonly HubConnection _hubConnection;
 		private readonly IHubProxy _proxy;
-		private TaskFactory _uiFactory;
+		private readonly TaskFactory _uiFactory;
 
 		private ObservableCollection<string> _messages = new ObservableCollection<string>();
-		private readonly string _dash;
+		private readonly string _dashName;
 
 		public IEnumerable<string> Messages => _messages;
+
+		private DateTime _lastUpdate;
+
+		public DateTime LastUpdate
+		{
+			get { return _lastUpdate; }
+			set { SetProperty(ref _lastUpdate, value); }
+		}
 
 
 		public DashboardViewModel(string dash)
 		{
+			LastUpdate = DateTime.Now;
+
 			// Construct a TaskFactory that uses the UI thread's context
 			_uiFactory = new TaskFactory(TaskScheduler.FromCurrentSynchronizationContext());
-
 			_hubConnection = new HubConnection("http://localhost:8080/");
 			_proxy = _hubConnection.CreateHubProxy("DashboardHub");
 
-			_proxy.On("broadcastMessage", (string x, string y) =>
+			_proxy.On("broadcastMessage", (string user, string message) =>
 			{
 				_uiFactory.StartNew(() =>
 				{
-					_messages.Add($"[{x}] {y}");
+					_messages.Add($"[{user}] {message}");
 				});
 			});
 
@@ -41,6 +51,7 @@ namespace Swampnet.Dash.Client.Wpf
 			{
 				_uiFactory.StartNew(() =>
 				{
+					LastUpdate = DateTime.Now;
 					foreach (var d in dashItems)
 					{
 						_messages.Add($"{d.Id} (" + string.Join(", ", d.Properties.Select(p => $"{p.Name}: {p.Value}")) + ")");
@@ -51,10 +62,10 @@ namespace Swampnet.Dash.Client.Wpf
 			_hubConnection.Start().Wait();
 
 			_proxy.Invoke("JoinGroup", dash);
-			_dash = dash;
+			_dashName = dash;
 		}
 
-		public string Name => _dash;
+		public string Name => _dashName;
 
 
 		public void Boosh()
