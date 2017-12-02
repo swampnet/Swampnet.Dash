@@ -14,7 +14,11 @@
 		<TextBlock Grid.Row="0" Text="{Binding LastUpdate}" FontSize="15" FontWeight="Bold" HorizontalAlignment="Center"/>
 		<ScrollViewer VerticalScrollBarVisibility="Auto" Grid.Row="1">
 			<ItemsControl ItemsSource="{Binding Path=Messages}">
-
+				<ItemsControl.ItemTemplate>
+					<DataTemplate>
+						<local:DashItemView Margin="10"/>
+					</DataTemplate>
+				</ItemsControl.ItemTemplate>
 			</ItemsControl>
 		</ScrollViewer>
 	</Grid>

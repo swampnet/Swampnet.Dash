@@ -23,7 +23,7 @@ namespace Swampnet.Dash.Service.Services
                 .GetHubContext<DashboardHub>()
                 .Clients
                 .Group(group)
-                .updateDashItems(dashItems);
+                .UpdateDash(dashItems);
         }
     }
 }

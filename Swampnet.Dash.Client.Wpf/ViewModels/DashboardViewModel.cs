@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNet.SignalR.Client;
 using Prism.Mvvm;
+using Serilog;
 using Swampnet.Dash.Common.Entities;
 using System;
 using System.Collections.Generic;
@@ -16,10 +17,10 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
 		private readonly IHubProxy _proxy;
 		private readonly TaskFactory _uiFactory;
 
-		private ObservableCollection<string> _messages = new ObservableCollection<string>();
+		private ObservableCollection<DashItemViewModel> _messages = new ObservableCollection<DashItemViewModel>();
 		private readonly string _dashName;
 
-		public IEnumerable<string> Messages => _messages;
+		public IEnumerable<DashItemViewModel> Messages => _messages;
 
 		private DateTime _lastUpdate;
 
@@ -39,25 +40,7 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
 			_hubConnection = new HubConnection("http://localhost:8080/");
 			_proxy = _hubConnection.CreateHubProxy("DashboardHub");
 
-			_proxy.On("broadcastMessage", (string user, string message) =>
-			{
-				_uiFactory.StartNew(() =>
-				{
-					_messages.Add($"[{user}] {message}");
-				});
-			});
-
-			_proxy.On("updateDashItems", (IEnumerable<DashItem> dashItems) =>
-			{
-				_uiFactory.StartNew(() =>
-				{
-					LastUpdate = DateTime.Now;
-					foreach (var d in dashItems)
-					{
-						_messages.Add($"{d.Id} (" + string.Join(", ", d.Properties.Select(p => $"{p.Name}: {p.Value}")) + ")");
-					}
-				});
-			});
+			_proxy.On("UpdateDash", (IEnumerable<DashItem> dashItems) => UpdateDash(dashItems));
 
 			_hubConnection.Start().Wait();
 
@@ -71,6 +54,24 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
 		public void Boosh()
 		{
 			_proxy.Invoke("Send", "some-name", "some-message");
+		}
+
+		private void UpdateDash(IEnumerable<DashItem> dashItems)
+		{
+			_uiFactory.StartNew(() =>
+			{
+				LastUpdate = DateTime.Now;
+				foreach (var di in dashItems)
+				{
+					var dashItem = _messages.SingleOrDefault(d => d.Id == di.Id);
+					if (dashItem == null)
+					{
+						dashItem = new DashItemViewModel(null);
+						_messages.Add(dashItem);
+					}
+					dashItem.Update(di);
+				}
+			});
 		}
 	}
 }

@@ -12,17 +12,24 @@ namespace Swampnet.Dash.Service.Controllers
 {
     public class TestsController : ApiController
     {
+		private readonly ITestRepository _testRepo;
 		private readonly IEnumerable<ITest> _tests;
 
-		public TestsController(IEnumerable<ITest> tests)
+		public TestsController(ITestRepository testRepo, IEnumerable<ITest> tests)
         {
+			_testRepo = testRepo;
 			_tests = tests;
 		}
 
 
-        public IEnumerable<TestMeta> Get()
+        public IEnumerable<TestDefinition> Get()
         {
-			return _tests.Select(t => t.Meta);
+			return _testRepo.GetTestDefinitions();
         }
+
+		public TestDefinition Get(int id)
+		{
+			return _testRepo.GetTestDefinitions().Single(d => d.Id == id);
+		}
     }
 }
