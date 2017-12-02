@@ -8,7 +8,8 @@ namespace Swampnet.Dash.Common.Interfaces
 {
     public interface IDashboardRepository
     {
-        ClientMeta GetMetaData(string dashId);
-        Task<IEnumerable<Dashboard>> GetActiveDashboardsAsync();
+		Task<DashMetaData> GetMetaDataAsync(string name);
+
+		Task<IEnumerable<Dashboard>> GetActiveDashboardsAsync();
     }
 }

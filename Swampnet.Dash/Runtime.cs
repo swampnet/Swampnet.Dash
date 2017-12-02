@@ -50,8 +50,6 @@ namespace Swampnet.Dash
                 try
                 {
                     var testResults = await _testRunner.RunAsync();
-
-                    // Tests are independant of the dashboards they might appear in.
                     var dashboards = await _dashboardRepository.GetActiveDashboardsAsync();
 
                     foreach (var dash in dashboards)

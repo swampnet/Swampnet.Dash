@@ -33,5 +33,23 @@ namespace Swampnet.Dash.Service.Hubs
             Groups.Add(Context.ConnectionId, groupName);
             Log.Debug($"{Context.ConnectionId} joined group {groupName}");
         }
-    }
+
+		public override Task OnConnected()
+		{
+			Log.Debug($"{Context.ConnectionId} Connected");
+			return base.OnConnected();
+		}
+
+		public override Task OnDisconnected(bool stopCalled)
+		{
+			Log.Debug($"{Context.ConnectionId} disconnected");
+			return base.OnDisconnected(stopCalled);
+		}
+
+		public override Task OnReconnected()
+		{
+			Log.Debug($"{Context.ConnectionId} reconnected");
+			return base.OnReconnected();
+		}
+	}
 }

@@ -25,13 +25,25 @@ namespace Swampnet.Dash.Common
 			{
 				if(_tests == null)
 				{
-					_tests = File.ReadAllText("Data\\TestDefinitions.xml").Deserialize<TestDefinition[]>();
+					_tests = File.ReadAllText("Data\\tests.xml").Deserialize<TestDefinition[]>();
 				}
 				return _tests;
 			}
 		}
 
+		public static IEnumerable<Dashboard> Dashboards
+		{
+			get
+			{
+				if(_dashboards == null)
+				{
+					_dashboards = File.ReadAllText("Data\\dashboards.xml").Deserialize<Dashboard[]>();
+				}
+				return _dashboards;
+			}
+		}
 
 		private static IEnumerable<TestDefinition> _tests = null;
-    }
+		private static IEnumerable<Dashboard> _dashboards = null;
+	}
 }

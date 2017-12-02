@@ -20,12 +20,12 @@ namespace Swampnet.Dash.Services
             _tests = tests;
         }
 
-        public Task<IEnumerable<TestResult>> RunAsync()
+        public async Task<IEnumerable<TestResult>> RunAsync()
         {
             var testResults = new List<TestResult>();
             var testDefinitions = _testRepo.GetPendingTestDefinitions();
 
-            Parallel.ForEach(testDefinitions, async test =>
+			foreach(var test in testDefinitions)
             {
                 try
                 {
@@ -33,12 +33,9 @@ namespace Swampnet.Dash.Services
                     var rs = await testRunner.RunAsync(test);
                     rs.TestName = test.Name;
 
-                    lock (testResults)
-                    {
-                        testResults.Add(rs);
-                    }
+					testResults.Add(rs);
 
-                    Log.Information("{test} '{name}' " + rs,
+					Log.Information("{test} '{name}' " + rs,
                         testRunner.GetType().Name,
                         test.Name);
 
@@ -49,9 +46,9 @@ namespace Swampnet.Dash.Services
                     // @TODO: Even when we error we need to broadcast an update (with the item in an error state)
                     Log.Error(ex, ex.Message);
                 }
-            });
+            }
 
-            return Task.FromResult(testResults.AsEnumerable());
+            return testResults;
         }
     }
 }

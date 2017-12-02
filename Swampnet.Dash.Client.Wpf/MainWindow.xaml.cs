@@ -26,13 +26,13 @@ namespace Swampnet.Dash.Client.Wpf
             DataContext = new MainViewModel();
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-            var dc = DataContext as MainViewModel;
-            if(dc != null)
-            {
-                dc.Boosh();
-            }
-        }
+        //private void Button_Click(object sender, RoutedEventArgs e)
+        //{
+        //    var dc = DataContext as MainViewModel;
+        //    if(dc != null)
+        //    {
+        //        dc.Boosh();
+        //    }
+        //}
     }
 }

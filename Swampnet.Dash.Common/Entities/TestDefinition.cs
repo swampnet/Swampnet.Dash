@@ -60,28 +60,6 @@ namespace Swampnet.Dash.Common.Entities
         public List<State> States { get; set; }
     }
 
-    public class Meta
-    {
-        public Meta()
-        {
-        }
-
-        public Meta(string name, string type, string region)
-        {
-            Name = name;
-            Type = type;
-            Region = region;
-        }
-
-		[XmlAttribute]
-		public string Name { get; set; }
-
-		[XmlAttribute]
-		public string Type { get; set; }  // Possibly VarEnum?
-
-		[XmlAttribute]
-		public string Region { get; set; }
-    }
 
 
     public class State
