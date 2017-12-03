@@ -16,8 +16,12 @@ namespace Swampnet.Dash.Common.Entities
         }
 
 		[XmlAttribute]
-        public string Id { get; set; }
-        public List<DashItemMeta> Items { get; set; }
+		public string Name { get; set; }
+
+		[XmlAttribute]
+		public string Description { get; set; }
+
+		public List<DashItemMeta> Items { get; set; }
     }
 
 
@@ -31,6 +35,13 @@ namespace Swampnet.Dash.Common.Entities
             Meta = new List<Meta>();
         }
 
+		/// <summary>
+		/// This Id ties the meta data to a dashItem
+		/// </summary>
+		/// <remarks>
+		/// This probably isn't good enough. Meta data -> dashItem isn't always a one-one relationship
+		/// eg: 'Argos' style dash items probably all share the same meta-data.
+		/// </remarks>
 		[XmlAttribute]
 		public string Id { get; set; }
 
@@ -42,8 +53,11 @@ namespace Swampnet.Dash.Common.Entities
 
 
 	/// <summary>
-	/// Map a property
+	/// Maps a property
 	/// </summary>
+	/// <remarks>
+	/// Includes stuff like the datatype so we can format it, the (string) format, and which region in the UI to display it.
+	/// </remarks>
 	public class Meta
 	{
 		public Meta()
@@ -62,6 +76,12 @@ namespace Swampnet.Dash.Common.Entities
 
 		[XmlAttribute]
 		public string Type { get; set; }  // Possibly VarEnum?
+
+		/// <summary>
+		/// .. as in string.Format()
+		/// </summary>
+		[XmlAttribute]
+		public string Format { get; set; }
 
 		[XmlAttribute]
 		public string Region { get; set; }

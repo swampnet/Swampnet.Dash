@@ -43,8 +43,13 @@ namespace Swampnet.Dash.Services
                 }
                 catch (Exception ex)
                 {
-                    // @TODO: Even when we error we need to broadcast an update (with the item in an error state)
-                    Log.Error(ex, ex.Message);
+					Log.Error(ex, ex.Message);
+
+					testResults.Add(new TestResult() {
+						State = "error",
+						TestName = test.Name,
+						TimestampUtc = DateTime.UtcNow
+					});
                 }
             }
 

@@ -8,11 +8,17 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="350" Width="525">
 	<Grid>
-		<Grid.ColumnDefinitions>
-			<ColumnDefinition/>
-			<ColumnDefinition/>
-		</Grid.ColumnDefinitions>
-		<view:DashboardView DataContext="{Binding Lefty}" Grid.Column="0" Margin="10"/>
-		<view:DashboardView DataContext="{Binding Righty}" Grid.Column="1" Margin="10"/>
+		<ItemsControl ItemsSource="{Binding Dashboards}" HorizontalContentAlignment="Stretch">
+			<ItemsControl.ItemsPanel>
+				<ItemsPanelTemplate>
+					<StackPanel Orientation="Horizontal"/>
+				</ItemsPanelTemplate>
+			</ItemsControl.ItemsPanel>
+			<ItemsControl.ItemTemplate>
+				<DataTemplate>
+					<view:DashboardView Margin="10"/>
+				</DataTemplate>
+			</ItemsControl.ItemTemplate>
+		</ItemsControl>
 	</Grid>
 </Window>

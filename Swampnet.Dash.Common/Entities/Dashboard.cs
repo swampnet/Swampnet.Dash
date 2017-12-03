@@ -11,7 +11,6 @@ namespace Swampnet.Dash.Common.Entities
 			Tests = new List<string>();
         }
 
-        public Guid Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
         public List<string> Tests { get; set; }

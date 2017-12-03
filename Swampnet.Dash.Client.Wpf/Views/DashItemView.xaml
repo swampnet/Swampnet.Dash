@@ -11,7 +11,20 @@
 			<Setter Property="Margin" Value="1"/>
 		</Style>
 	</UserControl.Resources>
-	<Grid Background="LightBlue">
+	<Grid>
+		<Grid.Style>
+			<Style TargetType="Grid">
+				<Setter Property="Background" Value="LightGreen"/>
+				<Style.Triggers>
+					<DataTrigger Binding="{Binding State}" Value="warn">
+						<Setter Property="Background" Value="Orange"/>
+					</DataTrigger>
+					<DataTrigger Binding="{Binding State}" Value="alert">
+						<Setter Property="Background" Value="Red"/>
+					</DataTrigger>
+				</Style.Triggers>
+			</Style>
+		</Grid.Style>
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto"/>
 			<RowDefinition />

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNet.SignalR.Client;
+using Newtonsoft.Json;
 using Prism.Mvvm;
 using Serilog;
 using Swampnet.Dash.Common.Entities;
@@ -6,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -17,10 +19,12 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
 		private readonly IHubProxy _proxy;
 		private readonly TaskFactory _uiFactory;
 
-		private ObservableCollection<DashItemViewModel> _messages = new ObservableCollection<DashItemViewModel>();
+		private readonly ObservableCollection<DashItemViewModel> _messages = new ObservableCollection<DashItemViewModel>();
 		private readonly string _dashName;
+		private DashMetaData _metaData;
 
 		public IEnumerable<DashItemViewModel> Messages => _messages;
+
 
 		private DateTime _lastUpdate;
 
@@ -33,22 +37,17 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
 
 		public DashboardViewModel(string dash)
 		{
-			LastUpdate = DateTime.Now;
-
 			// Construct a TaskFactory that uses the UI thread's context
 			_uiFactory = new TaskFactory(TaskScheduler.FromCurrentSynchronizationContext());
 			_hubConnection = new HubConnection("http://localhost:8080/");
 			_proxy = _hubConnection.CreateHubProxy("DashboardHub");
-
-			_proxy.On("UpdateDash", (IEnumerable<DashItem> dashItems) => UpdateDash(dashItems));
-
-			_hubConnection.Start().Wait();
-
-			_proxy.Invoke("JoinGroup", dash);
 			_dashName = dash;
+
+			InitialiseDash(dash);
 		}
 
-		public string Name => _dashName;
+		public string Name => _metaData?.Name;
+		public string Description => _metaData?.Description;
 
 
 		public void Boosh()
@@ -58,6 +57,8 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
 
 		private void UpdateDash(IEnumerable<DashItem> dashItems)
 		{
+			LastUpdate = DateTime.Now;
+
 			_uiFactory.StartNew(() =>
 			{
 				LastUpdate = DateTime.Now;
@@ -66,12 +67,34 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
 					var dashItem = _messages.SingleOrDefault(d => d.Id == di.Id);
 					if (dashItem == null)
 					{
-						dashItem = new DashItemViewModel(null);
+						// @TODO: Figure out a better way of resolving meta-data. It won't always be id based (ie, in Argos mode the meta data is the same for all items)
+						var meta = _metaData.Items.Single(x => x.Id == di.Id);
+						dashItem = new DashItemViewModel(meta);
 						_messages.Add(dashItem);
 					}
 					dashItem.Update(di);
 				}
 			});
+		}
+
+
+
+		private async void InitialiseDash(string dashId)
+		{
+			LastUpdate = DateTime.Now;
+
+			_metaData = await Api.GetAsync<DashMetaData>($"dashboards/{dashId}/meta");
+
+			foreach(var item in _metaData.Items)
+			{
+				_messages.Add(new DashItemViewModel(item));
+			}
+
+			await _hubConnection.Start()
+					.ContinueWith((x) => _proxy.Invoke("JoinGroup", dashId))
+					.ContinueWith((x) => _proxy.On("UpdateDash", (IEnumerable<DashItem> dashItems) => UpdateDash(dashItems)))
+					.ContinueWith((x) => RaisePropertyChanged(""))
+					;
 		}
 	}
 }

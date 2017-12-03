@@ -14,12 +14,16 @@ namespace Swampnet.Dash.Client.Wpf
 {
     class MainViewModel : BindableBase
     {
+		private ObservableCollection<DashboardViewModel> _dashboards = new ObservableCollection<DashboardViewModel>();
+
 		public MainViewModel()
 		{
-			Lefty = new DashboardViewModel("dash-01");
-			Righty = new DashboardViewModel("dash-02");
+			_dashboards.Add(new DashboardViewModel("dash-01"));
+			_dashboards.Add(new DashboardViewModel("dash-02"));
+			_dashboards.Add(new DashboardViewModel("dash-03"));
+			_dashboards.Add(new DashboardViewModel("dash-02"));
 		}
-		public DashboardViewModel Lefty { get; set; }
-		public DashboardViewModel Righty { get; set; }
+
+		public IEnumerable<DashboardViewModel> Dashboards => _dashboards;
 	}
 }

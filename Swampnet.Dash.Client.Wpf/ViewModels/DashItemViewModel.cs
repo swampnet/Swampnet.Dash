@@ -20,20 +20,23 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
 
 		public void Update(DashItem dashItem)
 		{
-			_dashItem = dashItem;
-			RaisePropertyChanged("");
+			if(dashItem.Id == _meta.Id)
+			{
+				_dashItem = dashItem;
+				RaisePropertyChanged("");
+			}
 		}
 
-		public string Id => _dashItem.Id;
-
-		public DateTime Timestamp => _dashItem.TimestampUtc;
+		public string Id => _meta.Id;
+		public DateTime? Timestamp => _dashItem?.TimestampUtc;
+		public string State => _dashItem?.State;
 
 		public string Main
 		{
 			get
 			{
 				// @TODO: Use meta data to figure this out
-				return _dashItem.Properties.StringValue("value");
+				return _dashItem?.Properties.StringValue("value");
 			}
 		}
 
@@ -42,7 +45,7 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
 			get
 			{
 				// @TODO: Use meta data to figure this out
-				return _dashItem.Id;
+				return _meta.Name;
 			}
 		}
 
@@ -63,12 +66,20 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
 
 		public string FooterLeft
 		{
-			get { return null; }
+			get
+			{
+				// @TODO: Use meta data to figure this out
+				return _dashItem?.State;
+			}
 		}
 
 		public string FooterRight
 		{
-			get { return null; }
+			get
+			{
+				// @TODO: Use meta data to figure this out
+				return _dashItem?.TimestampUtc.ToLongTimeString();
+			}
 		}
 	}
 }

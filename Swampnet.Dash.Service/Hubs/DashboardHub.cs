@@ -18,7 +18,7 @@ namespace Swampnet.Dash.Service.Hubs
             _test = test;
         }
 
-
+		// Just a test, we don't use this for anything
         public void Send(string name, string message)
         {
             Log.Debug($"{Context.ConnectionId} send '{message}'");

@@ -6,13 +6,15 @@
              xmlns:local="clr-namespace:Swampnet.Dash.Client.Wpf.Views"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
-	<Grid>
+	<Grid Background="LightYellow">
 		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto"/>
 			<RowDefinition Height="Auto"/>
 			<RowDefinition/>
 		</Grid.RowDefinitions>
-		<TextBlock Grid.Row="0" Text="{Binding LastUpdate}" FontSize="15" FontWeight="Bold" HorizontalAlignment="Center"/>
-		<ScrollViewer VerticalScrollBarVisibility="Auto" Grid.Row="1">
+		<TextBlock Grid.Row="0" Text="{Binding Name}" FontSize="15" FontWeight="Bold" HorizontalAlignment="Center" Margin="1"/>
+		<TextBlock Grid.Row="1" Text="{Binding Description}" FontSize="10" HorizontalAlignment="Center" Margin="1"/>
+		<ScrollViewer VerticalScrollBarVisibility="Auto" Grid.Row="2">
 			<ItemsControl ItemsSource="{Binding Path=Messages}">
 				<ItemsControl.ItemTemplate>
 					<DataTemplate>
@@ -21,5 +23,6 @@
 				</ItemsControl.ItemTemplate>
 			</ItemsControl>
 		</ScrollViewer>
+		<TextBlock Grid.Row="2" HorizontalAlignment="Right" VerticalAlignment="Bottom" Text="{Binding LastUpdate}" FontSize="8" Margin="2" />
 	</Grid>
 </UserControl>
