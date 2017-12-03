@@ -1,10 +1,7 @@
 ﻿using Prism.Mvvm;
 using Swampnet.Dash.Common.Entities;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Swampnet.Dash.Client.Wpf.ViewModels
 {
@@ -20,7 +17,7 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
 
 		public void Update(DashItem dashItem)
 		{
-			if(dashItem.Id == _meta.Id)
+			if (dashItem.Id == _meta.Id)
 			{
 				_dashItem = dashItem;
 				RaisePropertyChanged("");
@@ -33,53 +30,78 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
 
 		public string Main
 		{
-			get
-			{
-				// @TODO: Use meta data to figure this out
-				return _dashItem?.Properties.StringValue("value");
-			}
+			get { return ResolveValue("main"); }
 		}
 
 		public string Header
 		{
-			get
-			{
-				// @TODO: Use meta data to figure this out
-				return _meta.Name;
-			}
+			get { return ResolveValue("header"); }
 		}
 
 		public string HeaderLeft
 		{
-			get { return null; }
+			get { return ResolveValue("header-left"); }
 		}
 
 		public string HeaderRight
 		{
-			get { return null; }
+			get { return ResolveValue("header-right"); }
 		}
 
 		public string Footer
 		{
-			get { return null; }
+			get { return ResolveValue("footer"); }
 		}
 
 		public string FooterLeft
 		{
-			get
-			{
-				// @TODO: Use meta data to figure this out
-				return _dashItem?.State;
-			}
+			get { return ResolveValue("footer-left"); }
 		}
 
 		public string FooterRight
 		{
-			get
+			get { return ResolveValue("footer-right"); }
+		}
+
+		//@TODO: Need unit tests all over this!
+		private string ResolveValue(string region)
+		{
+			string value = null;
+
+			var meta = _meta?.Meta.SingleOrDefault(m => m.Region.EqualsNoCase(region));
+			if(meta != null)
 			{
-				// @TODO: Use meta data to figure this out
-				return _dashItem?.TimestampUtc.ToLongTimeString();
+				// Check static values
+				if (meta.Type.EqualsNoCase("static"))
+				{
+					value = meta.Name;
+				}
+				else
+				{
+					switch (meta.Name.ToLowerInvariant())
+					{
+						// Check some known values
+						case "state":
+							value = _dashItem?.State;
+							break;
+
+						case "timestamputc":
+							value = _dashItem?.TimestampUtc.ToLongTimeString(); // .Format()
+							break;
+
+						case "id":
+							value = _dashItem?.Id;
+							break;
+
+						// Check dash item properties
+						default:
+							value = _dashItem?.Properties.StringValue(meta.Name);
+							break;
+					}
+				}
 			}
+
+			return value;
 		}
 	}
 }

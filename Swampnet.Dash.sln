@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27004.2009
+VisualStudioVersion = 15.0.27004.2010
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Swampnet.Dash.Service", "Swampnet.Dash.Service\Swampnet.Dash.Service.csproj", "{10CC770A-05B6-4ABA-80AB-7DBF21ADE24A}"
 EndProject
@@ -10,6 +10,10 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Swampnet.Dash.Common", "Swampnet.Dash.Common\Swampnet.Dash.Common.csproj", "{3BD91733-5ED2-4B64-9DAA-47E8050CBBD9}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Swampnet.Dash", "Swampnet.Dash\Swampnet.Dash.csproj", "{BE1EB6E7-AE7C-4D4B-837A-78D91F0EAE02}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{693897B7-0CB9-4F6D-BCB8-CE87C9AE3FC5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTests", "Tests\UnitTests\UnitTests.csproj", "{E2BB9999-85C0-4060-97C8-193F583FC43E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,9 +37,16 @@ Global
 		{BE1EB6E7-AE7C-4D4B-837A-78D91F0EAE02}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BE1EB6E7-AE7C-4D4B-837A-78D91F0EAE02}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BE1EB6E7-AE7C-4D4B-837A-78D91F0EAE02}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E2BB9999-85C0-4060-97C8-193F583FC43E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E2BB9999-85C0-4060-97C8-193F583FC43E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E2BB9999-85C0-4060-97C8-193F583FC43E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E2BB9999-85C0-4060-97C8-193F583FC43E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{E2BB9999-85C0-4060-97C8-193F583FC43E} = {693897B7-0CB9-4F6D-BCB8-CE87C9AE3FC5}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AD29F51A-5B03-466A-AFF0-594EDB11A9DA}
