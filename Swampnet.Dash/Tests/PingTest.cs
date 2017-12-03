@@ -23,7 +23,7 @@ namespace Swampnet.Dash.Tests
             // @TODO: Figure out state
             var rs = new TestResult()
             {
-                State = "todo"
+                State = "ok"
             };
             
 			rs.Properties.Add(new Property("value", time));

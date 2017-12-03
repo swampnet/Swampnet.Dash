@@ -1,14 +1,11 @@
 ﻿using Swampnet.Dash.Common.Entities;
 using Swampnet.Dash.Common.Interfaces;
 using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Swampnet.Dash.Tests
 {
-    public class RandomNumberTest : ITest
+	public class RandomNumberTest : ITest
     {
         private readonly Random _rnd = new Random();
 

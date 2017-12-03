@@ -30,41 +30,41 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
 
 		public string Main
 		{
-			get { return ResolveValue("main"); }
+			get { return GetValue("main"); }
 		}
 
 		public string Header
 		{
-			get { return ResolveValue("header"); }
+			get { return GetValue("header"); }
 		}
 
 		public string HeaderLeft
 		{
-			get { return ResolveValue("header-left"); }
+			get { return GetValue("header-left"); }
 		}
 
 		public string HeaderRight
 		{
-			get { return ResolveValue("header-right"); }
+			get { return GetValue("header-right"); }
 		}
 
 		public string Footer
 		{
-			get { return ResolveValue("footer"); }
+			get { return GetValue("footer"); }
 		}
 
 		public string FooterLeft
 		{
-			get { return ResolveValue("footer-left"); }
+			get { return GetValue("footer-left"); }
 		}
 
 		public string FooterRight
 		{
-			get { return ResolveValue("footer-right"); }
+			get { return GetValue("footer-right"); }
 		}
 
 		//@TODO: Need unit tests all over this!
-		private string ResolveValue(string region)
+		private string GetValue(string region)
 		{
 			string value = null;
 
@@ -98,6 +98,30 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
 							value = _dashItem?.Properties.StringValue(meta.Name);
 							break;
 					}
+				}
+
+				value = Format(meta.Type, meta.Format, value);
+			}
+
+			return value;
+		}
+
+
+		private string Format(string type, string format, string value)
+		{
+			if (!string.IsNullOrEmpty(format))
+			{
+				switch (type.ToLowerInvariant())
+				{
+					case "decimal":
+					case "double":
+					case "float":
+						value = string.Format("{0:" + format.Trim() + "}", Convert.ToDouble(value));
+						break;
+
+					case "datetime":
+						value = string.Format("{0:" + format.Trim() + "}", Convert.ToDateTime(value));
+						break;
 				}
 			}
 
