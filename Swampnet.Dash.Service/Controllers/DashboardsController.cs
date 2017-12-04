@@ -43,10 +43,9 @@ namespace Swampnet.Dash.Service.Controllers
 
         [Route("dashboards/{dashId}/meta")]
         [HttpGet]
-        public async Task<DashMetaData> GetMeta(string dashId)
+        public Task<DashMetaData> GetMeta(string dashId)
         {
-			var meta = await _dashRepo.GetMetaDataAsync(dashId);
-			return meta;
+			return _dashRepo.GetMetaDataAsync(dashId);
         }
 
 		[Route("dashboards/{dashId}/state")]

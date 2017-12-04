@@ -15,8 +15,6 @@ namespace Swampnet.Dash.Common.Entities
         public TestDefinition()
         {
             Parameters = new List<Property>();
-            MetaData = new List<Meta>();
-            States = new List<State>();
         }
 
 		[XmlAttribute]
@@ -50,8 +48,6 @@ namespace Swampnet.Dash.Common.Entities
 		}
 
 		public List<Property> Parameters { get; set; }
-        public List<Meta> MetaData { get; set; }
-        public List<State> States { get; set; }
     }
 
 

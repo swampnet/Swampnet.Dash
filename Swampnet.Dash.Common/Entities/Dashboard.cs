@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Xml.Serialization;
 
 namespace Swampnet.Dash.Common.Entities
 {
@@ -8,11 +9,23 @@ namespace Swampnet.Dash.Common.Entities
     {
         public Dashboard()
         {
-			Tests = new List<string>();
+			Tests = new List<TestItemDefinition>();
         }
 
         public string Name { get; set; }
         public string Description { get; set; }
-        public List<string> Tests { get; set; }
+        public List<TestItemDefinition> Tests { get; set; }
     }
+
+
+	/// <summary>
+	/// Define test id and any property mapping that goes with it
+	/// </summary>
+	public class TestItemDefinition
+	{
+		[XmlAttribute]
+		public string TestId { get; set; }
+
+		public List<Meta> MetaData { get; set; }
+	}
 }

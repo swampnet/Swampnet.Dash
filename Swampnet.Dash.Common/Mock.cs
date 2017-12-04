@@ -14,7 +14,7 @@ namespace Swampnet.Dash.Common
             var dash = new Dashboard();
             dash.Name = name;
             dash.Description = name + " (description)";
-            dash.Tests = Tests.Select(t => t.Id).ToList();
+            dash.Tests = Tests.Select(t => new TestItemDefinition() { TestId = t.Id }).ToList();
             return dash;
         }
 
