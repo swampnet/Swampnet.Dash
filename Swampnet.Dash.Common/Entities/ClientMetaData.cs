@@ -46,7 +46,7 @@ namespace Swampnet.Dash.Common.Entities
 		public string Id { get; set; }
 
 		[XmlAttribute]
-		public string Name { get; set; }
+		public string Description { get; set; }
 
 		public List<Meta> Meta { get; set; }
     }

@@ -31,13 +31,13 @@ namespace Swampnet.Dash.Services
                 {
                     var testRunner = _tests.Single(t => t.GetType().Name == test.Type);
                     var rs = await testRunner.RunAsync(test);
-                    rs.TestName = test.Name;
+                    rs.TestId = test.Id;
 
 					testResults.Add(rs);
 
-					Log.Information("{test} '{name}' " + rs,
+					Log.Information("{test} '{id}' " + rs,
                         testRunner.GetType().Name,
-                        test.Name);
+                        test.Id);
 
                     _testRepo.UpdateLastRun(test);
                 }
@@ -47,7 +47,7 @@ namespace Swampnet.Dash.Services
 
 					testResults.Add(new TestResult() {
 						State = "error",
-						TestName = test.Name,
+						TestId = test.Id,
 						TimestampUtc = DateTime.UtcNow
 					});
                 }

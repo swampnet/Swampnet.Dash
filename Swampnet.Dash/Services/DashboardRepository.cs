@@ -30,12 +30,12 @@ namespace Swampnet.Dash
 			meta.Name = dash.Name;
 			meta.Description = dash.Description;
 
-			foreach (var testName in dash.Tests)
+			foreach (var id in dash.Tests)
             {
-                var test = tests.Single(t => t.Name == testName);
+                var test = tests.Single(t => t.Id== id);
                 var md = new DashItemMeta();
-                md.Id = test.Name;
-                md.Name = test.Name;
+                md.Id = test.Id;
+                md.Description = test.Description;
                 md.Meta = test.MetaData;
                 meta.Items.Add(md);
             }

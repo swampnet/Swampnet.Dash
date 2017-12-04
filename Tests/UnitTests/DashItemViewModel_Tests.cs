@@ -15,7 +15,7 @@ namespace UnitTests
 			var vm = new DashItemViewModel(new DashItemMeta()
 			{
 				Id = "test-id",
-				Name = "test-dash-item-meta",
+				Description = "test-dash-item-meta",
 				Meta = new List<Meta>()
 				{
 					new Meta("test", "static", "main")

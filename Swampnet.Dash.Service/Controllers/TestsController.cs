@@ -27,7 +27,7 @@ namespace Swampnet.Dash.Service.Controllers
 			return _testRepo.GetTestDefinitions();
         }
 
-		public TestDefinition Get(int id)
+		public TestDefinition Get(string id)
 		{
 			return _testRepo.GetTestDefinitions().Single(d => d.Id == id);
 		}

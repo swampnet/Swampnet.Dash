@@ -16,7 +16,7 @@ namespace Swampnet.Dash.Common.Entities
             TimestampUtc = DateTime.UtcNow;
         }
 
-        public string TestName { get; set; }
+        public string TestId { get; set; }
 
         // We probably need to return error state here as well? We need a way to signal that there was an error running the test.
         public string State { get; set; }

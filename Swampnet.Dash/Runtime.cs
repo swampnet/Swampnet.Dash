@@ -58,12 +58,12 @@ namespace Swampnet.Dash
                     foreach (var dash in dashboards)
                     {
                         // Get all the tests results referenced by tests in this dash:
-                        var dashTestUpdates = testResults.Where(r => dash.Tests.Contains(r.TestName));
+                        var dashTestUpdates = testResults.Where(r => dash.Tests.Contains(r.TestId));
                         if (dashTestUpdates.Any())
                         {
                             var dashItems = dashTestUpdates.Select(tr => new DashItem()
                             {
-                                Id = $"{tr.TestName}", // TODO: Need a better Id? - Also, this needs to link up to the meta data stuffs
+                                Id = $"{tr.TestId}", // TODO: Need a better Id? - Also, this needs to link up to the meta data stuffs
                                 State = tr.State,
                                 TimestampUtc = tr.TimestampUtc,
                                 Properties = tr.Properties

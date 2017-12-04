@@ -11,7 +11,8 @@ namespace Swampnet.Dash.Services
 {
     class TestRepository : ITestRepository
     {
-        private readonly Dictionary<int, DateTime> _testRuntimes = new Dictionary<int, DateTime>();
+		// [testId => DateTime]
+        private readonly Dictionary<string, DateTime> _testRuntimes = new Dictionary<string, DateTime>();
 
         public IEnumerable<TestDefinition> GetTestDefinitions()
         {
