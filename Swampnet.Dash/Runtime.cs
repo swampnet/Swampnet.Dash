@@ -17,19 +17,22 @@ namespace Swampnet.Dash
         private readonly IDashboardRepository _dashboardRepository;
         private readonly ITestRunner _testRunner;
         private readonly IBroadcast _broadcast;
+		private readonly IState _state;
 
-        public Runtime(
+		public Runtime(
             ITestRunner testRunner,
+			IState state,
             IDashboardRepository dashboardRepository,
             IBroadcast broadcast)
         {
-            _broadcast = broadcast;
-            _testRunner = testRunner;
+			_state = state;
+			_testRunner = testRunner;
             _dashboardRepository = dashboardRepository;
+			_broadcast = broadcast;
 
-            _runtimeThread = new Thread(RuntimeThread);
+			_runtimeThread = new Thread(RuntimeThread);
             _runtimeThread.IsBackground = true;
-        }
+		}
 
 
         public void Start()
@@ -65,6 +68,8 @@ namespace Swampnet.Dash
                                 TimestampUtc = tr.TimestampUtc,
                                 Properties = tr.Properties
                             });
+
+							await _state.SaveDashItemsAsync(dash.Name, dashItems);
 
                             _broadcast.DashboardItems(dash.Name, dashItems);
                         }

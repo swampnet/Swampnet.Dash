@@ -13,11 +13,13 @@ namespace Swampnet.Dash.Service.Controllers
     public class DashboardsController : ApiController
     {
         private readonly IDashboardRepository _dashRepo;
+		private readonly IState _state;
 
-        public DashboardsController(IDashboardRepository dashRepo)
+		public DashboardsController(IDashboardRepository dashRepo, IState state)
         {
             _dashRepo = dashRepo;
-        }
+			_state = state;
+		}
 
 
         [HttpGet]
@@ -46,5 +48,12 @@ namespace Swampnet.Dash.Service.Controllers
 			var meta = await _dashRepo.GetMetaDataAsync(dashId);
 			return meta;
         }
-    }
+
+		[Route("dashboards/{dashId}/state")]
+		[HttpGet]
+		public Task<IEnumerable<DashItem>> GetState(string dashId)
+		{
+			return _state.GetDashItemsAsync(dashId);
+		}
+	}
 }

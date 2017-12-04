@@ -19,11 +19,11 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
 		private readonly IHubProxy _proxy;
 		private readonly TaskFactory _uiFactory;
 
-		private readonly ObservableCollection<DashItemViewModel> _messages = new ObservableCollection<DashItemViewModel>();
+		private readonly ObservableCollection<DashItemViewModel> _items = new ObservableCollection<DashItemViewModel>();
 		private readonly string _dashName;
 		private DashMetaData _metaData;
 
-		public IEnumerable<DashItemViewModel> Messages => _messages;
+		public IEnumerable<DashItemViewModel> Items => _items;
 
 
 		private DateTime _lastUpdate;
@@ -64,13 +64,13 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
 				LastUpdate = DateTime.Now;
 				foreach (var di in dashItems)
 				{
-					var dashItem = _messages.SingleOrDefault(d => d.Id == di.Id);
+					var dashItem = _items.SingleOrDefault(d => d.Id == di.Id);
 					if (dashItem == null)
 					{
 						// @TODO: Figure out a better way of resolving meta-data. It won't always be id based (ie, in Argos mode the meta data is the same for all items)
 						var meta = _metaData.Items.Single(x => x.Id == di.Id);
 						dashItem = new DashItemViewModel(meta);
-						_messages.Add(dashItem);
+						_items.Add(dashItem);
 					}
 					dashItem.Update(di);
 				}
@@ -83,18 +83,27 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
 		{
 			LastUpdate = DateTime.Now;
 
-			_metaData = await Api.GetAsync<DashMetaData>($"dashboards/{dashId}/meta");
+			await UpdateMetaData(dashId);
 
-			foreach(var item in _metaData.Items)
-			{
-				_messages.Add(new DashItemViewModel(item));
-			}
+			var dashItems = await Api.GetDashState(dashId);
+			UpdateDash(dashItems);
 
 			await _hubConnection.Start()
 					.ContinueWith((x) => _proxy.Invoke("JoinGroup", dashId))
-					.ContinueWith((x) => _proxy.On("UpdateDash", (IEnumerable<DashItem> dashItems) => UpdateDash(dashItems)))
-					.ContinueWith((x) => RaisePropertyChanged(""))
+					.ContinueWith((x) => _proxy.On("UpdateDash", (IEnumerable<DashItem> di) => UpdateDash(di)))
 					;
+		}
+
+
+		private async Task UpdateMetaData(string dashId)
+		{
+			_metaData = await Api.GetDashMetaData(dashId);
+			RaisePropertyChanged("");
+
+			foreach (var item in _metaData.Items)
+			{
+				_items.Add(new DashItemViewModel(item));
+			}
 		}
 	}
 }

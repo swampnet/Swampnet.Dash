@@ -1,5 +1,7 @@
 ﻿using Newtonsoft.Json;
+using Swampnet.Dash.Common.Entities;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
@@ -12,7 +14,19 @@ namespace Swampnet.Dash
 		private static string _apiRoot = "http://localhost:8080/";
 		private static string _apiKey = "";
 
-		public static async Task<string> GetAsync(string endpoint)
+		public static Task<DashMetaData> GetDashMetaData(string dashId)
+		{
+			return GetAsync<DashMetaData>($"dashboards/{dashId}/meta");
+		}
+
+
+		public static Task<IEnumerable<DashItem>> GetDashState(string dashId)
+		{
+			return GetAsync<IEnumerable<DashItem>>($"dashboards/{dashId}/state");
+		}
+
+
+		private static async Task<string> GetAsync(string endpoint)
 		{
 			using (var client = new HttpClient())
 			{
@@ -29,7 +43,7 @@ namespace Swampnet.Dash
 		}
 
 
-		public static async Task<T> GetAsync<T>(string endpoint)
+		private static async Task<T> GetAsync<T>(string endpoint)
 		{
 			var json = await GetAsync(endpoint);
 

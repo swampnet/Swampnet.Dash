@@ -17,8 +17,9 @@ namespace Swampnet.Dash
             builder.RegisterType<Runtime>().As<IRuntime>();
             builder.RegisterType<DashboardRepository>().As<IDashboardRepository>().InstancePerLifetimeScope();
             builder.RegisterType<TestRepository>().As<ITestRepository>().InstancePerLifetimeScope();
-            builder.RegisterAssemblyTypes(typeof(DashStartup).Assembly).As<ITest>().InstancePerLifetimeScope();
+            builder.RegisterAssemblyTypes(typeof(DashStartup).Assembly).As<ITest>().SingleInstance();
             builder.RegisterType<TestRunner>().As<ITestRunner>();
+			builder.RegisterType<State>().As<IState>().SingleInstance();
         }
     }
 }
