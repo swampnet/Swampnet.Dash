@@ -5,6 +5,9 @@ using System.Xml.Serialization;
 
 namespace Swampnet.Dash.Common.Entities
 {
+	/// <summary>
+	/// Dashboard definition
+	/// </summary>
     public class Dashboard
     {
         public Dashboard()
