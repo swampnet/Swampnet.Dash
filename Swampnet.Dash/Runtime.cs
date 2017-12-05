@@ -61,7 +61,7 @@ namespace Swampnet.Dash
                         var dashTestUpdates = testResults.Where(r => dash.Tests.Select(t => t.TestId).Contains(r.TestId));
                         if (dashTestUpdates.Any())
                         {
-                            var dashItems = dashTestUpdates.Select(tr => new DashItem()
+                            var dashItems = dashTestUpdates.Select(tr => new DashboardItem()
                             {
                                 Id = $"{tr.TestId}", // TODO: Need a better Id? - Also, this needs to link up to the meta data stuffs
                                 State = tr.State,
@@ -69,9 +69,9 @@ namespace Swampnet.Dash
                                 Output = tr.Output
                             });
 
-							await _state.SaveDashItemsAsync(dash.Name, dashItems);
+							await _state.SaveDashItemsAsync(dash.Id, dashItems);
 
-                            _broadcast.DashboardItems(dash.Name, dashItems);
+                            _broadcast.DashboardItems(dash.Id, dashItems);
                         }
                     }
                 }

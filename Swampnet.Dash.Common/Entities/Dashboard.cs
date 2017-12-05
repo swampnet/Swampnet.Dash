@@ -15,8 +15,12 @@ namespace Swampnet.Dash.Common.Entities
 			Tests = new List<TestItemDefinition>();
         }
 
-        public string Name { get; set; }
-        public string Description { get; set; }
+		[XmlAttribute]
+        public string Id { get; set; }
+
+		[XmlAttribute]
+		public string Description { get; set; }
+
         public List<TestItemDefinition> Tests { get; set; }
     }
 

@@ -14,15 +14,15 @@ namespace Swampnet.Dash
 		private static string _apiRoot = "http://localhost:8080/";
 		private static string _apiKey = "";
 
-		public static Task<DashMetaData> GetDashMetaData(string dashId)
+		public static Task<Dashboard> GetDashboard(string dashId)
 		{
-			return GetAsync<DashMetaData>($"dashboards/{dashId}/meta");
+			return GetAsync<Dashboard>($"dashboards/{dashId}");
 		}
 
 
-		public static Task<IEnumerable<DashItem>> GetDashState(string dashId)
+		public static Task<IEnumerable<DashboardItem>> GetDashState(string dashId)
 		{
-			return GetAsync<IEnumerable<DashItem>>($"dashboards/{dashId}/state");
+			return GetAsync<IEnumerable<DashboardItem>>($"dashboards/{dashId}/state");
 		}
 
 

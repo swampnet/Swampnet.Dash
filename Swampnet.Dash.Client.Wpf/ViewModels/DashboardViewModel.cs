@@ -21,7 +21,7 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
 
 		private readonly ObservableCollection<DashItemViewModel> _items = new ObservableCollection<DashItemViewModel>();
 		private readonly string _dashName;
-		private DashMetaData _metaData;
+		private Dashboard _metaData;
 
 		public IEnumerable<DashItemViewModel> Items => _items;
 
@@ -46,7 +46,7 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
 			InitialiseDash(dash);
 		}
 
-		public string Name => _metaData?.Name;
+		public string Name => _metaData?.Id;
 		public string Description => _metaData?.Description;
 
 
@@ -55,7 +55,7 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
 			_proxy.Invoke("Send", "some-name", "some-message");
 		}
 
-		private void UpdateDash(IEnumerable<DashItem> dashItems)
+		private void UpdateDash(IEnumerable<DashboardItem> dashItems)
 		{
 			LastUpdate = DateTime.Now;
 
@@ -68,8 +68,12 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
 					if (dashItem == null)
 					{
 						// @TODO: Figure out a better way of resolving meta-data. It won't always be id based (ie, in Argos mode the meta data is the same for all items)
-						var meta = _metaData.Items.Single(x => x.Id == di.Id);
-						dashItem = new DashItemViewModel(meta);
+						var test = _metaData.Tests.SingleOrDefault(t => t.TestId == di.Id);
+						if(test == null)
+						{
+							// @TODO: Not a test, look somewhere else?
+						}
+						dashItem = new DashItemViewModel(test.TestId, test.MetaData);
 						_items.Add(dashItem);
 					}
 					dashItem.Update(di);
@@ -90,19 +94,19 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
 
 			await _hubConnection.Start()
 					.ContinueWith((x) => _proxy.Invoke("JoinGroup", dashId))
-					.ContinueWith((x) => _proxy.On("UpdateDash", (IEnumerable<DashItem> di) => UpdateDash(di)))
+					.ContinueWith((x) => _proxy.On("UpdateDash", (IEnumerable<DashboardItem> di) => UpdateDash(di)))
 					;
 		}
 
 
 		private async Task UpdateMetaData(string dashId)
 		{
-			_metaData = await Api.GetDashMetaData(dashId);
+			_metaData = await Api.GetDashboard(dashId);
 			RaisePropertyChanged("");
 
-			foreach (var item in _metaData.Items)
+			foreach (var item in _metaData.Tests)
 			{
-				_items.Add(new DashItemViewModel(item));
+				_items.Add(new DashItemViewModel(item.TestId, item.MetaData));
 			}
 		}
 	}

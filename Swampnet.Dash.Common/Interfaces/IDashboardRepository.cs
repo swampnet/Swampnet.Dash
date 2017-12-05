@@ -8,7 +8,7 @@ namespace Swampnet.Dash.Common.Interfaces
 {
     public interface IDashboardRepository
     {
-		Task<DashMetaData> GetMetaDataAsync(string name);
+		//Task<Dashboard> GetDashboardAsync(string id);
 
 		Task<IEnumerable<Dashboard>> GetActiveDashboardsAsync();
     }

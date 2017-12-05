@@ -13,7 +13,7 @@ namespace Swampnet.Dash.Service.Services
 {
     class Broadcast : IBroadcast
     {
-        public void DashboardItems(string group, IEnumerable<DashItem> dashItems)
+        public void DashboardItems(string group, IEnumerable<DashboardItem> dashItems)
         {
             Log.Debug("Broadcast to '{group}' - {dashItems}",
                 group,

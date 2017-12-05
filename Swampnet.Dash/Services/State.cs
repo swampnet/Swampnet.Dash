@@ -14,11 +14,11 @@ namespace Swampnet.Dash.Services
 	class State : IState
 	{
 		// [dashId => [dashItem.Id => dashItem]]
-		private readonly Dictionary<string, Dictionary<string, DashItem>> _state = new Dictionary<string, Dictionary<string, DashItem>>();
+		private readonly Dictionary<string, Dictionary<string, DashboardItem>> _state = new Dictionary<string, Dictionary<string, DashboardItem>>();
 
-		public Task<IEnumerable<DashItem>> GetDashItemsAsync(string dashId)
+		public Task<IEnumerable<DashboardItem>> GetDashItemsAsync(string dashId)
 		{
-			IEnumerable<DashItem> dashItems = null;
+			IEnumerable<DashboardItem> dashItems = null;
 
 			if (_state.ContainsKey(dashId))
 			{
@@ -29,9 +29,9 @@ namespace Swampnet.Dash.Services
 		}
 
 
-		public Task SaveDashItemsAsync(string dashId, IEnumerable<DashItem> dashItems)
+		public Task SaveDashItemsAsync(string dashId, IEnumerable<DashboardItem> dashItems)
 		{
-			Dictionary<string, DashItem> x;
+			Dictionary<string, DashboardItem> x;
 
 			lock (_state)
 			{
@@ -41,7 +41,7 @@ namespace Swampnet.Dash.Services
 				}
 				else
 				{
-					x = new Dictionary<string, DashItem>();
+					x = new Dictionary<string, DashboardItem>();
 					_state.Add(dashId, x);
 				}
 			}
@@ -52,7 +52,7 @@ namespace Swampnet.Dash.Services
 		}
 
 
-		private void Merge(Dictionary<string, DashItem> x, IEnumerable<DashItem> dashItems)
+		private void Merge(Dictionary<string, DashboardItem> x, IEnumerable<DashboardItem> dashItems)
 		{
 			lock (x)
 			{

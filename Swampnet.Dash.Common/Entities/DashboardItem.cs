@@ -5,15 +5,15 @@ using System.Linq;
 
 namespace Swampnet.Dash.Common.Entities
 {
-    public class DashItem
+    public class DashboardItem
     {
-        public DashItem()
+        public DashboardItem()
         {
             Output = new List<Property>();
             TimestampUtc = DateTime.UtcNow;
         }
 
-        public DashItem(object id)
+        public DashboardItem(object id)
             : this()
         {
             Id = id.ToString();

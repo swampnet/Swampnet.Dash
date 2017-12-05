@@ -1,30 +1,30 @@
 ﻿using Prism.Mvvm;
 using Swampnet.Dash.Common.Entities;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Swampnet.Dash.Client.Wpf.ViewModels
 {
 	class DashItemViewModel : BindableBase
 	{
-		private readonly DashItemMeta _meta;
-		private DashItem _dashItem;
+		private readonly IEnumerable<Meta> _meta;
+		private DashboardItem _dashItem;
+		private readonly string _id;
 
-		public DashItemViewModel(DashItemMeta meta)
+		public DashItemViewModel(object id, IEnumerable<Meta> meta)
 		{
 			_meta = meta;
+			_id = id.ToString();
 		}
 
-		public void Update(DashItem dashItem)
+		public void Update(DashboardItem dashItem)
 		{
-			if (dashItem.Id == _meta.Id)
-			{
-				_dashItem = dashItem;
-				RaisePropertyChanged("");
-			}
+			_dashItem = dashItem;
+			RaisePropertyChanged("");
 		}
 
-		public string Id => _meta.Id;
+		public string Id => _id;
 		public DateTime? Timestamp => _dashItem?.TimestampUtc;
 		public string State => _dashItem?.State;
 
@@ -68,7 +68,7 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
 		{
 			string value = null;
 
-			var meta = _meta?.Meta.SingleOrDefault(m => m.Region.EqualsNoCase(region));
+			var meta = _meta.SingleOrDefault(m => m.Region.EqualsNoCase(region));
 			if(meta != null)
 			{
 				// Check static values

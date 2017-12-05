@@ -8,8 +8,8 @@ namespace Swampnet.Dash.Common.Interfaces
 {
     public interface IState
     {
-		Task<IEnumerable<DashItem>> GetDashItemsAsync(string dashId);
-		Task SaveDashItemsAsync(string dashId, IEnumerable<DashItem> dashItems);
+		Task<IEnumerable<DashboardItem>> GetDashItemsAsync(string dashId);
+		Task SaveDashItemsAsync(string dashId, IEnumerable<DashboardItem> dashItems);
 
     }
 }

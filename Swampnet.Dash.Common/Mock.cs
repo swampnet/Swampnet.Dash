@@ -12,7 +12,7 @@ namespace Swampnet.Dash.Common
         public static Dashboard Dash(string name)
         {
             var dash = new Dashboard();
-            dash.Name = name;
+            dash.Id = name;
             dash.Description = name + " (description)";
             dash.Tests = Tests.Select(t => new TestItemDefinition() { TestId = t.Id }).ToList();
             return dash;
