@@ -4,12 +4,11 @@ using Swampnet.Dash.Common.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Swampnet.Dash.Services
 {
-    class TestRunner : ITestRunner
+	class TestRunner : ITestRunner
     {
         private readonly ITestRepository _testRepo;
         private readonly IEnumerable<ITest> _tests;
@@ -23,23 +22,25 @@ namespace Swampnet.Dash.Services
         public async Task<IEnumerable<TestResult>> RunAsync()
         {
             var testResults = new List<TestResult>();
-            var testDefinitions = _testRepo.GetPendingTestDefinitions();
 
-			foreach(var test in testDefinitions)
+			foreach(var testdefinition in _testRepo.GetPendingTestDefinitions())
             {
                 try
                 {
-                    var testRunner = _tests.Single(t => t.GetType().Name == test.Type);
-                    var rs = await testRunner.RunAsync(test);
-                    rs.TestId = test.Id;
+                    var test = _tests.Single(t => t.GetType().Name == testdefinition.Type);
+
+					Validate(testdefinition, test.Meta);
+
+                    var rs = await test.RunAsync(testdefinition);
+                    rs.TestId = testdefinition.Id;
 
 					testResults.Add(rs);
 
 					Log.Information("{test} '{id}' " + rs,
-                        testRunner.GetType().Name,
-                        test.Id);
+                        test.GetType().Name,
+                        testdefinition.Id);
 
-                    _testRepo.UpdateLastRun(test);
+                    _testRepo.UpdateLastRun(testdefinition);
                 }
                 catch (Exception ex)
                 {
@@ -47,7 +48,7 @@ namespace Swampnet.Dash.Services
 
 					testResults.Add(new TestResult() {
 						State = "error",
-						TestId = test.Id,
+						TestId = testdefinition.Id,
 						TimestampUtc = DateTime.UtcNow
 					});
                 }
@@ -55,5 +56,18 @@ namespace Swampnet.Dash.Services
 
             return testResults;
         }
-    }
+
+
+		// Validate parameters against the test metadata
+		private void Validate(TestDefinition testdefinition, TestMeta meta)
+		{
+			foreach(var parameter in meta.Parameters)
+			{
+				if(testdefinition.Parameters.StringValue(parameter.Name, "") == "")
+				{
+					throw new ArgumentNullException($"Missing parameter '{parameter.Name}'");
+				}
+			}
+		}
+	}
 }

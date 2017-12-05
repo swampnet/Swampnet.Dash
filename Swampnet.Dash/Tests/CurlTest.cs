@@ -15,8 +15,6 @@ namespace Swampnet.Dash.Tests
 	{
 		public async Task<TestResult> RunAsync(TestDefinition testDefinition)
 		{
-
-
 			var uri = testDefinition.Parameters.StringValue("uri");
 
 			var timer = Stopwatch.StartNew();

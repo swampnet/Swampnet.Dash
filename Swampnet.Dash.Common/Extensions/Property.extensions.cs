@@ -64,6 +64,12 @@ namespace Swampnet.Dash
 		}
 
 
+		public static bool Exists(this IEnumerable<Property> properties, string name)
+		{
+			return properties != null && properties.Any(x => x.Name.EqualsNoCase(name));
+		}
+
+
 		/// <summary>
 		/// Return the value of a property as an integer value
 		/// </summary>
