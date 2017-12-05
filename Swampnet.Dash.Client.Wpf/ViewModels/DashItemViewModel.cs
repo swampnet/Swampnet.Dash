@@ -26,7 +26,7 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
 
 		public string Id => _id;
 		public DateTime? Timestamp => _dashItem?.TimestampUtc;
-		public string State => _dashItem?.State;
+		public string Status => _dashItem?.Status;
 
 		public string Main
 		{
@@ -81,8 +81,8 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
 					switch (meta.Name.ToLowerInvariant())
 					{
 						// Check some known values
-						case "state":
-							value = _dashItem?.State;
+						case "status":
+							value = _dashItem?.Status;
 							break;
 
 						case "timestamputc":

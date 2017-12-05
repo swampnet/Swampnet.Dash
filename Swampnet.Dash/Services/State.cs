@@ -10,65 +10,36 @@ namespace Swampnet.Dash.Services
 {
 	/// <summary>
 	/// This might all belong in DashRepo...
-	/// Actually, is this even right? We shouldn't really be caring about *dashboards* at this level should we?
 	/// </summary>
 	class State : IState
 	{
-		// [dashId => [dashItem.Id => dashItem]]
-		private readonly Dictionary<string, Dictionary<string, DashboardItem>> _state = new Dictionary<string, Dictionary<string, DashboardItem>>();
+		private readonly Dictionary<string, DashboardItem> _state = new Dictionary<string, DashboardItem>();
 
-		public Task<IEnumerable<DashboardItem>> GetDashItemsAsync(string dashId)
+		public Task<IEnumerable<DashboardItem>> GetDashItemsAsync(IEnumerable<string> ids)
 		{
-			IEnumerable<DashboardItem> dashItems = null;
+			var items = _state.Where(x => ids.Contains(x.Key)).Select(x => x.Value);
 
-			if (_state.ContainsKey(dashId))
-			{
-				dashItems = _state[dashId].Values;
-			}
-
-			return Task.FromResult(dashItems);
+			return Task.FromResult(items);
 		}
 
-
-		public Task SaveDashItemsAsync(string dashId, IEnumerable<DashboardItem> dashItems)
+		public Task SaveDashItemsAsync(IEnumerable<DashboardItem> dashItems)
 		{
-			Dictionary<string, DashboardItem> x;
-
-			lock (_state)
+			foreach(var di in dashItems)
 			{
-				if (_state.ContainsKey(dashId))
+				lock (_state)
 				{
-					x = _state[dashId];
-				}
-				else
-				{
-					x = new Dictionary<string, DashboardItem>();
-					_state.Add(dashId, x);
-				}
-			}
-
-			Merge(x, dashItems);
-
-			return Task.CompletedTask;
-		}
-
-
-		private void Merge(Dictionary<string, DashboardItem> x, IEnumerable<DashboardItem> dashItems)
-		{
-			lock (x)
-			{
-				foreach (var di in dashItems)
-				{
-					if (x.ContainsKey(di.Id))
+					if (_state.ContainsKey(di.Id))
 					{
-						x[di.Id] = di;
+						_state[di.Id] = di;
 					}
 					else
 					{
-						x.Add(di.Id, di);
+						_state.Add(di.Id, di);
 					}
 				}
 			}
+
+			return Task.CompletedTask;
 		}
 	}
 }

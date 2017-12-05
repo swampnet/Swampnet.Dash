@@ -66,7 +66,7 @@ namespace Swampnet.Dash
                             var dashItems = dashTestUpdates.Select(tr => new DashboardItem()
                             {
                                 Id = tr.TestId,
-                                State = tr.State,
+                                Status = tr.State,
                                 TimestampUtc = tr.TimestampUtc,
                                 Output = tr.Output
                             });
@@ -74,7 +74,7 @@ namespace Swampnet.Dash
 							// Don't like that we're saving 'dash' items here. We shouldn't really care about the dash at this point...
 							// We're only doing it like this so we can 'get all dashitems for a particular dash' in the controller. (which we should
 							// be able to do some other way)
-							await _state.SaveDashItemsAsync(dash.Id, dashItems);
+							await _state.SaveDashItemsAsync(dashItems);
 
                             _broadcast.DashboardItems(dash.Id, dashItems);
                         }

@@ -40,13 +40,24 @@ namespace Swampnet.Dash.Service.Controllers
 			return Ok(dashboards.Single(d => d.Id == id));
         }
 
-
+		
 		[Route("dashboards/{id}/state")]
 		[HttpGet]
 		public async Task<IHttpActionResult> GetState(string id)
 		{
-			var state = await _state.GetDashItemsAsync(id);
-			return Ok(state);
+			IEnumerable<DashboardItem> states = null;
+
+			// Get all tests for dashboard
+			var dashboards = await _dashRepo.GetDashboardsAsync();
+			var dashboard = dashboards.Single(d => d.Id == id);
+
+			// Check for tests
+			if(dashboard.Tests != null)
+			{
+				states = await _state.GetDashItemsAsync(dashboard.Tests.Select(t => t.TestId));
+			}
+
+			return Ok(states);
 		}
 	}
 }
