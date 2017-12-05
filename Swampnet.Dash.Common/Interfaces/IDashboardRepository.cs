@@ -8,8 +8,7 @@ namespace Swampnet.Dash.Common.Interfaces
 {
     public interface IDashboardRepository
     {
-		//Task<Dashboard> GetDashboardAsync(string id);
-
-		Task<IEnumerable<Dashboard>> GetActiveDashboardsAsync();
+		Task<Dashboard> GetDashboardsAsync(string id);
+		Task<IEnumerable<Dashboard>> GetDashboardsAsync();
     }
 }

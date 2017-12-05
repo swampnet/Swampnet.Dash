@@ -23,11 +23,9 @@ namespace Swampnet.Dash.Service.Controllers
 
 
         [HttpGet]
-        public async Task<IEnumerable<Dashboard>> Get()
+        public Task<IEnumerable<Dashboard>> Get()
         {
-			var dashboards = await _dashRepo.GetActiveDashboardsAsync();
-
-			return dashboards;
+			return _dashRepo.GetDashboardsAsync();
         }
 
 
@@ -35,18 +33,11 @@ namespace Swampnet.Dash.Service.Controllers
         [HttpGet]
         public async Task<Dashboard> Get(string id)
         {
-			var dashboards = await _dashRepo.GetActiveDashboardsAsync();
+			var dashboards = await _dashRepo.GetDashboardsAsync();
 
 			return dashboards.Single(d => d.Id == id);
         }
 
-
-   //     [Route("dashboards/{dashId}/meta")]
-   //     [HttpGet]
-   //     public Task<DashMetaData> GetMeta(string dashId)
-   //     {
-			//return _dashRepo.GetMetaDataAsync(dashId);
-   //     }
 
 		[Route("dashboards/{id}/state")]
 		[HttpGet]

@@ -9,7 +9,8 @@ using Swampnet.Dash.Common.Entities;
 namespace Swampnet.Dash.Services
 {
 	/// <summary>
-	/// This migh all belong in DashRepo...
+	/// This might all belong in DashRepo...
+	/// Actually, is this even right? We shouldn't really be caring about *dashboards* at this level should we?
 	/// </summary>
 	class State : IState
 	{

@@ -6,7 +6,8 @@
         xmlns:local="clr-namespace:Swampnet.Dash.Client.Wpf"
         xmlns:view="clr-namespace:Swampnet.Dash.Client.Wpf.Views"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525">
+		SizeToContent="WidthAndHeight"
+        Title="MainWindow">
 	<Grid>
 		<ItemsControl ItemsSource="{Binding Dashboards}" HorizontalContentAlignment="Stretch">
 			<ItemsControl.ItemsPanel>

@@ -20,38 +20,14 @@ namespace Swampnet.Dash
 			_testRepo = testRepo;
 		}
 
-   //     public async Task<DashMetaData> GetMetaDataAsync(string name)
-   //     {
-			//try
-			//{
-			//	var dashboards = await GetActiveDashboardsAsync();
-			//	var dash = dashboards.Single(d => d.Name == name);
-			//	var tests = _testRepo.GetTestDefinitions();
-
-			//	var meta = new DashMetaData();
-			//	meta.Name = dash.Name;
-			//	meta.Description = dash.Description;
-
-			//	foreach (var tid in dash.Tests)
-			//	{
-			//		var test = tests.Single(t => t.Id == tid.TestId);
-			//		var md = new DashItemMeta();
-			//		md.Id = test.Id;
-			//		md.Description = test.Description;
-			//		md.Meta = tid.MetaData;
-			//		meta.Items.Add(md);
-			//	}
-
-			//	return meta;
-			//}
-			//catch (Exception ex)
-			//{
-			//	return null;
-			//}
-   //     }
+		public async Task<Dashboard> GetDashboardsAsync(string id)
+		{
+			var dashboards = await GetDashboardsAsync();
+			return dashboards.SingleOrDefault(d => d.Id == id);
+		}
 
 
-        public Task<IEnumerable<Dashboard>> GetActiveDashboardsAsync()
+		public Task<IEnumerable<Dashboard>> GetDashboardsAsync()
         {
             return Task.FromResult(Mock.Dashboards);
         }

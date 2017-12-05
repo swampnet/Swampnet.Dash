@@ -53,7 +53,7 @@ namespace Swampnet.Dash
                 try
                 {
                     var testResults = await _testRunner.RunAsync();
-                    var dashboards = await _dashboardRepository.GetActiveDashboardsAsync();
+                    var dashboards = await _dashboardRepository.GetDashboardsAsync();
 
                     foreach (var dash in dashboards)
                     {
