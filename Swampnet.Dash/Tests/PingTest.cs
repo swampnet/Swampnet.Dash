@@ -26,7 +26,7 @@ namespace Swampnet.Dash.Tests
                 State = "ok"
             };
             
-			rs.Properties.Add(new Property("value", time));
+			rs.Output.Add(new Property("value", time));
 
 			return rs;
 		}

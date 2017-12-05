@@ -66,7 +66,7 @@ namespace Swampnet.Dash
                                 Id = $"{tr.TestId}", // TODO: Need a better Id? - Also, this needs to link up to the meta data stuffs
                                 State = tr.State,
                                 TimestampUtc = tr.TimestampUtc,
-                                Properties = tr.Properties
+                                Output = tr.Output
                             });
 
 							await _state.SaveDashItemsAsync(dash.Name, dashItems);

@@ -95,7 +95,7 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
 
 						// Check dash item properties
 						default:
-							value = _dashItem?.Properties.StringValue(meta.Name);
+							value = _dashItem?.Output.StringValue(meta.Name);
 							break;
 					}
 				}

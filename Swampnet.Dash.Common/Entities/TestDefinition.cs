@@ -49,14 +49,4 @@ namespace Swampnet.Dash.Common.Entities
 
 		public List<Property> Parameters { get; set; }
     }
-
-
-
-    public class State
-    {
-		[XmlAttribute]
-		public string Name { get; set; }
-
-        public string Expression { get; set; } // @TODO: Not a string!
-    }
 }

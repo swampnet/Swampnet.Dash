@@ -30,7 +30,7 @@ namespace Swampnet.Dash.Tests
                 rs.State = "ok";
             }
 
-            rs.Properties.Add(new Property("value", value));
+            rs.Output.Add(new Property("value", value));
             
             return Task.FromResult(rs);
         }

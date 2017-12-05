@@ -12,7 +12,7 @@ namespace Swampnet.Dash.Common.Entities
     {
         public TestResult()
         {
-            Properties = new List<Property>();
+            Output = new List<Property>();
             TimestampUtc = DateTime.UtcNow;
         }
 
@@ -23,11 +23,11 @@ namespace Swampnet.Dash.Common.Entities
 
         public DateTime TimestampUtc { get; set; }
 
-        public List<Property> Properties { get; set; }
+        public List<Property> Output { get; set; }
 
         public override string ToString()
         {
-            return $"{State} (" + string.Join(",", Properties.Select(p => $"{p.Name}: {p.Value}")) + ")";
+            return $"{State} (" + string.Join(",", Output.Select(p => $"{p.Name}: {p.Value}")) + ")";
         }
     }
 }
