@@ -8,6 +8,9 @@ namespace Swampnet.Dash.Common.Entities
 	/// <summary>
 	/// Dashboard definition
 	/// </summary>
+	/// <remarks>
+	/// Contains configuration and meta data for a single dashboard. Any tests are defined elsware
+	/// </remarks>
     public class Dashboard
     {
         public Dashboard()

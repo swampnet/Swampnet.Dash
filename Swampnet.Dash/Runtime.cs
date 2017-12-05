@@ -52,7 +52,9 @@ namespace Swampnet.Dash
             {
                 try
                 {
+					// Run all the due tests
                     var testResults = await _testRunner.RunAsync();
+
                     var dashboards = await _dashboardRepository.GetDashboardsAsync();
 
                     foreach (var dash in dashboards)
@@ -63,12 +65,15 @@ namespace Swampnet.Dash
                         {
                             var dashItems = dashTestUpdates.Select(tr => new DashboardItem()
                             {
-                                Id = $"{tr.TestId}", // TODO: Need a better Id? - Also, this needs to link up to the meta data stuffs
+                                Id = tr.TestId,
                                 State = tr.State,
                                 TimestampUtc = tr.TimestampUtc,
                                 Output = tr.Output
                             });
 
+							// Don't like that we're saving 'dash' items here. We shouldn't really care about the dash at this point...
+							// We're only doing it like this so we can 'get all dashitems for a particular dash' in the controller. (which we should
+							// be able to do some other way)
 							await _state.SaveDashItemsAsync(dash.Id, dashItems);
 
                             _broadcast.DashboardItems(dash.Id, dashItems);

@@ -22,14 +22,14 @@ namespace Swampnet.Dash.Service.Controllers
 		}
 
 
-        public IEnumerable<TestDefinition> Get()
+        public IHttpActionResult Get()
         {
-			return _testRepo.GetTestDefinitions();
+			return Ok(_testRepo.GetTestDefinitions());
         }
 
-		public TestDefinition Get(string id)
+		public IHttpActionResult Get(string id)
 		{
-			return _testRepo.GetTestDefinitions().Single(d => d.Id == id);
+			return Ok(_testRepo.GetTestDefinitions().Single(d => d.Id == id));
 		}
     }
 }
