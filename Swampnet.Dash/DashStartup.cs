@@ -19,6 +19,7 @@ namespace Swampnet.Dash
             builder.RegisterType<TestRepository>().As<ITestRepository>().InstancePerLifetimeScope();
             builder.RegisterAssemblyTypes(typeof(DashStartup).Assembly).As<ITest>().SingleInstance();
             builder.RegisterType<TestRunner>().As<ITestRunner>();
+			builder.RegisterType<MockedArgosRunner>().As<IArgosRunner>();
 			builder.RegisterType<State>().As<IState>().SingleInstance();
         }
     }

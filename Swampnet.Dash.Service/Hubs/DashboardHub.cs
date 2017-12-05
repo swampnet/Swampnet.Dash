@@ -11,11 +11,8 @@ namespace Swampnet.Dash.Service.Hubs
 {
     public class DashboardHub : Hub
     {
-        private readonly ITestService _test;
-
-        public DashboardHub(ITestService test)
+        public DashboardHub()
         {
-            _test = test;
         }
 
 		// Just a test, we don't use this for anything
@@ -24,7 +21,7 @@ namespace Swampnet.Dash.Service.Hubs
             Log.Debug($"{Context.ConnectionId} send '{message}'");
 
             // Call the broadcastMessage method to update clients.
-            Clients.All.broadcastMessage($"{name} ({_test.Id})", message);
+            Clients.All.broadcastMessage(name, message);
         }
 
 

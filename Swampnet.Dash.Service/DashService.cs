@@ -75,7 +75,6 @@ namespace Swampnet.Dash.Service
             builder.UseDashboardRuntime();
             builder.RegisterApiControllers(Assembly.GetExecutingAssembly());
             builder.RegisterHubs(Assembly.GetExecutingAssembly());
-            builder.RegisterType<TestService>().As<ITestService>().InstancePerLifetimeScope();
             builder.RegisterType<Broadcast>().As<IBroadcast>();
 
             var container = builder.Build();

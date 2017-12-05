@@ -122,7 +122,6 @@
     <Compile Include="Hubs\DashboardHub.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\Broadcast.cs" />
-    <Compile Include="Services\TestService.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>
   <ItemGroup>

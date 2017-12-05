@@ -21,7 +21,7 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
 
 		private readonly ObservableCollection<DashItemViewModel> _items = new ObservableCollection<DashItemViewModel>();
 		private readonly string _dashName;
-		private Dashboard _metaData;
+		private Dashboard _dashboard;
 
 		public IEnumerable<DashItemViewModel> Items => _items;
 
@@ -46,8 +46,8 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
 			InitialiseDash(dash);
 		}
 
-		public string Name => _metaData?.Id;
-		public string Description => _metaData?.Description;
+		public string Name => _dashboard?.Id;
+		public string Description => _dashboard?.Description;
 
 
 		public void Boosh()
@@ -67,16 +67,27 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
 					var dashItem = _items.SingleOrDefault(d => d.Id == di.Id);
 					if (dashItem == null)
 					{
-						// @TODO: Figure out a better way of resolving meta-data. It won't always be id based (ie, in Argos mode the meta data is the same for all items)
-						var test = _metaData.Tests.SingleOrDefault(t => t.TestId == di.Id);
+						IEnumerable<Meta> metaData = null;
+						var test = _dashboard.Tests?.SingleOrDefault(t => t.TestId == di.Id);
 						if(test == null)
 						{
-							// @TODO: Not a test, look somewhere else?
+							metaData = _dashboard.DefaultMetaData;
 						}
-						dashItem = new DashItemViewModel(test.TestId, test.MetaData);
+						else
+						{
+							metaData = test.MetaData;
+						}
+						dashItem = new DashItemViewModel(di.Id, metaData);
 						_items.Add(dashItem);
 					}
 					dashItem.Update(di);
+				}
+
+				//HACK:
+				var kill = _items.Where(i => i.Status.EqualsNoCase("finished")).ToArray();
+				foreach(var x in kill)
+				{
+					_items.Remove(x);
 				}
 			});
 		}
@@ -101,12 +112,15 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
 
 		private async Task UpdateMetaData(string dashId)
 		{
-			_metaData = await Api.GetDashboard(dashId);
+			_dashboard = await Api.GetDashboard(dashId);
 			RaisePropertyChanged("");
 
-			foreach (var item in _metaData.Tests)
+			if(_dashboard.Tests != null && _dashboard.Tests.Any())
 			{
-				_items.Add(new DashItemViewModel(item.TestId, item.MetaData));
+				foreach (var item in _dashboard.Tests)
+				{
+					_items.Add(new DashItemViewModel(item.TestId, item.MetaData));
+				}
 			}
 		}
 	}

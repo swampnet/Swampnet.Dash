@@ -25,6 +25,8 @@ namespace Swampnet.Dash.Common.Entities
 		public string Description { get; set; }
 
         public List<TestItemDefinition> Tests { get; set; }
+
+		public List<Meta> DefaultMetaData { get; set; }
     }
 
 

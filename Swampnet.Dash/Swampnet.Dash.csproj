@@ -54,6 +54,7 @@
     <Compile Include="DashStartup.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Runtime.cs" />
+    <Compile Include="Services\ArgosRunner.cs" />
     <Compile Include="Services\DashboardRepository.cs" />
     <Compile Include="Services\State.cs" />
     <Compile Include="Services\TestRepository.cs" />
