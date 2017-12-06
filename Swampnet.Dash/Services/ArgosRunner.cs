@@ -29,8 +29,10 @@ namespace Swampnet.Dash.Services
 
             foreach (var definition in _argosRepo.GetPending())
             {
-                try
-                {
+				Log.Debug("{type} - RunAsync {id}", this.GetType().Name, definition.Id);
+
+				try
+				{
                     ArgosResult lastRun;
                     if (_lastResults.ContainsKey(definition.Id))
                     {
@@ -48,20 +50,23 @@ namespace Swampnet.Dash.Services
 
                     var rs = await argos.RunAsync(definition);
 
+					if(object.ReferenceEquals(rs, lastRun))
+					{
+						Log.Debug("ReferenceEquals!!!!11!!");
+					}
+
                     // Only add to our results if something has changed
-                    bool hacky_bool = rs.Equals(lastRun);
-                    Log.Debug("Changed: {changed}", hacky_bool);
-                    if (hacky_bool)
+                    if (!rs.Equals(lastRun))
                     {
                         items.Add(rs);
 
-                        Log.Information("{argos} '{id}' " + rs.Items,
+                        Log.Information("{argos} '{id}' Has changed",
                             argos.GetType().Name,
                             definition.Id);
                     }
 
                     _argosRepo.UpdateLastRun(definition);
-                    _lastResults[definition.Id] = rs;
+					_lastResults[definition.Id] = rs;//.Clone();
                 }
                 catch (Exception ex)
                 {

@@ -71,7 +71,9 @@ namespace Swampnet.Dash.Argos
 
             result.Items = _items.ToArray();
 
-            return Task.FromResult(result);
+			Log.Debug("{type} - RunAsync {id} ({count})", this.GetType().Name, result.ArgosId, result.Items.Count());
+
+			return Task.FromResult(result);
         }
     }
 }

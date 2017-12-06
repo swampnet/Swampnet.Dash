@@ -30,5 +30,25 @@ namespace Swampnet.Dash.Common.Entities
 		{
 			return base.GetHashCode();
 		}
+
+		public ArgosResult Clone()
+		{
+			return new ArgosResult()
+			{
+				ArgosId = this.ArgosId,
+				Items = this.Items.Select(i => new DashboardItem()
+				{
+					Id = i.Id,
+					Status = i.Status,
+					TimestampUtc = i.TimestampUtc,
+					Output = i.Output.Select(o => new Property()
+					{
+						Category = o.Category,
+						Name = o.Name,
+						Value = o.Value
+					}).ToList()
+				})
+			};
+		}
 	}
 }
