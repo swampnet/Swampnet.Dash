@@ -49,7 +49,7 @@ namespace Swampnet.Dash.Services
                     var rs = await argos.RunAsync(definition);
 
                     // Only add to our results if something has changed
-                    bool hacky_bool = Changed(rs, lastRun);
+                    bool hacky_bool = rs.Equals(lastRun);
                     Log.Debug("Changed: {changed}", hacky_bool);
                     if (hacky_bool)
                     {
@@ -81,45 +81,6 @@ namespace Swampnet.Dash.Services
                 : null;
 
             return Task.FromResult(rs);
-        }
-
-
-        // Need some way of exposing this to unit tests (i think it's buggy, i think if we remove something from lhs we won't pick it up)
-        private bool Changed(ArgosResult lhs, ArgosResult rhs)
-        {
-            foreach(var l in lhs.Items)
-            {
-                var r = rhs.Items?.SingleOrDefault(x => x.Id == l.Id);
-                if(r == null)
-                {
-                    // Removed / Added an item
-                    return true;
-                }
-
-                if(l.Status != r.Status)
-                {
-                    // Status has changed
-                    return true;
-                }
-
-                // Check output
-                foreach (var l_o in l.Output)
-                {
-                    var r_o = r.Output.SingleOrDefault(x => x.Name == l_o.Name);
-                    if(r_o == null)
-                    {
-                        // Removed / Added a property
-                        return true;
-                    }
-                    if(r_o.Value != l_o.Value)
-                    {
-                        // A property has changed
-                        return true;
-                    }
-                }
-            }
-
-            return false;
         }
     }
 }

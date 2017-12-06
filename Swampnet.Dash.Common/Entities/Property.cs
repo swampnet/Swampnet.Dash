@@ -25,5 +25,24 @@ namespace Swampnet.Dash.Common.Entities
 
 		[XmlAttribute]
 		public string Value { get; set; }
-    }
+
+		public override bool Equals(object obj)
+		{
+			var source = obj as Property;
+			if(source == null)
+			{
+				return false;
+			}
+
+			return Category == source.Category
+				&& Name == source.Name
+				&& Value == source.Value;
+		}
+
+		// @TODO: This, properly.
+		public override int GetHashCode()
+		{
+			return base.GetHashCode();
+		}
+	}
 }

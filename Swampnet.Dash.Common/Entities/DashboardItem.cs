@@ -39,5 +39,29 @@ namespace Swampnet.Dash.Common.Entities
         {
             return $"{Status} (" + string.Join(",", Output.Select(p => $"{p.Name}: {p.Value}")) + ")";
         }
-    }
+
+		public override bool Equals(object obj)
+		{
+			var source = obj as DashboardItem;
+			if(source == null)
+			{
+				return false;
+			}
+
+			if(Id != source.Id
+				|| Status != source.Status
+				|| TimestampUtc != source.TimestampUtc)
+			{
+				return false;
+			}
+
+			return Output.OrderBy(x => x.Name).SequenceEqual(source.Output.OrderBy(x => x.Name));
+		}
+
+		// @TODO: This, properly.
+		public override int GetHashCode()
+		{
+			return base.GetHashCode();
+		}
+	}
 }

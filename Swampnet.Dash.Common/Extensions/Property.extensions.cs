@@ -63,6 +63,15 @@ namespace Swampnet.Dash
 			return v;
 		}
 
+		public static Property Get(this IEnumerable<Property> properties, string name)
+		{
+			if (properties != null && properties.Any())
+			{
+				return properties.SingleOrDefault(x => x.Name.EqualsNoCase(name));
+			}
+			return null;
+		}
+
 
 		public static bool Exists(this IEnumerable<Property> properties, string name)
 		{
