@@ -7,6 +7,7 @@
         xmlns:view="clr-namespace:Swampnet.Dash.Client.Wpf.Views"
         mc:Ignorable="d"
 		SizeToContent="WidthAndHeight"
+        WindowState="Minimized"
         Title="MainWindow">
 	<Grid>
 		<ItemsControl ItemsSource="{Binding Dashboards}" HorizontalContentAlignment="Stretch">

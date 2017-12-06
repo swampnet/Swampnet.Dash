@@ -54,7 +54,7 @@ namespace Swampnet.Dash.Service.Controllers
 			// Check for tests
 			if(dashboard.Tests != null)
 			{
-				states = await _state.GetDashItemsAsync(dashboard.Tests.Select(t => t.TestId));
+				states = await _state.GetDashItemsAsync(dashboard.Tests.Select(t => t.Id));
 			}
 
 			return Ok(states);

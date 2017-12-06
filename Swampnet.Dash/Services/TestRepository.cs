@@ -11,8 +11,8 @@ namespace Swampnet.Dash.Services
 {
     class TestRepository : ITestRepository
     {
-		// [testId => DateTime]
-        private readonly Dictionary<string, DateTime> _testRuntimes = new Dictionary<string, DateTime>();
+		// [id => DateTime]
+        private readonly Dictionary<string, DateTime> _runtimes = new Dictionary<string, DateTime>();
 
         public IEnumerable<TestDefinition> GetTestDefinitions()
         {
@@ -27,11 +27,11 @@ namespace Swampnet.Dash.Services
             foreach (var testDefinition in GetTestDefinitions())
             {
                 DateTime lastRun;
-                if (!_testRuntimes.ContainsKey(testDefinition.Id))
+                if (!_runtimes.ContainsKey(testDefinition.Id))
                 {
-                    _testRuntimes.Add(testDefinition.Id, DateTime.MinValue);
+                    _runtimes.Add(testDefinition.Id, DateTime.MinValue);
                 }
-                lastRun = _testRuntimes[testDefinition.Id];
+                lastRun = _runtimes[testDefinition.Id];
 
                 if (lastRun.Add(testDefinition.Heartbeat) < DateTime.UtcNow)
                 {
@@ -45,9 +45,9 @@ namespace Swampnet.Dash.Services
 
         public void UpdateLastRun(TestDefinition test)
         {
-            lock (_testRuntimes)
+            lock (_runtimes)
             {
-                _testRuntimes[test.Id] = DateTime.UtcNow;
+                _runtimes[test.Id] = DateTime.UtcNow;
             }
         }
     }

@@ -14,7 +14,7 @@ namespace Swampnet.Dash.Common
             var dash = new Dashboard();
             dash.Id = name;
             dash.Description = name + " (description)";
-            dash.Tests = Tests.Select(t => new TestItemDefinition() { TestId = t.Id }).ToList();
+            dash.Tests = Tests.Select(t => new ItemDefinition() { Id = t.Id }).ToList();
             return dash;
         }
 
@@ -30,7 +30,19 @@ namespace Swampnet.Dash.Common
 			}
 		}
 
-		public static IEnumerable<Dashboard> Dashboards
+        public static IEnumerable<ArgosDefinition> Argos
+        {
+            get
+            {
+                if (_argos == null)
+                {
+                    _argos = File.ReadAllText("Data\\argos.xml").Deserialize<ArgosDefinition[]>();
+                }
+                return _argos;
+            }
+        }
+
+        public static IEnumerable<Dashboard> Dashboards
 		{
 			get
 			{
@@ -42,7 +54,8 @@ namespace Swampnet.Dash.Common
 			}
 		}
 
-		private static IEnumerable<TestDefinition> _tests = null;
+        private static IEnumerable<ArgosDefinition> _argos = null;
+        private static IEnumerable<TestDefinition> _tests = null;
 		private static IEnumerable<Dashboard> _dashboards = null;
 	}
 }

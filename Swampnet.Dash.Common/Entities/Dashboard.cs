@@ -13,30 +13,27 @@ namespace Swampnet.Dash.Common.Entities
 	/// </remarks>
     public class Dashboard
     {
-        public Dashboard()
-        {
-			Tests = new List<TestItemDefinition>();
-        }
-
 		[XmlAttribute]
         public string Id { get; set; }
 
 		[XmlAttribute]
 		public string Description { get; set; }
 
-        public List<TestItemDefinition> Tests { get; set; }
+        public List<ItemDefinition> Tests { get; set; }
 
-		public List<Meta> DefaultMetaData { get; set; }
+        public List<ItemDefinition> Argos { get; set; }
+
+        public List<Meta> DefaultMetaData { get; set; }
     }
 
 
-	/// <summary>
-	/// Define test id and any property mapping that goes with it
-	/// </summary>
-	public class TestItemDefinition
+    /// <summary>
+    /// Define test id and any property mapping that goes with it
+    /// </summary>
+    public class ItemDefinition
 	{
 		[XmlAttribute]
-		public string TestId { get; set; }
+		public string Id { get; set; }
 
 		public List<Meta> MetaData { get; set; }
 	}

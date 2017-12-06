@@ -72,7 +72,7 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
                 if (dashItem == null)
                 {
                     IEnumerable<Meta> metaData = null;
-                    var test = _dashboard.Tests?.SingleOrDefault(t => t.TestId == di.Id);
+                    var test = _dashboard.Tests?.SingleOrDefault(t => t.Id == di.Id);
                     if (test == null)
                     {
                         metaData = _dashboard.DefaultMetaData;
@@ -94,9 +94,9 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
         /// </summary>
         private void Remove(IEnumerable<DashboardItem> source)
         {
-            foreach (var di in _items.Where(i => !source.Select(s => s.Id).Contains(i.Id)).ToArray())
+            foreach (var id in _items.Where(i => !source.Select(s => s.Id).Contains(i.Id)).Select(x => x.Id).ToArray())
             {
-                _items.Remove(di);
+                _items.Remove(_items.SingleOrDefault(i => i.Id == id));
             }
         }
 
@@ -106,7 +106,7 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
             IEnumerable<Meta> metaData;
 
             // Look for a test with the same id
-            var test = _dashboard.Tests?.SingleOrDefault(t => t.TestId == di.Id);
+            var test = _dashboard.Tests?.SingleOrDefault(t => t.Id == di.Id);
             if (test != null)
             {
                 metaData = test.MetaData;
@@ -163,13 +163,14 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
         private async Task UpdateMetaData(string dashId)
 		{
 			_dashboard = await Api.GetDashboard(dashId);
+
 			RaisePropertyChanged("");
 
 			if(_dashboard.Tests != null && _dashboard.Tests.Any())
 			{
 				foreach (var item in _dashboard.Tests)
 				{
-					_items.Add(new DashItemViewModel(item.TestId, item.MetaData));
+					_items.Add(new DashItemViewModel(item.Id, item.MetaData));
 				}
 			}
 		}

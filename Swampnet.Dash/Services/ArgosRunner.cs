@@ -5,58 +5,102 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Swampnet.Dash.Common.Entities;
+using Serilog;
 
 namespace Swampnet.Dash.Services
 {
-	internal class MockedArgosRunner : IArgosRunner
+	internal class ArgosRunner : IArgosRunner
 	{
-		private static readonly List<DashboardItem> _items = new List<DashboardItem>();
-		private static DateTime _lastNewbie = DateTime.MinValue;
-		private static int _id = 0;
+        private readonly IEnumerable<IArgos> _argos;
+        private readonly IArgosRepository _argosRepo;
 
-		public Task<IEnumerable<DashboardItem>> RunAsync()
-		{
-			// Clean up finished items
-			_items.RemoveAll(x => x.Status == "finished");
+        // argos-id -> argos
+        private readonly Dictionary<string, ArgosResult> _lastResults = new Dictionary<string, ArgosResult>();
 
-			// Add a newbie avery minute
-			if (_lastNewbie < DateTime.Now.AddSeconds(-30))
-			{
-				var item = new DashboardItem(++_id);
-				item.Output.Add(new Property("CreatedOn", DateTime.Now));
-				item.Output.Add(new Property("Id", item.Id));
-				item.Status = "newbie";
-				_items.Add(item);
-				_lastNewbie = DateTime.Now;
-			}
+        public ArgosRunner(IArgosRepository argosRepo, IEnumerable<IArgos> argos)
+        {
+            _argos = argos;
+            _argosRepo = argosRepo;
+        }
 
-			foreach(var item in _items)
-			{
-				var age = DateTime.Now - item.Output.DateTimeValue("CreatedOn");
-				if(age.TotalMinutes > 4)
-				{
-					item.Status = "finished";
-				}
-				else if(age.TotalMinutes > 3)
-				{
-					item.Status = "nearly-finished";
-				}
-				else if (age.TotalMinutes > 2)
-				{
-					item.Status = "halfway";
-				}
-				else if (age.TotalMinutes > 1)
-				{
-					item.Status = "in-progress";
-				}
-				else if (age.TotalSeconds > 10)
-				{
-					item.Status = "pending";
-				}
-			}
+        public async Task<IEnumerable<ArgosResult>> RunAsync()
+        {
+            var items = new List<ArgosResult>();
 
-			return Task.FromResult(_items.AsEnumerable());
-		}
+            foreach (var definition in _argosRepo.GetPending())
+            {
+                try
+                {
+                    var lastRun = _lastResults.ContainsKey(definition.Id)
+                        ? _lastResults[definition.Id]
+                        : new ArgosResult();
 
-	}
+                    var argos = _argos.Single(t => t.GetType().Name == definition.Type);
+
+                    //Validate(testdefinition, test.Meta);
+
+                    var rs = await argos.RunAsync(definition);
+
+                    // Only add to our results if something has changed
+                    bool hacky_bool = Changed(rs, lastRun);
+                    Log.Debug("Changed: {changed}", hacky_bool);
+                    if (hacky_bool)
+                    {
+                        items.Add(rs);
+
+                        Log.Information("{argos} '{id}' " + rs.Items,
+                            argos.GetType().Name,
+                            definition.Id);
+                    }
+
+                    _argosRepo.UpdateLastRun(definition);
+                    _lastResults[definition.Id] = rs;
+                }
+                catch (Exception ex)
+                {
+                    Log.Error(ex, ex.Message);
+                }
+            }
+
+            return items;
+        }
+
+
+        private bool Changed(ArgosResult lhs, ArgosResult rhs)
+        {
+            foreach(var l in lhs.Items)
+            {
+                var r = rhs.Items?.SingleOrDefault(x => x.Id == l.Id);
+                if(r == null)
+                {
+                    // Removed / Added an item
+                    return true;
+                }
+
+                if(l.Status != r.Status)
+                {
+                    // Status has changed
+                    return true;
+                }
+
+                // Check output
+                foreach (var l_o in l.Output)
+                {
+                    var r_o = r.Output.SingleOrDefault(x => x.Name == l_o.Name);
+                    if(r_o == null)
+                    {
+                        // Removed / Added a property
+                        return true;
+                    }
+                    if(r_o.Value != l_o.Value)
+                    {
+                        // A property has changed
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+    }
 }

@@ -57,7 +57,8 @@ namespace Swampnet.Dash
                 {
 					// Run all the due tests
                     var testResults = await _testRunner.RunAsync();
-                    // Get latest Argos results
+
+                    // Get latest Argos results. Note, this will probably be *all* the dashItems from *all* the argos style dashes
 					var argosResults = await _argosRunner.RunAsync();
 
                     var dashboards = await _dashboardRepository.GetDashboardsAsync();
@@ -68,7 +69,7 @@ namespace Swampnet.Dash
 						if(dash.Tests != null && dash.Tests.Any())
 						{
 							// Get all the tests results referenced by tests in this dash:
-							var dashTestUpdates = testResults.Where(r => dash.Tests.Select(t => t.TestId).Contains(r.TestId));
+							var dashTestUpdates = testResults.Where(r => dash.Tests.Select(t => t.Id).Contains(r.TestId));
 							if (dashTestUpdates.Any())
 							{
 								var dashItems = dashTestUpdates.Select(tr => new DashboardItem()
@@ -79,19 +80,31 @@ namespace Swampnet.Dash
 									Output = tr.Output
 								});
 
+                                // @todo: Not here, surely?
 								await _state.SaveDashItemsAsync(dashItems);
 
 								_broadcast.Update(dash.Id, dashItems);
 							}
 						}
 
-                        // Handle argos style dash components
-						if(dash.Id == "argos-test")
-						{
-							_broadcast.Refresh(dash.Id, argosResults);
-							await _state.SaveDashItemsAsync(argosResults);
-						}
-					}
+                        // Handle Argos stuff
+                        if(dash.Argos != null && dash.Argos.Any())
+                        {
+                            // We collate *all* the 'argos' stuff into one single per-dash update.
+                            var broadcast = new List<DashboardItem>();
+                            
+                            foreach(var rs in argosResults.Where(a => dash.Argos.Select(b => b.Id).Contains(a.ArgosId)))
+                            {
+                                broadcast.AddRange(rs.Items);
+                            }
+
+
+                            if (broadcast.Any())
+                            {
+                                _broadcast.Refresh(dash.Id, broadcast);
+                            }
+                        }
+                    }
                 }
 				catch (ThreadAbortException)
 				{

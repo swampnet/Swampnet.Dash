@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 
 namespace Swampnet.Dash.Common.Interfaces
 {
-	public interface IArgosRunner
-	{
-		Task<IEnumerable<ArgosResult>> RunAsync();
-	}
+    public interface IArgos
+    {
+        Task<ArgosResult> RunAsync(ArgosDefinition argosDefinition);
+        //TestMeta Meta { get; }
+    }
 }
