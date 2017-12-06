@@ -57,12 +57,14 @@ namespace Swampnet.Dash
                 {
 					// Run all the due tests
                     var testResults = await _testRunner.RunAsync();
+                    // Get latest Argos results
 					var argosResults = await _argosRunner.RunAsync();
 
                     var dashboards = await _dashboardRepository.GetDashboardsAsync();
 
                     foreach (var dash in dashboards)
                     {
+                        // Handle any tests if ther eare any
 						if(dash.Tests != null && dash.Tests.Any())
 						{
 							// Get all the tests results referenced by tests in this dash:
@@ -79,13 +81,14 @@ namespace Swampnet.Dash
 
 								await _state.SaveDashItemsAsync(dashItems);
 
-								_broadcast.DashboardItems(dash.Id, dashItems);
+								_broadcast.Update(dash.Id, dashItems);
 							}
 						}
 
+                        // Handle argos style dash components
 						if(dash.Id == "argos-test")
 						{
-							_broadcast.DashboardItems(dash.Id, argosResults);
+							_broadcast.Refresh(dash.Id, argosResults);
 							await _state.SaveDashItemsAsync(argosResults);
 						}
 					}

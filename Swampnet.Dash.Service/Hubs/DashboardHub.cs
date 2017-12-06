@@ -9,6 +9,9 @@ using System.Threading.Tasks;
 
 namespace Swampnet.Dash.Service.Hubs
 {
+    /// <summary>
+    /// Client - callable stuff in here
+    /// </summary>
     public class DashboardHub : Hub
     {
         public DashboardHub()
@@ -24,12 +27,16 @@ namespace Swampnet.Dash.Service.Hubs
             Clients.All.broadcastMessage(name, message);
         }
 
-
+        /// <summary>
+        /// Client is joining a group. A group == a dashboard, and a dashboard is really just a collection of DashItems
+        /// </summary>
+        /// <param name="groupName"></param>
         public void JoinGroup(string groupName)
         {
             Groups.Add(Context.ConnectionId, groupName);
             Log.Debug($"{Context.ConnectionId} joined group {groupName}");
         }
+
 
 		public override Task OnConnected()
 		{

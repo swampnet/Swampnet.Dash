@@ -13,9 +13,9 @@ namespace Swampnet.Dash.Service.Services
 {
     class Broadcast : IBroadcast
     {
-        public void DashboardItems(string group, IEnumerable<DashboardItem> dashItems)
+        public void Update(string group, IEnumerable<DashboardItem> dashItems)
         {
-            Log.Debug("Broadcast to '{group}' - {dashItems}",
+            Log.Debug("Update: '{group}' - {dashItems}",
                 group,
                 string.Join(", ", dashItems.Select(di => di.Id)));
 
@@ -23,7 +23,21 @@ namespace Swampnet.Dash.Service.Services
                 .GetHubContext<DashboardHub>()
                 .Clients
                 .Group(group)
-                .UpdateDash(dashItems);
+                .Update(dashItems);
+        }
+
+
+        public void Refresh(string group, IEnumerable<DashboardItem> dashItems)
+        {
+            Log.Debug("Refresh: '{group}' - {dashItems}",
+                group,
+                string.Join(", ", dashItems.Select(di => di.Id)));
+
+            GlobalHost.ConnectionManager
+                .GetHubContext<DashboardHub>()
+                .Clients
+                .Group(group)
+                .Refresh(dashItems);
         }
     }
 }
