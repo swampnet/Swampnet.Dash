@@ -58,7 +58,6 @@
     <Compile Include="Services\ArgosRepository.cs" />
     <Compile Include="Services\ArgosRunner.cs" />
     <Compile Include="Services\DashboardRepository.cs" />
-    <Compile Include="Services\State.cs" />
     <Compile Include="Services\TestRepository.cs" />
     <Compile Include="Services\TestRunner.cs" />
     <Compile Include="Tests\CurlTest.cs" />

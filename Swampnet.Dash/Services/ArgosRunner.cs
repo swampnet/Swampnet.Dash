@@ -84,7 +84,7 @@ namespace Swampnet.Dash.Services
         }
 
 
-        // Need some way of exposing this to unit tests
+        // Need some way of exposing this to unit tests (i think it's buggy, i think if we remove something from lhs we won't pick it up)
         private bool Changed(ArgosResult lhs, ArgosResult rhs)
         {
             foreach(var l in lhs.Items)
