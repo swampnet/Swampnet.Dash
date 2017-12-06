@@ -14,12 +14,14 @@ namespace Swampnet.Dash.Service.Controllers
     {
         private readonly IDashboardRepository _dashRepo;
 		private readonly IState _state;
+        private readonly IArgosRunner _argosRunner;
 
-		public DashboardsController(IDashboardRepository dashRepo, IState state)
+        public DashboardsController(IDashboardRepository dashRepo, IState state, IArgosRunner argosRunner)
         {
             _dashRepo = dashRepo;
 			_state = state;
-		}
+            _argosRunner = argosRunner;
+        }
 
 
         [HttpGet]
@@ -45,17 +47,33 @@ namespace Swampnet.Dash.Service.Controllers
 		[HttpGet]
 		public async Task<IHttpActionResult> GetState(string id)
 		{
-			IEnumerable<DashboardItem> states = null;
+            List<DashboardItem> states = new List<DashboardItem>();
 
-			// Get all tests for dashboard
-			var dashboards = await _dashRepo.GetDashboardsAsync();
-			var dashboard = dashboards.Single(d => d.Id == id);
+            var dashboard = await _dashRepo.GetDashboardAsync(id);
 
-			// Check for tests
-			if(dashboard.Tests != null)
+            if(dashboard == null)
+            {
+                return NotFound();
+            }
+
+            // Get all tests for dashboard
+            if (dashboard.Tests != null)
 			{
-				states = await _state.GetDashItemsAsync(dashboard.Tests.Select(t => t.Id));
+				states.AddRange(await _state.GetDashItemsAsync(dashboard.Tests.Select(t => t.Id)));
 			}
+
+            // Sort out the argos stuff
+            if(dashboard.Argos != null)
+            {
+                foreach(var a in dashboard.Argos)
+                {
+                    var rs = await _argosRunner.GetState(a.Id);
+                    if(rs != null)
+                    {
+                        states.AddRange(rs.Items);
+                    }
+                }
+            }
 
 			return Ok(states);
 		}

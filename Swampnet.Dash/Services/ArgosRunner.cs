@@ -31,9 +31,16 @@ namespace Swampnet.Dash.Services
             {
                 try
                 {
-                    var lastRun = _lastResults.ContainsKey(definition.Id)
-                        ? _lastResults[definition.Id]
-                        : new ArgosResult();
+                    ArgosResult lastRun;
+                    if (_lastResults.ContainsKey(definition.Id))
+                    {
+                        lastRun = _lastResults[definition.Id];
+                    }
+                    else
+                    {
+                        lastRun = new ArgosResult();
+                        _lastResults.Add(definition.Id, lastRun);
+                    }
 
                     var argos = _argos.Single(t => t.GetType().Name == definition.Type);
 
@@ -66,6 +73,18 @@ namespace Swampnet.Dash.Services
         }
 
 
+
+        public Task<ArgosResult> GetState(string id)
+        {
+            ArgosResult rs = _lastResults.ContainsKey(id)
+                ? _lastResults[id]
+                : null;
+
+            return Task.FromResult(rs);
+        }
+
+
+        // Need some way of exposing this to unit tests
         private bool Changed(ArgosResult lhs, ArgosResult rhs)
         {
             foreach(var l in lhs.Items)

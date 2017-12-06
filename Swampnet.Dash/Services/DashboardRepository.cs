@@ -20,7 +20,7 @@ namespace Swampnet.Dash
 			_testRepo = testRepo;
 		}
 
-		public async Task<Dashboard> GetDashboardsAsync(string id)
+		public async Task<Dashboard> GetDashboardAsync(string id)
 		{
 			var dashboards = await GetDashboardsAsync();
 			return dashboards.SingleOrDefault(d => d.Id == id);

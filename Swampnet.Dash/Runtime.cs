@@ -65,7 +65,7 @@ namespace Swampnet.Dash
 
                     foreach (var dash in dashboards)
                     {
-                        // Handle any tests if ther eare any
+                        // Handle any tests if there are any
 						if(dash.Tests != null && dash.Tests.Any())
 						{
 							// Get all the tests results referenced by tests in this dash:
@@ -97,7 +97,6 @@ namespace Swampnet.Dash
                             {
                                 broadcast.AddRange(rs.Items);
                             }
-
 
                             if (broadcast.Any())
                             {
