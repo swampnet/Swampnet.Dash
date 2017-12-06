@@ -17,17 +17,14 @@ namespace Swampnet.Dash
         private readonly IDashboardRepository _dashboardRepository;
         private readonly ITestRunner _testRunner;
         private readonly IBroadcast _broadcast;
-		private readonly IState _state;
 		private readonly IArgosRunner _argosRunner;
 
 		public Runtime(
             ITestRunner testRunner,
 			IArgosRunner argosRunner,
-			IState state,
             IDashboardRepository dashboardRepository,
             IBroadcast broadcast)
         {
-			_state = state;
 			_testRunner = testRunner;
 			_argosRunner = argosRunner;
 			_dashboardRepository = dashboardRepository;
@@ -75,13 +72,10 @@ namespace Swampnet.Dash
 								var dashItems = dashTestUpdates.Select(tr => new DashboardItem()
 								{
 									Id = tr.TestId,
-									Status = tr.State,
+									Status = tr.Status,
 									TimestampUtc = tr.TimestampUtc,
 									Output = tr.Output
 								});
-
-                                // @todo: Not here, surely?
-								await _state.SaveDashItemsAsync(dashItems);
 
 								_broadcast.Update(dash.Id, dashItems);
 							}

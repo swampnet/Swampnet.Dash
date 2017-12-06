@@ -13,14 +13,14 @@ namespace Swampnet.Dash.Service.Controllers
     public class DashboardsController : ApiController
     {
         private readonly IDashboardRepository _dashRepo;
-		private readonly IState _state;
         private readonly IArgosRunner _argosRunner;
+        private readonly ITestRunner _testRunner;
 
-        public DashboardsController(IDashboardRepository dashRepo, IState state, IArgosRunner argosRunner)
+        public DashboardsController(IDashboardRepository dashRepo, ITestRunner testRunner, IArgosRunner argosRunner)
         {
             _dashRepo = dashRepo;
-			_state = state;
             _argosRunner = argosRunner;
+            _testRunner = testRunner;
         }
 
 
@@ -59,7 +59,12 @@ namespace Swampnet.Dash.Service.Controllers
             // Get all tests for dashboard
             if (dashboard.Tests != null)
 			{
-				states.AddRange(await _state.GetDashItemsAsync(dashboard.Tests.Select(t => t.Id)));
+				states.AddRange(_testRunner.GetTestResults(dashboard.Tests.Select(t => t.Id)).Select(x => new DashboardItem(x.TestId)
+                {
+                    Output = x.Output,
+                    Status = x.Status,
+                    TimestampUtc = x.TimestampUtc                    
+                }));
 			}
 
             // Sort out the argos stuff

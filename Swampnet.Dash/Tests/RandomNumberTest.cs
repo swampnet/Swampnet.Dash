@@ -19,15 +19,15 @@ namespace Swampnet.Dash.Tests
             // HACK
             if(value > 5)
             {
-                rs.State = "alert";
+                rs.Status = "alert";
             }
             else if(value > 4)
             {
-                rs.State = "warn";
+                rs.Status = "warn";
             }
             else
             {
-                rs.State = "ok";
+                rs.Status = "ok";
             }
 
             rs.Output.Add(new Property("value", value));

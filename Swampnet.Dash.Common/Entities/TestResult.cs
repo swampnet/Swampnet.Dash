@@ -19,7 +19,7 @@ namespace Swampnet.Dash.Common.Entities
         public string TestId { get; set; }
 
         // We probably need to return error state here as well? We need a way to signal that there was an error running the test.
-        public string State { get; set; }
+        public string Status { get; set; }
 
         public DateTime TimestampUtc { get; set; }
 
@@ -27,7 +27,7 @@ namespace Swampnet.Dash.Common.Entities
 
         public override string ToString()
         {
-            return $"{State} (" + string.Join(",", Output.Select(p => $"{p.Name}: {p.Value}")) + ")";
+            return $"{Status} (" + string.Join(",", Output.Select(p => $"{p.Name}: {p.Value}")) + ")";
         }
     }
 }

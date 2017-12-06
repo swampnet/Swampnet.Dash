@@ -12,6 +12,7 @@ namespace Swampnet.Dash.Services
     {
         private readonly ITestRepository _testRepo;
         private readonly IEnumerable<ITest> _tests;
+        private readonly Dictionary<string, TestResult> _state = new Dictionary<string, TestResult>();
 
         public TestRunner(ITestRepository testRepo, IEnumerable<ITest> tests)
         {
@@ -41,25 +42,34 @@ namespace Swampnet.Dash.Services
                         testdefinition.Id);
 
                     _testRepo.UpdateLastRun(testdefinition);
+
+                    await SaveTestResultsAsync(testResults);
                 }
                 catch (Exception ex)
                 {
 					Log.Error(ex, ex.Message);
 
 					testResults.Add(new TestResult() {
-						State = "error",
+						Status = "error",
 						TestId = testdefinition.Id,
 						TimestampUtc = DateTime.UtcNow
 					});
                 }
             }
+        
 
             return testResults;
         }
 
 
-		// Validate parameters against the test metadata
-		private void Validate(TestDefinition testdefinition, TestMeta meta)
+        public IEnumerable<TestResult> GetTestResults(IEnumerable<string> ids)
+        {
+            return _state.Where(x => ids.Contains(x.Key)).Select(x => x.Value);
+        }
+
+
+        // Validate parameters against the test metadata
+        private void Validate(TestDefinition testdefinition, TestMeta meta)
 		{
 			foreach(var parameter in meta.Parameters)
 			{
@@ -69,5 +79,26 @@ namespace Swampnet.Dash.Services
 				}
 			}
 		}
-	}
+
+        private Task SaveTestResultsAsync(IEnumerable<TestResult> testResults)
+        {
+            foreach (var testResult in testResults)
+            {
+                lock (_state)
+                {
+                    if (_state.ContainsKey(testResult.TestId))
+                    {
+                        _state[testResult.TestId] = testResult;
+                    }
+                    else
+                    {
+                        _state.Add(testResult.TestId, testResult);
+                    }
+                }
+            }
+
+            return Task.CompletedTask;
+        }
+
+    }
 }
