@@ -9,8 +9,15 @@ namespace Swampnet.Dash.Common.Entities
     {
         public string ArgosId { get; set; }
         public IEnumerable<DashboardItem> Items { get; set; }
+        public DateTime TimestampUtc { get; private set; }
 
-		public override bool Equals(object obj)
+        public ArgosResult()
+        {
+            TimestampUtc = DateTime.UtcNow;
+        }
+
+        // @TODO: So, we don't want the timestamp to be part of this, which kinda makes this the wrong place to do this stuff...
+        public override bool Equals(object obj)
 		{
 			var source = obj as ArgosResult;
 			if(source == null)

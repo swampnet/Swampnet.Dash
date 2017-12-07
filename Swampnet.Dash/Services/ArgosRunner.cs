@@ -14,13 +14,8 @@ namespace Swampnet.Dash.Services
         private readonly IEnumerable<IArgos> _argos;
         private readonly IArgosRepository _argosRepo;
 
-        // @TODO: Surely we can merge _lastResults & _runtimes??
-        
-        // [argos-id] -> argos
+        // [argos-definition-id] -> argos
         private readonly Dictionary<string, ArgosResult> _lastResults = new Dictionary<string, ArgosResult>();
-
-        // [id => DateTime]
-        private readonly Dictionary<string, DateTime> _runtimes = new Dictionary<string, DateTime>();
 
 
         public ArgosRunner(IArgosRepository argosRepo, IEnumerable<IArgos> argos)
@@ -71,11 +66,6 @@ namespace Swampnet.Dash.Services
                         items.Add(rs);
                     }
 
-                    lock (_runtimes)
-                    {
-                        _runtimes[definition.Id] = DateTime.UtcNow;
-                    }
-
                     _lastResults[definition.Id] = rs;
                 }
                 catch (Exception ex)
@@ -94,17 +84,18 @@ namespace Swampnet.Dash.Services
 
             foreach (var definition in _argosRepo.GetDefinitions())
             {
-                DateTime lastRun;
-                if (!_runtimes.ContainsKey(definition.Id))
-                {
-                    _runtimes.Add(definition.Id, DateTime.MinValue);
-                }
-
-                lastRun = _runtimes[definition.Id];
-
-                if (lastRun.Add(definition.Heartbeat) < DateTime.UtcNow)
+                // Never been run
+                if (!_lastResults.ContainsKey(definition.Id))
                 {
                     definitions.Add(definition);
+                }
+                else
+                {
+                    var lastResult = _lastResults[definition.Id];
+                    if (lastResult.TimestampUtc.Add(definition.Heartbeat) < DateTime.UtcNow)
+                    {
+                        definitions.Add(definition);
+                    }
                 }
             }
 
