@@ -14,8 +14,14 @@ namespace Swampnet.Dash.Services
         private readonly IEnumerable<IArgos> _argos;
         private readonly IArgosRepository _argosRepo;
 
-        // argos-id -> argos
+        // @TODO: Surely we can merge _lastResults & _runtimes??
+        
+        // [argos-id] -> argos
         private readonly Dictionary<string, ArgosResult> _lastResults = new Dictionary<string, ArgosResult>();
+
+        // [id => DateTime]
+        private readonly Dictionary<string, DateTime> _runtimes = new Dictionary<string, DateTime>();
+
 
         public ArgosRunner(IArgosRepository argosRepo, IEnumerable<IArgos> argos)
         {
@@ -23,14 +29,14 @@ namespace Swampnet.Dash.Services
             _argosRepo = argosRepo;
         }
 
+
         public async Task<IEnumerable<ArgosResult>> RunAsync()
         {
             var items = new List<ArgosResult>();
 
-            foreach (var definition in _argosRepo.GetPending())
+            // Get any argos definitions who's heartbeat is due
+            foreach (var definition in GetDue())
             {
-				//Log.Debug("{type} - RunAsync {id}", this.GetType().Name, definition.Id);
-
 				try
 				{
                     ArgosResult lastRun;
@@ -51,6 +57,11 @@ namespace Swampnet.Dash.Services
                     var rs = await argos.RunAsync(definition);
 
                     // Only add to our results if something has changed
+                    // @TODO: We *might* want to only update if something we have mapped in meta data has changed...
+                    //          eg: We might be returning a 'timestamp' property that *will* change each heartbeat, but we don't have it mapped to anything
+                    //              so we don't really care if it changes or not. (rememmber, this is telling the client something has updated. If the client 
+                    //              isn't interested in any of the stuff that's changed then we don't need to broadcast it.)
+                    //              - That screws our equality comparer implementation doesn't it...
                     if (!rs.Equals(lastRun))
                     {
                         Log.Information("{argos} '{id}' Has changed: " + rs,
@@ -60,8 +71,12 @@ namespace Swampnet.Dash.Services
                         items.Add(rs);
                     }
 
-                    _argosRepo.UpdateLastRun(definition);
-					_lastResults[definition.Id] = rs;
+                    lock (_runtimes)
+                    {
+                        _runtimes[definition.Id] = DateTime.UtcNow;
+                    }
+
+                    _lastResults[definition.Id] = rs;
                 }
                 catch (Exception ex)
                 {
@@ -70,6 +85,30 @@ namespace Swampnet.Dash.Services
             }
 
             return items;
+        }
+
+
+        public IEnumerable<ArgosDefinition> GetDue()
+        {
+            var definitions = new List<ArgosDefinition>();
+
+            foreach (var definition in _argosRepo.GetDefinitions())
+            {
+                DateTime lastRun;
+                if (!_runtimes.ContainsKey(definition.Id))
+                {
+                    _runtimes.Add(definition.Id, DateTime.MinValue);
+                }
+
+                lastRun = _runtimes[definition.Id];
+
+                if (lastRun.Add(definition.Heartbeat) < DateTime.UtcNow)
+                {
+                    definitions.Add(definition);
+                }
+            }
+
+            return definitions;
         }
 
 

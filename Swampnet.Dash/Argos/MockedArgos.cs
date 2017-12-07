@@ -12,7 +12,6 @@ namespace Swampnet.Dash.Argos
     class MockedArgos : IArgos
     {
         private readonly List<DashboardItem> _items = new List<DashboardItem>();
-        private DateTime _lastNewbie = DateTime.MinValue;
         private int _id = 0;
 		private Random _rnd = new Random();
 
@@ -26,17 +25,17 @@ namespace Swampnet.Dash.Argos
             // Clean up finished items
             _items.RemoveAll(x => x.Status == "finished");
 
-            // Real simple. Single item, updates every heartbeat
+            // Generate new items
             if (!_items.Any())
             {
-                Log.Debug("Creating new item");
-                var item = new DashboardItem(++_id);
-                item.Output.Add(new Property("created-on", DateTime.Now));
-                item.Output.Add(new Property("id", item.Id));
-                item.Output.Add(new Property("age", ""));
-                item.Status = "newbie";
-                _items.Add(item);
-                _lastNewbie = DateTime.Now;
+                CreateNewbie();
+            }
+            else
+            {
+                if(_rnd.NextDouble() > 0.95)
+                {
+                    CreateNewbie();
+                }
             }
 
             foreach(var item in _items)
@@ -60,26 +59,39 @@ namespace Swampnet.Dash.Argos
 			return Task.FromResult(result);
         }
 
+
+        private void CreateNewbie()
+        {
+            Log.Debug("Creating new item");
+            var item = new DashboardItem(++_id);
+            item.Output.Add(new Property("created-on", DateTime.Now));
+            item.Output.Add(new Property("id", item.Id));
+            item.Output.Add(new Property("age", ""));
+            item.Status = "newbie";
+            _items.Add(item);
+        }
+
+
         private void Update(DashboardItem item)
         {
             var age = DateTime.Now - item.Output.DateTimeValue("created-on");
-            var ageProperty = item.Output.Get("age");
 
+            //var ageProperty = item.Output.Get("age");
             //ageProperty.Value = age.TotalSeconds.ToString("0.0");
 
-            if (age.TotalSeconds > 150)
+            if (age.TotalSeconds > 50)
             {
                 item.Status = "finished";
             }
-            else if (age.TotalSeconds > 110)
+            else if (age.TotalSeconds > 40)
             {
                 item.Status = "nearly-finished";
             }
-            else if (age.TotalSeconds > 80)
+            else if (age.TotalSeconds > 30)
             {
                 item.Status = "halfway";
             }
-            else if (age.TotalSeconds > 45)
+            else if (age.TotalSeconds > 20)
             {
                 item.Status = "in-progress";
             }
@@ -87,7 +99,6 @@ namespace Swampnet.Dash.Argos
             {
                 item.Status = "pending";
             }
-
         }
     }
 }

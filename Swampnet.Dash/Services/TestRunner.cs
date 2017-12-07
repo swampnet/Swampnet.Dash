@@ -12,7 +12,12 @@ namespace Swampnet.Dash.Services
     {
         private readonly ITestRepository _testRepo;
         private readonly IEnumerable<ITest> _tests;
+
+
+        // [id => DateTime]
+        private readonly Dictionary<string, DateTime> _runtimes = new Dictionary<string, DateTime>();
         private readonly Dictionary<string, TestResult> _state = new Dictionary<string, TestResult>();
+
 
         public TestRunner(ITestRepository testRepo, IEnumerable<ITest> tests)
         {
@@ -24,7 +29,7 @@ namespace Swampnet.Dash.Services
         {
             var testResults = new List<TestResult>();
 
-			foreach(var testdefinition in _testRepo.GetPendingTestDefinitions())
+			foreach(var testdefinition in GetDue())
             {
                 try
                 {
@@ -41,7 +46,10 @@ namespace Swampnet.Dash.Services
                         test.GetType().Name,
                         testdefinition.Id);
 
-                    _testRepo.UpdateLastRun(testdefinition);
+                    lock (_runtimes)
+                    {
+                        _runtimes[testdefinition.Id] = DateTime.UtcNow;
+                    }
 
                     await SaveTestResultsAsync(testResults);
                 }
@@ -98,6 +106,29 @@ namespace Swampnet.Dash.Services
             }
 
             return Task.CompletedTask;
+        }
+
+
+        public IEnumerable<TestDefinition> GetDue()
+        {
+            var testDefinitions = new List<TestDefinition>();
+
+            foreach (var testDefinition in _testRepo.GetDefinitions())
+            {
+                DateTime lastRun;
+                if (!_runtimes.ContainsKey(testDefinition.Id))
+                {
+                    _runtimes.Add(testDefinition.Id, DateTime.MinValue);
+                }
+                lastRun = _runtimes[testDefinition.Id];
+
+                if (lastRun.Add(testDefinition.Heartbeat) < DateTime.UtcNow)
+                {
+                    testDefinitions.Add(testDefinition);
+                }
+            }
+
+            return testDefinitions;
         }
 
     }

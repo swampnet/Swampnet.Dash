@@ -7,8 +7,6 @@ namespace Swampnet.Dash.Common.Interfaces
 {
     public interface ITestRepository
     {
-        IEnumerable<TestDefinition> GetTestDefinitions();
-        IEnumerable<TestDefinition> GetPendingTestDefinitions();
-        void UpdateLastRun(TestDefinition test);
+        IEnumerable<TestDefinition> GetDefinitions();
     }
 }

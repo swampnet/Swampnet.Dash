@@ -24,12 +24,12 @@ namespace Swampnet.Dash.Service.Controllers
 
         public IHttpActionResult Get()
         {
-			return Ok(_testRepo.GetTestDefinitions());
+			return Ok(_testRepo.GetDefinitions());
         }
 
 		public IHttpActionResult Get(string id)
 		{
-			return Ok(_testRepo.GetTestDefinitions().Single(d => d.Id == id));
+			return Ok(_testRepo.GetDefinitions().Single(d => d.Id == id));
 		}
     }
 }
