@@ -12,10 +12,6 @@ namespace Swampnet.Dash.Services
     {
         private readonly ITestRepository _testRepo;
         private readonly IEnumerable<ITest> _tests;
-
-
-        // [id => DateTime]
-        private readonly Dictionary<string, DateTime> _runtimes = new Dictionary<string, DateTime>();
         private readonly Dictionary<string, TestResult> _state = new Dictionary<string, TestResult>();
 
 
@@ -24,6 +20,7 @@ namespace Swampnet.Dash.Services
             _testRepo = testRepo;
             _tests = tests;
         }
+
 
         public async Task<IEnumerable<TestResult>> RunAsync()
         {
@@ -37,7 +34,10 @@ namespace Swampnet.Dash.Services
 
 					Validate(testdefinition, test.Meta);
 
+                    Log.Debug("Running test {type}", test.GetType().Name);
+
                     var rs = await test.RunAsync(testdefinition);
+
                     rs.TestId = testdefinition.Id;
 
 					testResults.Add(rs);
@@ -45,11 +45,6 @@ namespace Swampnet.Dash.Services
 					Log.Information("{test} '{id}' " + rs,
                         test.GetType().Name,
                         testdefinition.Id);
-
-                    lock (_runtimes)
-                    {
-                        _runtimes[testdefinition.Id] = DateTime.UtcNow;
-                    }
 
                     await SaveTestResultsAsync(testResults);
                 }
@@ -65,7 +60,6 @@ namespace Swampnet.Dash.Services
                 }
             }
         
-
             return testResults;
         }
 
@@ -111,24 +105,25 @@ namespace Swampnet.Dash.Services
 
         public IEnumerable<TestDefinition> GetDue()
         {
-            var testDefinitions = new List<TestDefinition>();
+            var definitions = new List<TestDefinition>();
 
-            foreach (var testDefinition in _testRepo.GetDefinitions())
+            foreach (var definition in _testRepo.GetDefinitions())
             {
-                DateTime lastRun;
-                if (!_runtimes.ContainsKey(testDefinition.Id))
+                // Never been run
+                if (!_state.ContainsKey(definition.Id))
                 {
-                    _runtimes.Add(testDefinition.Id, DateTime.MinValue);
+                    definitions.Add(definition);
                 }
-                lastRun = _runtimes[testDefinition.Id];
-
-                if (lastRun.Add(testDefinition.Heartbeat) < DateTime.UtcNow)
+                else
                 {
-                    testDefinitions.Add(testDefinition);
+                    if (_state[definition.Id].TimestampUtc.Add(definition.Heartbeat) < DateTime.UtcNow)
+                    {
+                        definitions.Add(definition);
+                    }
                 }
             }
 
-            return testDefinitions;
+            return definitions;
         }
 
     }

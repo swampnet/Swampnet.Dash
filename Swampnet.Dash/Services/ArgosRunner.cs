@@ -15,7 +15,7 @@ namespace Swampnet.Dash.Services
         private readonly IArgosRepository _argosRepo;
 
         // [argos-definition-id] -> argos
-        private readonly Dictionary<string, ArgosResult> _lastResults = new Dictionary<string, ArgosResult>();
+        private readonly Dictionary<string, ArgosResult> _state = new Dictionary<string, ArgosResult>();
 
 
         public ArgosRunner(IArgosRepository argosRepo, IEnumerable<IArgos> argos)
@@ -35,14 +35,14 @@ namespace Swampnet.Dash.Services
 				try
 				{
                     ArgosResult lastRun;
-                    if (_lastResults.ContainsKey(definition.Id))
+                    if (_state.ContainsKey(definition.Id))
                     {
-                        lastRun = _lastResults[definition.Id];
+                        lastRun = _state[definition.Id];
                     }
                     else
                     {
                         lastRun = new ArgosResult();
-                        _lastResults.Add(definition.Id, lastRun);
+                        _state.Add(definition.Id, lastRun);
                     }
 
                     var argos = _argos.Single(t => t.GetType().Name == definition.Type);
@@ -66,7 +66,7 @@ namespace Swampnet.Dash.Services
                         items.Add(rs);
                     }
 
-                    _lastResults[definition.Id] = rs;
+                    _state[definition.Id] = rs;
                 }
                 catch (Exception ex)
                 {
@@ -85,13 +85,13 @@ namespace Swampnet.Dash.Services
             foreach (var definition in _argosRepo.GetDefinitions())
             {
                 // Never been run
-                if (!_lastResults.ContainsKey(definition.Id))
+                if (!_state.ContainsKey(definition.Id))
                 {
                     definitions.Add(definition);
                 }
                 else
                 {
-                    var lastResult = _lastResults[definition.Id];
+                    var lastResult = _state[definition.Id];
                     if (lastResult.TimestampUtc.Add(definition.Heartbeat) < DateTime.UtcNow)
                     {
                         definitions.Add(definition);
@@ -106,8 +106,8 @@ namespace Swampnet.Dash.Services
 
         public Task<ArgosResult> GetState(string id)
         {
-            ArgosResult rs = _lastResults.ContainsKey(id)
-                ? _lastResults[id]
+            ArgosResult rs = _state.ContainsKey(id)
+                ? _state[id]
                 : null;
 
             return Task.FromResult(rs);
