@@ -18,62 +18,76 @@ namespace Swampnet.Dash.Argos
 
         public Task<ArgosResult> RunAsync(ArgosDefinition argosDefinition)
         {
+            Log.Debug("MockedArgos - RunAsync");
+
             var result = new ArgosResult();
             result.ArgosId = argosDefinition.Id;
 
             // Clean up finished items
             _items.RemoveAll(x => x.Status == "finished");
 
-            if (_lastNewbie < DateTime.Now.AddSeconds(-20))
+            // Real simple. Single item, updates every heartbeat
+            if (!_items.Any())
             {
-				if(_rnd.Next(100) > 50)
-				{
-					Log.Debug("Creating new item");
-					var item = new DashboardItem(++_id);
-					item.Output.Add(new Property("CreatedOn", DateTime.Now));
-					item.Output.Add(new Property("Id", item.Id));
-					item.Output.Add(new Property("age", ""));
-					item.Status = "newbie";
-					_items.Add(item);
-					_lastNewbie = DateTime.Now;
-				}
-			}
-
-
-            foreach (var item in _items)
-            {
-                var age = DateTime.Now - item.Output.DateTimeValue("CreatedOn");
-				
-				// This *should* trigger an update every heartbeat
-				item.Output.Get("age").Value = age.TotalSeconds.ToString();
-
-                if (age.TotalSeconds > 150)
-                {
-                    item.Status = "finished";
-                }
-                else if (age.TotalSeconds > 110)
-                {
-                    item.Status = "nearly-finished";
-                }
-                else if (age.TotalSeconds > 80)
-                {
-                    item.Status = "halfway";
-                }
-                else if (age.TotalSeconds > 45)
-                {
-                    item.Status = "in-progress";
-                }
-                else if(age.TotalSeconds > 10)
-                {
-                    item.Status = "pending";
-                }
+                Log.Debug("Creating new item");
+                var item = new DashboardItem(++_id);
+                item.Output.Add(new Property("created-on", DateTime.Now));
+                item.Output.Add(new Property("id", item.Id));
+                item.Output.Add(new Property("age", ""));
+                item.Status = "newbie";
+                _items.Add(item);
+                _lastNewbie = DateTime.Now;
             }
 
-            result.Items = _items.ToArray();
+            foreach(var item in _items)
+            {
+                Update(item);
+            }
 
-			Log.Debug("{type} - RunAsync {id} ({count})", this.GetType().Name, result.ArgosId, result.Items.Count());
+            // Nggg, return a copy not our actual items...
+            result.Items = _items.Select(i => new DashboardItem() {
+                Id = i.Id,
+                Status = i.Status,
+                TimestampUtc = i.TimestampUtc,
+                Output = i.Output.Select(o => new Property()
+                {
+                    Category = o.Category,
+                    Name = o.Name,
+                    Value = o.Value
+                }).ToList()
+            }).ToArray();
 
 			return Task.FromResult(result);
+        }
+
+        private void Update(DashboardItem item)
+        {
+            var age = DateTime.Now - item.Output.DateTimeValue("created-on");
+            var ageProperty = item.Output.Get("age");
+
+            //ageProperty.Value = age.TotalSeconds.ToString("0.0");
+
+            if (age.TotalSeconds > 150)
+            {
+                item.Status = "finished";
+            }
+            else if (age.TotalSeconds > 110)
+            {
+                item.Status = "nearly-finished";
+            }
+            else if (age.TotalSeconds > 80)
+            {
+                item.Status = "halfway";
+            }
+            else if (age.TotalSeconds > 45)
+            {
+                item.Status = "in-progress";
+            }
+            else if (age.TotalSeconds > 10)
+            {
+                item.Status = "pending";
+            }
+
         }
     }
 }
