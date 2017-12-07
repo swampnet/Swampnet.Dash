@@ -47,7 +47,8 @@ namespace Swampnet.Dash.Service.Controllers
 		[HttpGet]
 		public async Task<IHttpActionResult> GetState(string id)
 		{
-            List<DashboardItem> states = new List<DashboardItem>();
+            // @TODO: Yeah, way too much going on in here. Farm all this off to another service or something.
+            var states = new List<DashboardItem>();
 
             var dashboard = await _dashRepo.GetDashboardAsync(id);
 

@@ -13,16 +13,14 @@ namespace Swampnet.Dash.Services
 	internal class ArgosRunner : IArgosRunner
 	{
         private readonly IEnumerable<IArgos> _argos;
-        private readonly IArgosRepository _argosRepo;
-
-        // [argos-definition-id] -> argos
+        private readonly IArgosRepository _argosRepository;
         private readonly Dictionary<string, ArgosResult> _state = new Dictionary<string, ArgosResult>();
 
 
         public ArgosRunner(IArgosRepository argosRepo, IEnumerable<IArgos> argos)
         {
             _argos = argos;
-            _argosRepo = argosRepo;
+            _argosRepository = argosRepo;
         }
 
 
@@ -77,7 +75,7 @@ namespace Swampnet.Dash.Services
         {
             var definitions = new List<ArgosDefinition>();
 
-            foreach (var definition in _argosRepo.GetDefinitions())
+            foreach (var definition in _argosRepository.GetDefinitions())
             {
                 // Never been run
                 if (!_state.ContainsKey(definition.Id))

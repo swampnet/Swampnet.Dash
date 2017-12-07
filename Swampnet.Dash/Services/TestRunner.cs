@@ -10,57 +10,71 @@ namespace Swampnet.Dash.Services
 {
 	class TestRunner : ITestRunner
     {
-        private readonly ITestRepository _testRepo;
+        private readonly ITestRepository _testRepository;
         private readonly IEnumerable<ITest> _tests;
         private readonly Dictionary<string, TestResult> _state = new Dictionary<string, TestResult>();
 
 
         public TestRunner(ITestRepository testRepo, IEnumerable<ITest> tests)
         {
-            _testRepo = testRepo;
+            _testRepository = testRepo;
             _tests = tests;
         }
 
 
         public async Task<IEnumerable<TestResult>> RunAsync()
         {
-            var testResults = new List<TestResult>();
+            var results = new List<TestResult>();
 
-			foreach(var testdefinition in GetDue())
+            //Parallel.ForEach(GetDue(), testDefinition => { });
+			foreach(var definition in GetDue())
             {
                 try
                 {
-                    var test = _tests.Single(t => t.GetType().Name == testdefinition.Type);
+                    var test = _tests.Single(t => t.GetType().Name == definition.Type);
 
-					Validate(testdefinition, test.Meta);
+					Validate(definition, test.Meta);
 
                     Log.Debug("Running test {type}", test.GetType().Name);
 
-                    var rs = await test.RunAsync(testdefinition);
+                    var rs = await test.RunAsync(definition);
 
-                    rs.TestId = testdefinition.Id;
+                    rs.TestId = definition.Id;
 
-					testResults.Add(rs);
+                    lock (results)
+                    {
+                        results.Add(rs);
+                    }
 
-					Log.Information("{test} '{id}' " + rs,
+                    Log.Information("{test} '{id}' " + rs,
                         test.GetType().Name,
-                        testdefinition.Id);
-
-                    await SaveTestResultsAsync(testResults);
+                        definition.Id);
                 }
                 catch (Exception ex)
                 {
 					Log.Error(ex, ex.Message);
-
-					testResults.Add(new TestResult() {
-						Status = "error",
-						TestId = testdefinition.Id,
-						TimestampUtc = DateTime.UtcNow
-					});
                 }
             }
-        
-            return testResults;
+
+
+            // Save state
+            foreach (var testResult in results)
+            {
+                if (_state.ContainsKey(testResult.TestId))
+                {
+                    _state[testResult.TestId] = testResult;
+                }
+                else
+                {
+                    _state.Add(testResult.TestId, testResult);
+                }
+            }
+
+            // @TODO: So, if we're actually writing stuff away to the db as part of this, then it might take a while: We might be
+            //        better off queing it up for later.
+
+
+            return results;
         }
 
 
@@ -82,32 +96,12 @@ namespace Swampnet.Dash.Services
 			}
 		}
 
-        private Task SaveTestResultsAsync(IEnumerable<TestResult> testResults)
-        {
-            foreach (var testResult in testResults)
-            {
-                lock (_state)
-                {
-                    if (_state.ContainsKey(testResult.TestId))
-                    {
-                        _state[testResult.TestId] = testResult;
-                    }
-                    else
-                    {
-                        _state.Add(testResult.TestId, testResult);
-                    }
-                }
-            }
-
-            return Task.CompletedTask;
-        }
-
 
         public IEnumerable<TestDefinition> GetDue()
         {
             var definitions = new List<TestDefinition>();
 
-            foreach (var definition in _testRepo.GetDefinitions())
+            foreach (var definition in _testRepository.GetDefinitions())
             {
                 // Never been run
                 if (!_state.ContainsKey(definition.Id))
