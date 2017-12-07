@@ -6,13 +6,13 @@ using System.Linq;
 
 namespace Swampnet.Dash.Client.Wpf.ViewModels
 {
-	class DashItemViewModel : BindableBase
+	class DashboardItemViewModel : BindableBase
 	{
 		private readonly IEnumerable<Meta> _meta;
 		private DashboardItem _dashItem;
 		private readonly string _id;
 
-		public DashItemViewModel(object id, IEnumerable<Meta> meta)
+		public DashboardItemViewModel(object id, IEnumerable<Meta> meta)
 		{
 			_meta = meta;
 			_id = id.ToString();
@@ -27,6 +27,12 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
 		public string Id => _id;
 		public DateTime? Timestamp => _dashItem?.TimestampUtc;
 		public string Status => _dashItem?.Status;
+
+		public string Group
+		{
+			get { return GetValue("group"); }
+		}
+
 
 		public string Main
 		{
@@ -109,7 +115,7 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
 
 		private string Format(string type, string format, string value)
 		{
-			if (!string.IsNullOrEmpty(format))
+			if (!string.IsNullOrEmpty(format) && !string.IsNullOrEmpty(value))
 			{
 				switch (type.ToLowerInvariant())
 				{

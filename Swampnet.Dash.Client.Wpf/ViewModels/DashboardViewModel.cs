@@ -25,11 +25,12 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
 		private readonly IHubProxy _proxy;
 		private readonly TaskFactory _uiFactory;
 
-		private readonly ObservableCollection<DashItemViewModel> _items = new ObservableCollection<DashItemViewModel>();
+		private readonly ObservableCollection<DashboardItemViewModel> _items = new ObservableCollection<DashboardItemViewModel>();
 		private readonly string _dashName;
 		private Dashboard _dashboard;
 
-		public IEnumerable<DashItemViewModel> Items => _items;
+		public IEnumerable<DashboardItemViewModel> Items => _items;
+
 
 
 		private DateTime _lastUpdate;
@@ -81,7 +82,7 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
                     {
                         metaData = test.MetaData;
                     }
-                    dashItem = new DashItemViewModel(di.Id, metaData);
+                    dashItem = new DashboardItemViewModel(di.Id, metaData);
                     _items.Add(dashItem);
                 }
                 dashItem.Update(di);
@@ -170,7 +171,7 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
 			{
 				foreach (var item in _dashboard.Tests)
 				{
-					_items.Add(new DashItemViewModel(item.Id, item.MetaData));
+					_items.Add(new DashboardItemViewModel(item.Id, item.MetaData));
 				}
 			}
 		}

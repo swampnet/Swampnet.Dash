@@ -17,8 +17,6 @@ namespace Swampnet.Dash.Argos
 
         public Task<ArgosResult> RunAsync(ArgosDefinition argosDefinition)
         {
-            Log.Debug("MockedArgos - RunAsync");
-
             var result = new ArgosResult();
             result.ArgosId = argosDefinition.Id;
 
@@ -32,7 +30,7 @@ namespace Swampnet.Dash.Argos
             }
             else
             {
-                if(_rnd.NextDouble() > 0.95)
+                if(_rnd.NextDouble() < 0.3)
                 {
                     CreateNewbie();
                 }
@@ -62,17 +60,17 @@ namespace Swampnet.Dash.Argos
 
         private void CreateNewbie()
         {
-            Log.Debug("Creating new item");
             var item = new DashboardItem(++_id);
             item.Output.Add(new Property("created-on", DateTime.Now));
             item.Output.Add(new Property("id", item.Id));
             item.Output.Add(new Property("age", ""));
             item.Status = "newbie";
             _items.Add(item);
-        }
+			Log.Debug("Creating new item: {id}", item.Id);
+		}
 
 
-        private void Update(DashboardItem item)
+		private void Update(DashboardItem item)
         {
             var age = DateTime.Now - item.Output.DateTimeValue("created-on");
 

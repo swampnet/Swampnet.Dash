@@ -52,9 +52,9 @@ namespace Swampnet.Dash.Services
                     
                     if (!Compare.ArgosResults(rs, lastRun))
                     {
-                        Log.Information("{argos} '{id}' Has changed: " + rs,
-                            argos.GetType().Name,
-                            definition.Id);
+                        //Log.Information("{argos} '{id}' Has changed: " + rs,
+                        //    argos.GetType().Name,
+                        //    definition.Id);
 
                         items.Add(rs);
                     }

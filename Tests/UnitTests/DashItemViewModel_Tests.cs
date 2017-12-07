@@ -12,20 +12,43 @@ namespace UnitTests
 		[TestMethod]
 		public void TestMethod1()
 		{
-			//var vm = new DashItemViewModel(new DashItemMeta()
-			//{
-			//	Id = "test-id",
-			//	Description = "test-dash-item-meta",
-			//	Meta = new List<Meta>()
-			//	{
-			//		new Meta("test", "static", "main")
-			//	}
-			//});
+			var vm = new DashboardItemViewModel("test-id", new[]
+			{
+				new Meta()
+				{
+					Name = "test",
+					Region = "main",
+					Type = "static"
+				}
+			});
 
-			//var expected = "test";
-			//var actual = vm.Main;
+			var expected = "test";
+			var actual = vm.Main;
 
-			//Assert.AreEqual(expected, actual);
+			Assert.AreEqual(expected, actual);
 		}
+
+		[TestMethod]
+		public void TestMethod2()
+		{
+			var vm = new DashboardItemViewModel("test-id", new[]
+			{
+				new Meta()
+				{
+					Name = "status",
+					Region = "group"
+				}
+			});
+
+			vm.Update(new DashboardItem() {
+				Status = "test-status"
+			});
+
+			var expected = "test-status";
+			var actual = vm.Group;
+
+			Assert.AreEqual(expected, actual);
+		}
+
 	}
 }

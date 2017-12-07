@@ -35,7 +35,7 @@ namespace Swampnet.Dash.Services
 
 					Validate(definition, test.Meta);
 
-                    Log.Debug("Running test {type}", test.GetType().Name);
+                    //Log.Debug("Running test {type}", test.GetType().Name);
 
                     var rs = await test.RunAsync(definition);
 
@@ -46,9 +46,9 @@ namespace Swampnet.Dash.Services
                         results.Add(rs);
                     }
 
-                    Log.Information("{test} '{id}' " + rs,
-                        test.GetType().Name,
-                        definition.Id);
+                    //Log.Information("{test} '{id}' " + rs,
+                    //    test.GetType().Name,
+                    //    definition.Id);
                 }
                 catch (Exception ex)
                 {
