@@ -1,22 +1,35 @@
-﻿using Serilog;
-using Swampnet.Dash.Common.Entities;
+﻿using Swampnet.Dash.Common.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Swampnet.Dash.Services
+namespace Swampnet.Dash.Common
 {
-    class ArgosResultComparer
+    // So, why not just override .Equals() & GetHash() ?
+    //
+    //  Well - It's not a true equality comparer. We deliberately ignore some properties (eg, Timestamp) and in the future
+    //  we might decide to ignore things like case on some or all of the properties.
+    //  With that in mind, I thought that .Equals() wasn't a good fit / could have been confusing.
+    //
+    // @TODO: Would this be better off as extensions over the various entities?
+    public static class Compare
     {
-        public bool IsEqual(ArgosResult lhs, ArgosResult rhs)
+        /// <summary>
+        /// Compare two ArgosResults
+        /// </summary>
+        /// <param name="lhs"></param>
+        /// <param name="rhs"></param>
+        /// <returns>true if lhs and rhs are equal</returns>
+        public static bool ArgosResults(ArgosResult lhs, ArgosResult rhs)
         {
             return lhs.ArgosId == rhs.ArgosId
                 && IsEqual(lhs.Items, rhs.Items);
         }
 
-        private bool IsEqual(IEnumerable<DashboardItem> lhs, IEnumerable<DashboardItem> rhs)
+
+        private static bool IsEqual(IEnumerable<DashboardItem> lhs, IEnumerable<DashboardItem> rhs)
         {
             if((lhs != null && rhs == null) || (lhs == null && rhs != null))
             {
@@ -32,7 +45,7 @@ namespace Swampnet.Dash.Services
             var y = rhs.OrderBy(d => d.Id).ToArray();
             for (int i = 0; i < x.Length; i++)
             {
-                if (!IsEqual(x[i], y[i]))
+                if (!Compare.DashboardItems(x[i], y[i]))
                 {
                     return false;
                 }
@@ -41,9 +54,15 @@ namespace Swampnet.Dash.Services
             return true;
         }
 
-        private bool IsEqual(DashboardItem lhs, DashboardItem rhs)
+
+        public static bool DashboardItems(DashboardItem lhs, DashboardItem rhs)
         {
             if (lhs.Id != rhs.Id || lhs.Status != rhs.Status)
+            {
+                return false;
+            }
+
+            if(!IsEqual(lhs.Output, rhs.Output))
             {
                 return false;
             }
@@ -52,7 +71,7 @@ namespace Swampnet.Dash.Services
         }
 
 
-        private bool IsEqual(IEnumerable<Property> lhs, IEnumerable<Property> rhs)
+        private static bool IsEqual(IEnumerable<Property> lhs, IEnumerable<Property> rhs)
         {
             if ((lhs != null && rhs == null) || (lhs == null && rhs != null))
             {
@@ -68,7 +87,7 @@ namespace Swampnet.Dash.Services
             var y = rhs.OrderBy(d => d.Category).ThenBy(d => d.Name).ToArray();
             for (int i = 0; i < x.Length; i++)
             {
-                if (!IsEqual(x[i], y[i]))
+                if (!Compare.Properties(x[i], y[i]))
                 {
                     return false;
                 }
@@ -77,13 +96,12 @@ namespace Swampnet.Dash.Services
             return true;
         }
 
-        private bool IsEqual(Property lhs, Property rhs)
+        public static bool Properties(Property lhs, Property rhs)
         {
             if (lhs.Category != rhs.Category
                 || lhs.Name != rhs.Name
                 || lhs.Value != rhs.Value)
             {
-                Log.Debug($"IsEqual-False (Property Category/Name/Value)");
                 return false;
             }
 

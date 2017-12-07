@@ -1,14 +1,15 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Swampnet.Dash.Common.Entities;
+using Swampnet.Dash.Common;
 
 namespace UnitTests
 {
 	[TestClass]
-	public class DashboardItem_Tests
+	public class Compare_Tests
 	{
 		[TestMethod]
-		public void DashboardItem_Equals_01()
+		public void Compare_DashboardItem_01()
 		{
 			var lhs = new DashboardItem()
 			{
@@ -36,12 +37,12 @@ namespace UnitTests
 				}
 			};
 
-			Assert.IsTrue(lhs.Equals(rhs));
+			Assert.IsTrue(Compare.DashboardItems(lhs, rhs));
 		}
 
 
 		[TestMethod]
-		public void DashboardItem_Equals_02()
+		public void Compare_DashboardItem_02()
 		{
 			var lhs = new DashboardItem()
 			{
@@ -70,13 +71,13 @@ namespace UnitTests
 				}
 			};
 
-			Assert.IsTrue(lhs.Equals(rhs));
-		}
+            Assert.IsTrue(Compare.DashboardItems(lhs, rhs));
+        }
 
 
-		// Different property value
-		[TestMethod]
-		public void DashboardItem_Equals_03()
+        // Different property value
+        [TestMethod]
+		public void Compare_DashboardItem_03()
 		{
 			var lhs = new DashboardItem()
 			{
@@ -104,8 +105,53 @@ namespace UnitTests
 				}
 			};
 
-			Assert.IsFalse(lhs.Equals(rhs));
-		}
+            Assert.IsFalse(Compare.DashboardItems(lhs, rhs));
+        }
 
-	}
+
+        [TestMethod]
+        public void Property_Equals_01()
+        {
+            var lhs = new Property() { Category = "cat", Name = "name", Value = "val" };
+            var rhs = new Property() { Category = "cat", Name = "name", Value = "val" };
+
+            Assert.IsTrue(Compare.Properties(lhs, rhs));
+        }
+
+        [TestMethod]
+        public void Property_Equals_NullCategory()
+        {
+            var lhs = new Property() { Category = null, Name = "name", Value = "val" };
+            var rhs = new Property() { Category = null, Name = "name", Value = "val" };
+
+            Assert.IsTrue(Compare.Properties(lhs, rhs));
+        }
+
+        [TestMethod]
+        public void Property_Equals_Different_Category()
+        {
+            var lhs = new Property() { Category = "cat", Name = "name", Value = "val" };
+            var rhs = new Property() { Category = "catX", Name = "name", Value = "val" };
+
+            Assert.IsFalse(Compare.Properties(lhs, rhs));
+        }
+
+        [TestMethod]
+        public void Property_Equals_Different_Name()
+        {
+            var lhs = new Property() { Category = "cat", Name = "name", Value = "val" };
+            var rhs = new Property() { Category = "cat", Name = "nameX", Value = "val" };
+
+            Assert.IsFalse(Compare.Properties(lhs, rhs));
+        }
+
+        [TestMethod]
+        public void Property_Equals_Different_Value()
+        {
+            var lhs = new Property() { Category = "cat", Name = "name", Value = "val" };
+            var rhs = new Property() { Category = "cat", Name = "name", Value = "valX" };
+
+            Assert.IsFalse(Compare.Properties(lhs, rhs));
+        }
+    }
 }

@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Swampnet.Dash.Common.Entities;
 using Serilog;
+using Swampnet.Dash.Common;
 
 namespace Swampnet.Dash.Services
 {
@@ -50,9 +51,8 @@ namespace Swampnet.Dash.Services
                     //Validate(testdefinition, test.Meta);
 
                     var rs = await argos.RunAsync(definition);
-
-                    var comparer = new ArgosResultComparer();
-                    if (!comparer.IsEqual(rs, lastRun))
+                    
+                    if (!Compare.ArgosResults(rs, lastRun))
                     {
                         Log.Information("{argos} '{id}' Has changed: " + rs,
                             argos.GetType().Name,
