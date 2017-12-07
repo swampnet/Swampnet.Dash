@@ -51,13 +51,8 @@ namespace Swampnet.Dash.Services
 
                     var rs = await argos.RunAsync(definition);
 
-                    // Only add to our results if something has changed
-                    // @TODO: We *might* want to only update if something we have mapped in meta data has changed...
-                    //          eg: We might be returning a 'timestamp' property that *will* change each heartbeat, but we don't have it mapped to anything
-                    //              so we don't really care if it changes or not. (rememmber, this is telling the client something has updated. If the client 
-                    //              isn't interested in any of the stuff that's changed then we don't need to broadcast it.)
-                    //              - That screws our equality comparer implementation doesn't it...
-                    if (!rs.Equals(lastRun))
+                    var comparer = new ArgosResultComparer();
+                    if (!comparer.IsEqual(rs, lastRun))
                     {
                         Log.Information("{argos} '{id}' Has changed: " + rs,
                             argos.GetType().Name,
@@ -103,7 +98,7 @@ namespace Swampnet.Dash.Services
         }
 
 
-
+        // @TODO: Does this really belong in here?
         public Task<ArgosResult> GetState(string id)
         {
             ArgosResult rs = _state.ContainsKey(id)
