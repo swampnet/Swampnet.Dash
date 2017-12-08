@@ -19,23 +19,22 @@
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
                     <!-- 
-                            Just switching the orientation here isn't going to be good enough. Pretty sure we're going to end up 
-                            with separate horizontal / vertical templates here...
-                        -->
+                        Just switching the orientation here isn't going to be good enough. Pretty sure we're going to end up 
+                        with separate horizontal / vertical templates here...
+                    -->
                     <StackPanel Orientation="{Binding Orientation}"/>
                 </ItemsPanelTemplate>
             </ItemsControl.ItemsPanel>
-            <ItemsControl.ItemTemplate>
-                <DataTemplate>
+			<ItemsControl.ItemTemplate>
+				<DataTemplate>
                     <!-- Group -->
-                    <Border BorderBrush="Black" BorderThickness="0.5" MinWidth="70" Margin="2">
-                        <Grid Background="White">
+                    <Border MinWidth="100" Margin="5">
+                        <Grid>
                             <Grid.Resources>
                                 <!-- Sort by Order, then Timestamp -->
                                 <CollectionViewSource x:Key="viewSource" Source="{Binding Items}">
                                     <CollectionViewSource.SortDescriptions>
-                                        <scm:SortDescription PropertyName="Order" />
-                                        <scm:SortDescription PropertyName="Timestamp" Direction="Descending" />
+                                        <scm:SortDescription PropertyName="Order" Direction="Ascending" />
                                     </CollectionViewSource.SortDescriptions>
                                 </CollectionViewSource>
                             </Grid.Resources>

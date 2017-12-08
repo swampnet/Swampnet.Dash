@@ -26,7 +26,18 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
         public string Id { get; private set; }
         public DateTime? Timestamp => _dashItem?.TimestampUtc;
 		public string Status => _dashItem?.Status;
-        public string Order => _dashItem?.Order;
+		public string Order
+		{
+			get
+			{
+				var value = GetValue("order");
+				if (string.IsNullOrEmpty(value))
+				{
+					value = _dashItem?.Order; // @todo: Possibly the other way round? Use dashItem.Order first, falling back to mapping? Dunno.
+				}
+				return value;
+			}
+		}
 
 		public string Group
 		{
