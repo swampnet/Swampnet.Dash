@@ -10,12 +10,11 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
 	{
 		private readonly IEnumerable<Meta> _meta;
 		private DashboardItem _dashItem;
-		private readonly string _id;
 
 		public DashboardItemViewModel(object id, IEnumerable<Meta> meta)
 		{
 			_meta = meta;
-			_id = id.ToString();
+            Id = id.ToString();
 		}
 
 		public void Update(DashboardItem dashItem)
@@ -24,8 +23,8 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
 			RaisePropertyChanged("");
 		}
 
-		public string Id => _id;
-		public DateTime? Timestamp => _dashItem?.TimestampUtc;
+        public string Id { get; private set; }
+        public DateTime? Timestamp => _dashItem?.TimestampUtc;
 		public string Status => _dashItem?.Status;
         public string Order => _dashItem?.Order;
 

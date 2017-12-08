@@ -17,11 +17,9 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
 	{
         private const string UPDATE_MESSAGE = "Update";
         private const string REFRESH_MESSAGE = "Refresh";
-        private const string DASHBOARD_HUB = "DashboardHub";
 
         private readonly string _dashName;
-        private readonly HubConnection _hubConnection;
-		private readonly IHubProxy _proxy;
+        private readonly DashboardHub _hub;
 		private readonly TaskFactory _uiFactory;
 
 		private Dashboard _dashboard;
@@ -37,8 +35,7 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
 
             // Construct a TaskFactory that uses the UI thread's context
             _uiFactory = new TaskFactory(TaskScheduler.FromCurrentSynchronizationContext());
-            _hubConnection = new HubConnection("http://localhost:8080/");
-            _proxy = _hubConnection.CreateHubProxy(DASHBOARD_HUB);
+            _hub = new DashboardHub(dash);
 
             InitialiseDash(dash);
 		}
@@ -183,7 +180,7 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
             return metaData;
         }
 
-
+        // @todo: So this is quite a chunky method. We can probably split it up a bit.
         private async void InitialiseDash(string dashId)
 		{
             try
@@ -231,29 +228,17 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
                 var dashItems = await Api.GetDashState(dashId);
                 Update(dashItems);
 
-                // Hook up SignalR
-                _hubConnection.Closed += HubConnectionClosed;
-                _hubConnection.ConnectionSlow += HubConnectionConnectionSlow;
-                _hubConnection.Error += HubConnectionError;
-                _hubConnection.Received += HubConnectionReceived;
-                _hubConnection.Reconnected += HubConnectionReconnected;
-                _hubConnection.Reconnecting += HubConnectionReconnecting;
-                _hubConnection.StateChanged += HubConnectionStateChanged;
-
-                _proxy.On(UPDATE_MESSAGE, (IEnumerable<DashboardItem> di) => _uiFactory.StartNew(() =>
+                _hub.Proxy.On(UPDATE_MESSAGE, (IEnumerable<DashboardItem> di) => _uiFactory.StartNew(() =>
                 {
                     Update(di, false);
                 }));
 
-                _proxy.On(REFRESH_MESSAGE, (IEnumerable<DashboardItem> di) => _uiFactory.StartNew(() =>
+                _hub.Proxy.On(REFRESH_MESSAGE, (IEnumerable<DashboardItem> di) => _uiFactory.StartNew(() =>
                 {
                     Update(di, true);
                 }));
 
-                // Connect to server and join a group based on the dashboard id
-                await _hubConnection.Start()
-                        .ContinueWith((x) => _proxy.Invoke("JoinGroup", dashId))
-                        ;
+                _hub.Start();
 
                 LastUpdate = DateTime.Now;
             }
@@ -268,59 +253,10 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
         }
 
 
-        #region SignalR Events
-
-        private void HubConnectionStateChanged(StateChange obj)
-        {
-            Log.Debug("HubConnectionStateChanged {oldState} -> {newState}", obj.OldState, obj.NewState);
-        }
-
-        private void HubConnectionReconnecting()
-        {
-            Log.Debug("HubConnectionReconnecting");
-        }
-
-        private void HubConnectionReconnected()
-        {
-            Log.Debug("HubConnectionReconnected");
-        }
-
-        private void HubConnectionReceived(string obj)
-        {
-            Log.Debug("HubConnectionReceived"); // 'obj' is the entire message
-        }
-
-        private void HubConnectionError(Exception ex)
-        {
-            Log.Error(ex, "HubConnectionError");
-        }
-
-        private void HubConnectionConnectionSlow()
-        {
-            Log.Debug("HubConnectionConnectionSlow");
-        }
-
-        private void HubConnectionClosed()
-        {
-            Log.Debug("HubConnectionClosed");
-        }
-
-        #endregion
 
         public void Dispose()
         {
-            if (_hubConnection != null)
-            {
-                _hubConnection.Closed -= HubConnectionClosed;
-                _hubConnection.ConnectionSlow -= HubConnectionConnectionSlow;
-                _hubConnection.Error -= HubConnectionError;
-                _hubConnection.Received -= HubConnectionReceived;
-                _hubConnection.Reconnected -= HubConnectionReconnected;
-                _hubConnection.Reconnecting -= HubConnectionReconnecting;
-                _hubConnection.StateChanged -= HubConnectionStateChanged;
-
-                _hubConnection.Dispose();
-            }
+            _hub?.Dispose();
         }
     }
 }

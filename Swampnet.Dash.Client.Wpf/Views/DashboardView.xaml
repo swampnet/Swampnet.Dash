@@ -48,7 +48,7 @@
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
                                         <!-- Item -->
-                                        <local:DashItemView Margin="10"/>
+                                        <local:DashboardItemView Margin="10"/>
                                     </DataTemplate>
                                 </ItemsControl.ItemTemplate>
                             </ItemsControl>
