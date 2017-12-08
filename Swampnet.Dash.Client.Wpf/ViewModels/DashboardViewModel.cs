@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNet.SignalR.Client;
-using Newtonsoft.Json;
 using Prism.Mvvm;
 using Serilog;
 using Swampnet.Dash.Common.Entities;
@@ -7,8 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Swampnet.Dash.Client.Wpf.ViewModels
@@ -25,13 +22,11 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
 		private readonly IHubProxy _proxy;
 		private readonly TaskFactory _uiFactory;
 
-		//private readonly ObservableCollection<DashboardItemViewModel> _items = new ObservableCollection<DashboardItemViewModel>();
 		private readonly string _dashName;
 		private Dashboard _dashboard;
         private ObservableCollection<DashboardGroupViewModel> _groups;
         private IEnumerable<DashboardGroupViewModel> _defaultGroups;
 
-        //public IEnumerable<DashboardItemViewModel> Items => _items;
         public IEnumerable<DashboardGroupViewModel> Groups => _groups;
 
         private DateTime _lastUpdate;
@@ -45,18 +40,18 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
 
 		public DashboardViewModel(string dash)
 		{
-			// Construct a TaskFactory that uses the UI thread's context
-			_uiFactory = new TaskFactory(TaskScheduler.FromCurrentSynchronizationContext());
+            _dashName = dash;
+
+            // Construct a TaskFactory that uses the UI thread's context
+            _uiFactory = new TaskFactory(TaskScheduler.FromCurrentSynchronizationContext());
 			_hubConnection = new HubConnection("http://localhost:8080/");
 			_proxy = _hubConnection.CreateHubProxy("DashboardHub");
-			_dashName = dash;
 
 			InitialiseDash(dash);
 		}
 
-		public string Name => _dashboard?.Id;
+		public string Id => _dashboard?.Id;
 		public string Description => _dashboard?.Description;
-
 
 		public void Boosh()
 		{
@@ -70,8 +65,7 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
         {
             foreach (var di in source)
             {
-                // @todo: This breaks if we have the same group defined multiple times ( SingleOrDefault thowing a 'multiple results' exception
-                var dashItem = _groups.SelectMany(g => g.Items).SingleOrDefault(d => d.Id == di.Id);
+                var dashItem = _groups.SelectMany(g => g.Items).Where(d => d.Id == di.Id).Distinct().SingleOrDefault();
                 if (dashItem == null)
                 {
                     IEnumerable<Meta> metaData = null;
@@ -219,7 +213,6 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
                 _defaultGroups = _groups.Take(1);
             }
 
-
             RaisePropertyChanged("");
 
             // Set up known dashboard items
@@ -285,28 +278,6 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
 
                 _hubConnection.Dispose();
             }
-        }
-    }
-
-
-    /// <summary>
-    /// Group view model
-    /// </summary>
-    class DashboardGroupViewModel : BindableBase
-    {
-        private readonly ObservableCollection<DashboardItemViewModel> _items = new ObservableCollection<DashboardItemViewModel>();
-        private readonly DashboardGroup _group;
-
-        public string Title => _group.Title;
-        public string Id => _group.Id;
-        public bool IsDefault => _group.IsDefault;
-
-        public ICollection<DashboardItemViewModel> Items => _items;
-
-
-        public DashboardGroupViewModel(DashboardGroup group)
-        {
-            _group = group;
         }
     }
 }

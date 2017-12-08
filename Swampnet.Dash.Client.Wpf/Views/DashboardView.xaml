@@ -12,7 +12,7 @@
 			<RowDefinition Height="Auto"/>
 			<RowDefinition/>
 		</Grid.RowDefinitions>
-		<TextBlock Grid.Row="0" Text="{Binding Name}" FontSize="15" FontWeight="Bold" HorizontalAlignment="Center" Margin="1"/>
+		<TextBlock Grid.Row="0" Text="{Binding Id}" FontSize="15" FontWeight="Bold" HorizontalAlignment="Center" Margin="1"/>
 		<TextBlock Grid.Row="1" Text="{Binding Description}" FontSize="10" HorizontalAlignment="Center" Margin="1"/>
 		<ScrollViewer VerticalScrollBarVisibility="Auto" Grid.Row="2">
             <ItemsControl ItemsSource="{Binding Groups}">

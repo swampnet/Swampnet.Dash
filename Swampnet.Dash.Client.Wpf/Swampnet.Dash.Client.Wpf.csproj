@@ -90,6 +90,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Boot.cs" />
+    <Compile Include="ViewModels\DashboardGroupViewModel.cs" />
     <Compile Include="ViewModels\DashboardViewModel.cs" />
     <Compile Include="ViewModels\DashboardItemViewModel.cs" />
     <Compile Include="Views\DashboardView.xaml.cs">
