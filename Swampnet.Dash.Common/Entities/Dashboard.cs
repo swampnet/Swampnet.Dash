@@ -19,6 +19,9 @@ namespace Swampnet.Dash.Common.Entities
 		[XmlAttribute]
 		public string Description { get; set; }
 
+        [XmlAttribute]
+        public string Orientation { get; set; }
+
         public List<ItemDefinition> Tests { get; set; }
 
         public List<ItemDefinition> Argos { get; set; }

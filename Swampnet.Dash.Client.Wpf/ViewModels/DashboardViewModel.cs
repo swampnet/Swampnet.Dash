@@ -17,6 +17,7 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
 	{
         private const string UPDATE_MESSAGE = "Update";
         private const string REFRESH_MESSAGE = "Refresh";
+        private const string DASHBOARD_HUB = "DashboardHub";
 
         private readonly string _dashName;
         private readonly HubConnection _hubConnection;
@@ -27,6 +28,7 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
         private ObservableCollection<DashboardGroupViewModel> _groups;
         private IEnumerable<DashboardGroupViewModel> _defaultGroups;
         private DateTime _lastUpdate;
+        private bool _loadingDashboard;
 
 
         public DashboardViewModel(string dash)
@@ -35,10 +37,10 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
 
             // Construct a TaskFactory that uses the UI thread's context
             _uiFactory = new TaskFactory(TaskScheduler.FromCurrentSynchronizationContext());
-			_hubConnection = new HubConnection("http://localhost:8080/");
-			_proxy = _hubConnection.CreateHubProxy("DashboardHub");
+            _hubConnection = new HubConnection("http://localhost:8080/");
+            _proxy = _hubConnection.CreateHubProxy(DASHBOARD_HUB);
 
-			InitialiseDash(dash);
+            InitialiseDash(dash);
 		}
 
         public DateTime LastUpdate
@@ -47,14 +49,21 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
             set { SetProperty(ref _lastUpdate, value); }
         }
 
+        public bool LoadingDashboard
+        {
+            get { return _loadingDashboard; }
+            set { SetProperty(ref _loadingDashboard, value); }
+        }
+
 
         public IEnumerable<DashboardGroupViewModel> Groups => _groups;
         public string Id => _dashboard?.Id;
 		public string Description => _dashboard?.Description;
+        public string Orientation => _dashboard?.Orientation;
 
 
         /// <summary>
-        /// Update / Add DashItems based on source
+        /// Update / Add DashItems based on source. Optionally remove those not in the list.
         /// </summary>
         private void Update(IEnumerable<DashboardItem> source, bool isFullRefresh = false)
         {
@@ -177,62 +186,87 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
 
         private async void InitialiseDash(string dashId)
 		{
-			LastUpdate = DateTime.Now;
-
-			await UpdateMetaData(dashId);
-
-			var dashItems = await Api.GetDashState(dashId);
-
-            // Get initial data
-            Update(dashItems);
-
-            _hubConnection.Closed += HubConnectionClosed;
-            _hubConnection.ConnectionSlow += HubConnectionConnectionSlow;
-            _hubConnection.Error += HubConnectionError;
-            _hubConnection.Received += HubConnectionReceived;
-            _hubConnection.Reconnected += HubConnectionReconnected;
-            _hubConnection.Reconnecting += HubConnectionReconnecting;
-            _hubConnection.StateChanged += HubConnectionStateChanged;
-
-            _proxy.On(UPDATE_MESSAGE, (IEnumerable<DashboardItem> di) => _uiFactory.StartNew(() =>
+            try
             {
-                Update(di, false);
-            }));
+                LoadingDashboard = true;
 
-            _proxy.On(REFRESH_MESSAGE, (IEnumerable<DashboardItem> di) => _uiFactory.StartNew(() =>
+                // Load dashboard meta data
+                _dashboard = await Api.GetDashboard(dashId);
+
+                // Create groups
+                _groups = new ObservableCollection<DashboardGroupViewModel>(_dashboard.Groups?.Select(g => new DashboardGroupViewModel(g)));
+
+                // Add a default group if none defined
+                if (!_groups.Any())
+                {
+                    _groups.Add(new DashboardGroupViewModel(new DashboardGroup()
+                    {
+                        Id = "_default",
+                        Title = "",
+                        IsDefault = true
+                    }));
+                }
+
+                // Figure out default groups
+                _defaultGroups = _groups.Where(g => g.IsDefault);
+                if (!_defaultGroups.Any())
+                {
+                    _defaultGroups = _groups.Take(1);
+                }
+
+                // Set up known dashboard items
+                if (_dashboard.Tests != null && _dashboard.Tests.Any())
+                {
+                    foreach (var item in _dashboard.Tests)
+                    {
+                        AssignGroup(new DashboardItemViewModel(item.Id, item.MetaData));
+                        //_groups.First().Items.Add(new DashboardItemViewModel(item.Id, item.MetaData));
+                    }
+                }
+
+                // Refresh UI
+                RaisePropertyChanged("");
+
+                // Get initial data
+                var dashItems = await Api.GetDashState(dashId);
+                Update(dashItems);
+
+                // Hook up SignalR
+                _hubConnection.Closed += HubConnectionClosed;
+                _hubConnection.ConnectionSlow += HubConnectionConnectionSlow;
+                _hubConnection.Error += HubConnectionError;
+                _hubConnection.Received += HubConnectionReceived;
+                _hubConnection.Reconnected += HubConnectionReconnected;
+                _hubConnection.Reconnecting += HubConnectionReconnecting;
+                _hubConnection.StateChanged += HubConnectionStateChanged;
+
+                _proxy.On(UPDATE_MESSAGE, (IEnumerable<DashboardItem> di) => _uiFactory.StartNew(() =>
+                {
+                    Update(di, false);
+                }));
+
+                _proxy.On(REFRESH_MESSAGE, (IEnumerable<DashboardItem> di) => _uiFactory.StartNew(() =>
+                {
+                    Update(di, true);
+                }));
+
+                // Connect to server and join a group based on the dashboard id
+                await _hubConnection.Start()
+                        .ContinueWith((x) => _proxy.Invoke("JoinGroup", dashId))
+                        ;
+
+                LastUpdate = DateTime.Now;
+            }
+            catch (Exception ex)
             {
-                Update(di, true);
-            }));
-
-            // Connect to server and join a group based on the dashboard id
-            await _hubConnection.Start()
-					.ContinueWith((x) => _proxy.Invoke("JoinGroup", dashId))
-                    ;
+                Log.Error(ex, ex.Message);
+            }
+            finally
+            {
+                LoadingDashboard = false;
+            }
         }
 
-
-        private async Task UpdateMetaData(string dashId)
-		{
-			_dashboard = await Api.GetDashboard(dashId);
-            _groups = new ObservableCollection<DashboardGroupViewModel>(_dashboard.Groups.Select(g => new DashboardGroupViewModel(g))); //@todo: Need a default if no group defined
-
-            _defaultGroups = _groups.Where(g => g.IsDefault);
-            if (!_defaultGroups.Any())
-            {
-                _defaultGroups = _groups.Take(1);
-            }
-
-            RaisePropertyChanged("");
-
-            // Set up known dashboard items
-			if(_dashboard.Tests != null && _dashboard.Tests.Any())
-			{
-				foreach (var item in _dashboard.Tests)
-				{
-                    _groups.First().Items.Add(new DashboardItemViewModel(item.Id, item.MetaData));
-				}
-			}
-		}
 
         #region SignalR Events
 
