@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Swampnet.Dash.Client.Wpf.Views"
+             xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
 	<Grid Background="LightYellow">
@@ -24,14 +25,23 @@
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
                         <!-- Group -->
-                        <Border BorderBrush="Black" BorderThickness="0.5" MinWidth="50">
+                        <Border BorderBrush="Black" BorderThickness="0.5" MinWidth="70" Margin="2">
                             <Grid>
+                                <Grid.Resources>
+                                    <!-- Sort by Order, then Timestamp -->
+                                    <CollectionViewSource x:Key="viewSource" Source="{Binding Items}">
+                                        <CollectionViewSource.SortDescriptions>
+                                            <scm:SortDescription PropertyName="Order" />
+                                            <scm:SortDescription PropertyName="Timestamp" Direction="Descending" />
+                                        </CollectionViewSource.SortDescriptions>
+                                    </CollectionViewSource>
+                                </Grid.Resources>
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto"/>
                                     <RowDefinition />
                                 </Grid.RowDefinitions>
-                                <TextBlock Grid.Row="0" Text="{Binding Title}" HorizontalAlignment="Center"/>
-                                <ItemsControl Grid.Row="1" ItemsSource="{Binding Items}">
+                                <TextBlock Grid.Row="0" Text="{Binding Title}" HorizontalAlignment="Center" Margin="5" FontWeight="Bold" FontSize="15"/>
+                                <ItemsControl Grid.Row="1" ItemsSource="{Binding Source={StaticResource viewSource}}">
                                     <ItemsControl.ItemTemplate>
                                         <DataTemplate>
                                             <!-- Item -->

@@ -28,9 +28,18 @@ namespace Swampnet.Dash.Common.Entities
         /// </remarks>
         public string Id { get; set; }
 
+        /// <summary>
+        /// Sorting hint
+        /// </summary>
+        public string Order { get; set; }
+
         // We probably need to return error state here as well? We need a way to signal that there was an error running the test.
         public string Status { get; set; }
 
+        /// <summary>
+        /// What is Timestamp? Is it the last time the item was updated, or the time it was initially created. We kinda need both under different
+        /// circumstances. (We might want to display the last updated but, at least in an argos style dash, we probably want to order it by created)
+        /// </summary>
         public DateTime TimestampUtc { get; set; }
 
         public List<Property> Output { get; set; }

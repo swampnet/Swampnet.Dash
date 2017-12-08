@@ -27,6 +27,7 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
 		public string Id => _id;
 		public DateTime? Timestamp => _dashItem?.TimestampUtc;
 		public string Status => _dashItem?.Status;
+        public string Order => _dashItem?.Order;
 
 		public string Group
 		{

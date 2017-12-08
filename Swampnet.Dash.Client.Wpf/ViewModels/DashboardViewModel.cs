@@ -18,27 +18,18 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
         private const string UPDATE_MESSAGE = "Update";
         private const string REFRESH_MESSAGE = "Refresh";
 
+        private readonly string _dashName;
         private readonly HubConnection _hubConnection;
 		private readonly IHubProxy _proxy;
 		private readonly TaskFactory _uiFactory;
 
-		private readonly string _dashName;
 		private Dashboard _dashboard;
         private ObservableCollection<DashboardGroupViewModel> _groups;
         private IEnumerable<DashboardGroupViewModel> _defaultGroups;
-
-        public IEnumerable<DashboardGroupViewModel> Groups => _groups;
-
         private DateTime _lastUpdate;
 
-		public DateTime LastUpdate
-		{
-			get { return _lastUpdate; }
-			set { SetProperty(ref _lastUpdate, value); }
-		}
 
-
-		public DashboardViewModel(string dash)
+        public DashboardViewModel(string dash)
 		{
             _dashName = dash;
 
@@ -50,23 +41,27 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
 			InitialiseDash(dash);
 		}
 
-		public string Id => _dashboard?.Id;
+        public DateTime LastUpdate
+        {
+            get { return _lastUpdate; }
+            set { SetProperty(ref _lastUpdate, value); }
+        }
+
+
+        public IEnumerable<DashboardGroupViewModel> Groups => _groups;
+        public string Id => _dashboard?.Id;
 		public string Description => _dashboard?.Description;
 
-		public void Boosh()
-		{
-			_proxy.Invoke("Send", "some-name", "some-message");
-		}
 
         /// <summary>
         /// Update / Add DashItems based on source
         /// </summary>
-        private void Update(IEnumerable<DashboardItem> source)
+        private void Update(IEnumerable<DashboardItem> source, bool isFullRefresh = false)
         {
             foreach (var di in source)
             {
-                var dashItem = _groups.SelectMany(g => g.Items).Where(d => d.Id == di.Id).Distinct().SingleOrDefault();
-                if (dashItem == null)
+                var item = _groups.SelectMany(g => g.Items).Where(d => d.Id == di.Id).Distinct().SingleOrDefault();
+                if (item == null)
                 {
                     IEnumerable<Meta> metaData = null;
                     var test = _dashboard.Tests?.SingleOrDefault(t => t.Id == di.Id);
@@ -78,17 +73,34 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
                     {
                         metaData = test.MetaData;
                     }
-                    dashItem = new DashboardItemViewModel(di.Id, metaData);
+                    item = new DashboardItemViewModel(di.Id, metaData);
                 }
 
-                dashItem.Update(di);
+                item.Update(di);
 
-                AssignGroup(dashItem);
+                AssignGroup(item);
             }
 
+            if (isFullRefresh)
+            {
+                // Remove any DashItems that do not appear in source
+                foreach (var id in _groups.SelectMany(g => g.Items).Where(i => !source.Select(s => s.Id).Contains(i.Id)).Select(x => x.Id).ToArray())
+                {
+                    foreach (var group in _groups)
+                    {
+                        group.Items.Remove(group.Items.SingleOrDefault(i => i.Id == id));
+                    }
+                }
+            }
+
+            LastUpdate = DateTime.Now;
         }
 
 
+        /// <summary>
+        /// Add item to a group (or groups)
+        /// </summary>
+        /// <param name="item"></param>
         private void AssignGroup(DashboardItemViewModel item)
         {
             var targetGroups = GetTargetGroups(item);
@@ -110,6 +122,11 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
         }
 
 
+        /// <summary>
+        /// Figure out the group(s) this item belongs in
+        /// </summary>
+        /// <param name="item"></param>
+        /// <returns></returns>
         private IEnumerable<DashboardGroupViewModel> GetTargetGroups(DashboardItemViewModel item)
         {
             IEnumerable<DashboardGroupViewModel> targets = null;
@@ -129,32 +146,26 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
 
 
         /// <summary>
-        /// Remove any DashItems that do not appear in source
+        /// Get MetaData for this item
         /// </summary>
-        private void Remove(IEnumerable<DashboardItem> source)
+        private IEnumerable<Meta> GetMetaData(DashboardItem item)
         {
-            foreach (var id in _groups.SelectMany(g => g.Items).Where(i => !source.Select(s => s.Id).Contains(i.Id)).Select(x => x.Id).ToArray())
-            {
-                foreach(var group in _groups)
-                {
-                    group.Items.Remove(group.Items.SingleOrDefault(i => i.Id == id));
-                }
-            }
-        }
+            // @TODO: There's a heirachy here:
+            //  Test / Argos specific
+            //  Group specific
+            //  Default
 
-
-        private IEnumerable<Meta> GetMetaData(DashboardItem di)
-        {
             IEnumerable<Meta> metaData;
 
             // Look for a test with the same id
-            var test = _dashboard.Tests?.SingleOrDefault(t => t.Id == di.Id);
+            var test = _dashboard.Tests?.SingleOrDefault(t => t.Id == item.Id);
             if (test != null)
             {
                 metaData = test.MetaData;
             }
 
-            // No test going by that id - use generic metadata
+            
+            // No test going by that id - use default metadata
             else
             {
                 metaData = _dashboard.DefaultMetaData;
@@ -162,6 +173,7 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
 
             return metaData;
         }
+
 
         private async void InitialiseDash(string dashId)
 		{
@@ -184,18 +196,15 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
 
             _proxy.On(UPDATE_MESSAGE, (IEnumerable<DashboardItem> di) => _uiFactory.StartNew(() =>
             {
-                LastUpdate = DateTime.Now;
-                Update(di);
+                Update(di, false);
             }));
 
             _proxy.On(REFRESH_MESSAGE, (IEnumerable<DashboardItem> di) => _uiFactory.StartNew(() =>
             {
-                LastUpdate = DateTime.Now;
-                Update(di);
-                Remove(di);
+                Update(di, true);
             }));
 
-
+            // Connect to server and join a group based on the dashboard id
             await _hubConnection.Start()
 					.ContinueWith((x) => _proxy.Invoke("JoinGroup", dashId))
                     ;
