@@ -15,13 +15,36 @@
 		<TextBlock Grid.Row="0" Text="{Binding Name}" FontSize="15" FontWeight="Bold" HorizontalAlignment="Center" Margin="1"/>
 		<TextBlock Grid.Row="1" Text="{Binding Description}" FontSize="10" HorizontalAlignment="Center" Margin="1"/>
 		<ScrollViewer VerticalScrollBarVisibility="Auto" Grid.Row="2">
-			<ItemsControl ItemsSource="{Binding Path=Items}">
-				<ItemsControl.ItemTemplate>
-					<DataTemplate>
-						<local:DashItemView Margin="10"/>
-					</DataTemplate>
-				</ItemsControl.ItemTemplate>
-			</ItemsControl>
+            <ItemsControl ItemsSource="{Binding Groups}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Horizontal"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <!-- Group -->
+                        <Border BorderBrush="Black" BorderThickness="0.5" MinWidth="50">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition />
+                                </Grid.RowDefinitions>
+                                <TextBlock Grid.Row="0" Text="{Binding Title}" HorizontalAlignment="Center"/>
+                                <ItemsControl Grid.Row="1" ItemsSource="{Binding Items}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <!-- Item -->
+                                            <local:DashItemView Margin="10"/>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+            
 		</ScrollViewer>
 		<TextBlock Grid.Row="2" HorizontalAlignment="Right" VerticalAlignment="Bottom" Text="{Binding LastUpdate}" FontSize="8" Margin="2" />
 	</Grid>

@@ -25,15 +25,15 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
 		private readonly IHubProxy _proxy;
 		private readonly TaskFactory _uiFactory;
 
-		private readonly ObservableCollection<DashboardItemViewModel> _items = new ObservableCollection<DashboardItemViewModel>();
+		//private readonly ObservableCollection<DashboardItemViewModel> _items = new ObservableCollection<DashboardItemViewModel>();
 		private readonly string _dashName;
 		private Dashboard _dashboard;
+        private ObservableCollection<Group> _groups;
 
-		public IEnumerable<DashboardItemViewModel> Items => _items;
+        //public IEnumerable<DashboardItemViewModel> Items => _items;
+        public IEnumerable<Group> Groups => _groups;
 
-
-
-		private DateTime _lastUpdate;
+        private DateTime _lastUpdate;
 
 		public DateTime LastUpdate
 		{
@@ -69,7 +69,7 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
         {
             foreach (var di in source)
             {
-                var dashItem = _items.SingleOrDefault(d => d.Id == di.Id);
+                var dashItem = _groups.SelectMany(g => g.Items).SingleOrDefault(d => d.Id == di.Id);
                 if (dashItem == null)
                 {
                     IEnumerable<Meta> metaData = null;
@@ -83,21 +83,53 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
                         metaData = test.MetaData;
                     }
                     dashItem = new DashboardItemViewModel(di.Id, metaData);
-                    _items.Add(dashItem);
+                    AddToGroup(dashItem);
                 }
+
+                var oldGroup = dashItem.Group;
                 dashItem.Update(di);
+                if(oldGroup != dashItem.Group)
+                {
+                    RemoveFromGroup(dashItem, oldGroup);
+                    AddToGroup(dashItem);
+                }
             }
 
         }
+
+
+        private void AddToGroup(DashboardItemViewModel dashItem)
+        {
+            var group = Groups.SingleOrDefault(g => g.Id == dashItem.Group);
+            if (group != null)
+            {
+                group.Items.Add(dashItem);
+            }
+        }
+
+
+        private void RemoveFromGroup(DashboardItemViewModel dashItem, string oldGroup)
+        {
+            var group = Groups.SingleOrDefault(g => g.Id == oldGroup);
+            if(group != null)
+            {
+                group.Items.Remove(dashItem);
+            }
+        }
+
+
 
         /// <summary>
         /// Remove any DashItems that do not appear in source
         /// </summary>
         private void Remove(IEnumerable<DashboardItem> source)
         {
-            foreach (var id in _items.Where(i => !source.Select(s => s.Id).Contains(i.Id)).Select(x => x.Id).ToArray())
+            foreach (var id in _groups.SelectMany(g => g.Items).Where(i => !source.Select(s => s.Id).Contains(i.Id)).Select(x => x.Id).ToArray())
             {
-                _items.Remove(_items.SingleOrDefault(i => i.Id == id));
+                foreach(var group in _groups)
+                {
+                    group.Items.Remove(group.Items.SingleOrDefault(i => i.Id == id));
+                }
             }
         }
 
@@ -164,14 +196,16 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
         private async Task UpdateMetaData(string dashId)
 		{
 			_dashboard = await Api.GetDashboard(dashId);
+            _groups = new ObservableCollection<Group>(_dashboard.Groups.Select(g => new Group(g))); //@todo: Need a default if no group defined
 
 			RaisePropertyChanged("");
 
+            // Set up known dashboard items
 			if(_dashboard.Tests != null && _dashboard.Tests.Any())
 			{
 				foreach (var item in _dashboard.Tests)
 				{
-					_items.Add(new DashboardItemViewModel(item.Id, item.MetaData));
+                    _groups.First().Items.Add(new DashboardItemViewModel(item.Id, item.MetaData));
 				}
 			}
 		}
@@ -229,6 +263,22 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
 
                 _hubConnection.Dispose();
             }
+        }
+    }
+
+    class Group : BindableBase
+    {
+        private readonly ObservableCollection<DashboardItemViewModel> _items = new ObservableCollection<DashboardItemViewModel>();
+        private readonly DashboardGroup _group;
+
+        public string Title => _group.Title;
+        public string Id => _group.Id;
+        public ICollection<DashboardItemViewModel> Items => _items;
+
+
+        public Group(DashboardGroup group)
+        {
+            _group = group;
         }
     }
 }
