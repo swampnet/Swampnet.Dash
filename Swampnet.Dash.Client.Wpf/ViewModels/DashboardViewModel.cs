@@ -28,10 +28,11 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
 		//private readonly ObservableCollection<DashboardItemViewModel> _items = new ObservableCollection<DashboardItemViewModel>();
 		private readonly string _dashName;
 		private Dashboard _dashboard;
-        private ObservableCollection<Group> _groups;
+        private ObservableCollection<DashboardGroupViewModel> _groups;
+        private IEnumerable<DashboardGroupViewModel> _defaultGroups;
 
         //public IEnumerable<DashboardItemViewModel> Items => _items;
-        public IEnumerable<Group> Groups => _groups;
+        public IEnumerable<DashboardGroupViewModel> Groups => _groups;
 
         private DateTime _lastUpdate;
 
@@ -69,6 +70,7 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
         {
             foreach (var di in source)
             {
+                // @todo: This breaks if we have the same group defined multiple times ( SingleOrDefault thowing a 'multiple results' exception
                 var dashItem = _groups.SelectMany(g => g.Items).SingleOrDefault(d => d.Id == di.Id);
                 if (dashItem == null)
                 {
@@ -83,40 +85,53 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
                         metaData = test.MetaData;
                     }
                     dashItem = new DashboardItemViewModel(di.Id, metaData);
-                    AddToGroup(dashItem);
                 }
 
-                var oldGroup = dashItem.Group;
                 dashItem.Update(di);
-                if(oldGroup != dashItem.Group)
+
+                AssignGroup(dashItem);
+            }
+
+        }
+
+
+        private void AssignGroup(DashboardItemViewModel item)
+        {
+            var targetGroups = GetTargetGroups(item);
+
+            // Remove from any groups this item already exists in (excluding the 'target' groups)
+            foreach(var group in _groups.Where(g => !targetGroups.Contains(g) && g.Items.Select(i => i.Id).Contains(item.Id)))
+            {
+                group.Items.Remove(item);
+            }
+
+            // Add to target groups
+            foreach (var group in targetGroups)
+            {
+                if (!group.Items.Contains(item))
                 {
-                    RemoveFromGroup(dashItem, oldGroup);
-                    AddToGroup(dashItem);
+                    group.Items.Add(item);
                 }
             }
-
         }
 
 
-        private void AddToGroup(DashboardItemViewModel dashItem)
+        private IEnumerable<DashboardGroupViewModel> GetTargetGroups(DashboardItemViewModel item)
         {
-            var group = Groups.SingleOrDefault(g => g.Id == dashItem.Group);
-            if (group != null)
+            IEnumerable<DashboardGroupViewModel> targets = null;
+
+            if (!string.IsNullOrEmpty(item.Group))
             {
-                group.Items.Add(dashItem);
+                targets = _groups.Where(g => g.Id == item.Group);
             }
-        }
 
-
-        private void RemoveFromGroup(DashboardItemViewModel dashItem, string oldGroup)
-        {
-            var group = Groups.SingleOrDefault(g => g.Id == oldGroup);
-            if(group != null)
+            if(targets == null || !targets.Any())
             {
-                group.Items.Remove(dashItem);
+                targets = _defaultGroups;
             }
-        }
 
+            return targets;
+        }
 
 
         /// <summary>
@@ -196,9 +211,16 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
         private async Task UpdateMetaData(string dashId)
 		{
 			_dashboard = await Api.GetDashboard(dashId);
-            _groups = new ObservableCollection<Group>(_dashboard.Groups.Select(g => new Group(g))); //@todo: Need a default if no group defined
+            _groups = new ObservableCollection<DashboardGroupViewModel>(_dashboard.Groups.Select(g => new DashboardGroupViewModel(g))); //@todo: Need a default if no group defined
 
-			RaisePropertyChanged("");
+            _defaultGroups = _groups.Where(g => g.IsDefault);
+            if (!_defaultGroups.Any())
+            {
+                _defaultGroups = _groups.Take(1);
+            }
+
+
+            RaisePropertyChanged("");
 
             // Set up known dashboard items
 			if(_dashboard.Tests != null && _dashboard.Tests.Any())
@@ -266,17 +288,23 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
         }
     }
 
-    class Group : BindableBase
+
+    /// <summary>
+    /// Group view model
+    /// </summary>
+    class DashboardGroupViewModel : BindableBase
     {
         private readonly ObservableCollection<DashboardItemViewModel> _items = new ObservableCollection<DashboardItemViewModel>();
         private readonly DashboardGroup _group;
 
         public string Title => _group.Title;
         public string Id => _group.Id;
+        public bool IsDefault => _group.IsDefault;
+
         public ICollection<DashboardItemViewModel> Items => _items;
 
 
-        public Group(DashboardGroup group)
+        public DashboardGroupViewModel(DashboardGroup group)
         {
             _group = group;
         }

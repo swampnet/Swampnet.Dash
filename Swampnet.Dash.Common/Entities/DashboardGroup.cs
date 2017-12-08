@@ -13,6 +13,8 @@ namespace Swampnet.Dash.Common.Entities
         [XmlAttribute]
         public string Title { get; set; }
 
+        [XmlAttribute]
+        public bool IsDefault { get; set; }
 
         // @TODO: Group specific metadata?
     }

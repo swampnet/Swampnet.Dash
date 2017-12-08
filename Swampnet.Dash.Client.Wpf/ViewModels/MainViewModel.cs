@@ -21,7 +21,7 @@ namespace Swampnet.Dash.Client.Wpf
 			//_dashboards.Add(new DashboardViewModel("dash-01"));
 			//_dashboards.Add(new DashboardViewModel("dash-02"));
 			//_dashboards.Add(new DashboardViewModel("dash-02"));
-			//_dashboards.Add(new DashboardViewModel("local-dash"));
+			_dashboards.Add(new DashboardViewModel("local-dash"));
 			_dashboards.Add(new DashboardViewModel("argos-test"));
 		}
 
