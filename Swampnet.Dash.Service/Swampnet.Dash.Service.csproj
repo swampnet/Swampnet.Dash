@@ -8,7 +8,7 @@
     <OutputType>Exe</OutputType>
     <RootNamespace>Swampnet.Dash.Service</RootNamespace>
     <AssemblyName>Swampnet.Dash.Service</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <TargetFrameworkProfile />
@@ -79,7 +79,7 @@
       <HintPath>..\packages\Owin.1.0\lib\net40\Owin.dll</HintPath>
     </Reference>
     <Reference Include="Serilog, Version=2.0.0.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10, processorArchitecture=MSIL">
-      <HintPath>..\packages\Serilog.2.5.0\lib\net46\Serilog.dll</HintPath>
+      <HintPath>..\packages\Serilog.2.6.0\lib\net46\Serilog.dll</HintPath>
     </Reference>
     <Reference Include="Serilog.Sinks.Console, Version=3.1.1.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10, processorArchitecture=MSIL">
       <HintPath>..\packages\Serilog.Sinks.Console.3.1.1\lib\net45\Serilog.Sinks.Console.dll</HintPath>
@@ -154,6 +154,10 @@
     <ProjectReference Include="..\Swampnet.Dash.Common\Swampnet.Dash.Common.csproj">
       <Project>{3bd91733-5ed2-4b64-9daa-47e8050cbbd9}</Project>
       <Name>Swampnet.Dash.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Swampnet.Dash.DAL\Swampnet.Dash.DAL.csproj">
+      <Project>{397f66b0-1f67-471b-8b04-5b5502916a22}</Project>
+      <Name>Swampnet.Dash.DAL</Name>
     </ProjectReference>
     <ProjectReference Include="..\Swampnet.Dash\Swampnet.Dash.csproj">
       <Project>{be1eb6e7-ae7c-4d4b-837a-78d91f0eae02}</Project>

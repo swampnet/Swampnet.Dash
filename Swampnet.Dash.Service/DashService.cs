@@ -73,6 +73,7 @@ namespace Swampnet.Dash.Service
             var builder = new ContainerBuilder();
 
             builder.UseDashboardRuntime();
+            builder.UseDAL();
             builder.RegisterApiControllers(Assembly.GetExecutingAssembly());
             builder.RegisterHubs(Assembly.GetExecutingAssembly());
             builder.RegisterType<Broadcast>().As<IBroadcast>();

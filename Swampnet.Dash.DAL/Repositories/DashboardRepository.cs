@@ -1,15 +1,11 @@
 ﻿using Swampnet.Dash.Common;
 using Swampnet.Dash.Common.Entities;
 using Swampnet.Dash.Common.Interfaces;
-using Swampnet.Dash.Services;
-using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
-namespace Swampnet.Dash
+namespace Swampnet.Dash.DAL
 {
     class DashboardRepository : IDashboardRepository
     {

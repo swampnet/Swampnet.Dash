@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Swampnet.Dash.Common.Entities;
 using Swampnet.Dash.Common;
 
-namespace Swampnet.Dash.Services
+namespace Swampnet.Dash.DAL
 {
     class TestRepository : ITestRepository
     {

@@ -15,9 +15,6 @@ namespace Swampnet.Dash
         public static void UseDashboardRuntime(this ContainerBuilder builder)
         {
             builder.RegisterType<Runtime>().As<IRuntime>();
-            builder.RegisterType<ArgosRepository>().As<IArgosRepository>().InstancePerLifetimeScope();
-            builder.RegisterType<DashboardRepository>().As<IDashboardRepository>().InstancePerLifetimeScope();
-            builder.RegisterType<TestRepository>().As<ITestRepository>().InstancePerLifetimeScope();
             builder.RegisterAssemblyTypes(typeof(DashStartup).Assembly).As<ITest>().SingleInstance();
             builder.RegisterAssemblyTypes(typeof(DashStartup).Assembly).As<IArgos>().SingleInstance();
             builder.RegisterType<TestRunner>().As<ITestRunner>().SingleInstance();

@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Swampnet.Dash.Services
+namespace Swampnet.Dash.DAL
 {
     class ArgosRepository : IArgosRepository
     {
