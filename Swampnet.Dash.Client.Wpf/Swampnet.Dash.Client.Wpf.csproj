@@ -90,6 +90,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Boot.cs" />
+    <Compile Include="Core\DashboardTemplateSelector.cs" />
     <Compile Include="DashboardHub.cs" />
     <Compile Include="ViewModels\DashboardGroupViewModel.cs" />
     <Compile Include="ViewModels\DashboardViewModel.cs" />
@@ -97,7 +98,17 @@
     <Compile Include="Views\DashboardView.xaml.cs">
       <DependentUpon>DashboardView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\HorizontalDashboardView.xaml.cs">
+      <DependentUpon>HorizontalDashboardView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\VerticalDashboardView.xaml.cs">
+      <DependentUpon>VerticalDashboardView.xaml</DependentUpon>
+    </Compile>
     <Page Include="Views\DashboardItemView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\HorizontalDashboardView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -118,6 +129,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="Views\DashboardView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\VerticalDashboardView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

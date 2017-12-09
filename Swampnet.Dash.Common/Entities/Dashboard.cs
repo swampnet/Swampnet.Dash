@@ -20,7 +20,7 @@ namespace Swampnet.Dash.Common.Entities
 		public string Description { get; set; }
 
         [XmlAttribute]
-        public string Orientation { get; set; }
+        public string Template { get; set; }
 
         public List<ItemDefinition> Tests { get; set; }
 

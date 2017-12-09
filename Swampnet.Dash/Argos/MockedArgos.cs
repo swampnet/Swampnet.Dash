@@ -64,7 +64,6 @@ namespace Swampnet.Dash.Argos
             item.Output.Add(new Property("updated-on", DateTime.Now.ToString("s")));
             item.Output.Add(new Property("id", item.Id));
 			item.Output.Add(new Property("stage", "0"));
-			//item.Status = "newbie";
             _items.Add(item);
 			Log.Debug("Creating new item: {id}", item.Id);
 		}
@@ -81,16 +80,17 @@ namespace Swampnet.Dash.Argos
 
 		private void Update(DashboardItem item)
         {
+			// Update stage
 			var stage = item.Output.IntValue("stage");
 
 			if(_rnd.NextDouble() < 0.2)
 			{
 				stage++;
-				Log.Debug("Item {item} -> stage {stage}", item.Id, stage);
 				item.Output.Get("stage").Value = stage.ToString();
 				item.Output.Get("updated-on").Value = DateTime.UtcNow.ToString("s");
 			}
 
+			// Update status
 			var timeInGroup = DateTime.UtcNow - item.Output.DateTimeValue("updated-on");
 
 			if(timeInGroup.TotalSeconds < 20)

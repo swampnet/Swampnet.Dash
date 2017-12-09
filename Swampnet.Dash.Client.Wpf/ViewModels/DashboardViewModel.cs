@@ -56,7 +56,7 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
         public IEnumerable<DashboardGroupViewModel> Groups => _groups;
         public string Id => _dashboard?.Id;
 		public string Description => _dashboard?.Description;
-        public string Orientation => _dashboard?.Orientation;
+        public string Template => _dashboard?.Template;
 
 
         /// <summary>
@@ -221,9 +221,6 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
                     }
                 }
 
-                // Refresh UI
-                RaisePropertyChanged("");
-
                 // Get initial data
                 var dashItems = await Api.GetDashState(dashId);
                 Update(dashItems);
@@ -249,8 +246,11 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
             finally
             {
                 LoadingDashboard = false;
-            }
-        }
+
+				// Refresh UI
+				RaisePropertyChanged("");
+			}
+		}
 
 
 

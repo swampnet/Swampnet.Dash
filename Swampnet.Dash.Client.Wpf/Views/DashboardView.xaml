@@ -7,6 +7,15 @@
              xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
+	<UserControl.Resources>
+		<local:DashboardTemplateSelector x:Key="myDataTemplateSelector"/>
+		<DataTemplate x:Key="Horizontal">
+			<local:HorizontalDashboardView DataContext="{Binding Groups}"/>
+		</DataTemplate>
+		<DataTemplate x:Key="Vertical">
+			<local:VerticalDashboardView DataContext="{Binding Groups}"/>
+		</DataTemplate>
+	</UserControl.Resources>
 	<Grid Background="LightYellow">
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto"/>
@@ -15,47 +24,37 @@
 		</Grid.RowDefinitions>
 		<TextBlock Grid.Row="0" Text="{Binding Id}" FontSize="15" FontWeight="Bold" HorizontalAlignment="Center" Margin="1"/>
 		<TextBlock Grid.Row="1" Text="{Binding Description}" FontSize="10" HorizontalAlignment="Center" Margin="1"/>
-        <ItemsControl ItemsSource="{Binding Groups}" Grid.Row="2">
-            <ItemsControl.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <!-- 
-                        Just switching the orientation here isn't going to be good enough. Pretty sure we're going to end up 
-                        with separate horizontal / vertical templates here...
-                    -->
-                    <StackPanel Orientation="{Binding Orientation}"/>
-                </ItemsPanelTemplate>
-            </ItemsControl.ItemsPanel>
-			<ItemsControl.ItemTemplate>
-				<DataTemplate>
-                    <!-- Group -->
-                    <Border MinWidth="100" Margin="5">
-                        <Grid>
-                            <Grid.Resources>
-                                <!-- Sort by Order, then Timestamp -->
-                                <CollectionViewSource x:Key="viewSource" Source="{Binding Items}">
-                                    <CollectionViewSource.SortDescriptions>
-                                        <scm:SortDescription PropertyName="Order" Direction="Ascending" />
-                                    </CollectionViewSource.SortDescriptions>
-                                </CollectionViewSource>
-                            </Grid.Resources>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition />
-                            </Grid.RowDefinitions>
-                            <TextBlock Grid.Row="0" Text="{Binding Title}" HorizontalAlignment="Center" Margin="5" FontWeight="Bold" FontSize="15"/>
-                            <ItemsControl Grid.Row="1" ItemsSource="{Binding Source={StaticResource viewSource}}">
-                                <ItemsControl.ItemTemplate>
-                                    <DataTemplate>
-                                        <!-- Item -->
-                                        <local:DashboardItemView Margin="10"/>
-                                    </DataTemplate>
-                                </ItemsControl.ItemTemplate>
-                            </ItemsControl>
-                        </Grid>
-                    </Border>
-                </DataTemplate>
-            </ItemsControl.ItemTemplate>
-        </ItemsControl>
-        <TextBlock Grid.Row="2" HorizontalAlignment="Right" VerticalAlignment="Bottom" Text="{Binding LastUpdate}" FontSize="8" Margin="2" />
+		
+		<!--<ContentControl Grid.Row="2" ContentTemplateSelector="{StaticResource myDataTemplateSelector}" Content="{Binding}" />-->
+
+		<!-- Nggg... -->
+		<!--
+			So, we load the dashboard async and a ContentTemplateSelector doesn't react to property changed events which means the
+			template only resolves when the view virst loads which is too soon..
+			Here's a nasty workaround, not really good enough tbh
+		-->
+		<ContentControl Grid.Row="2" Content="{Binding }">
+			<ContentControl.Style>
+				<Style TargetType="{x:Type ContentControl}">
+					<!-- Default Template -->
+					<Setter Property="ContentTemplate" Value="{x:Null}" />
+
+					<Style.Triggers>
+						<DataTrigger Binding="{Binding Template}" Value="Horizontal">
+							<Setter Property="ContentTemplate" Value="{StaticResource Horizontal}" />
+						</DataTrigger>
+						
+						<DataTrigger Binding="{Binding Template}" Value="Vertical">
+							<Setter Property="ContentTemplate" Value="{StaticResource Vertical}" />
+						</DataTrigger>
+					</Style.Triggers>
+				</Style>
+			</ContentControl.Style>
+		</ContentControl>
+
+		<!--<local:VerticalDashboardView DataContext="{Binding Groups}" Grid.Row="2"/>
+		<local:HorizontalDashboardView DataContext="{Binding Groups}" Grid.Row="3" Background="LightGray"/>-->
+		
+		<TextBlock Grid.Row="2" HorizontalAlignment="Right" VerticalAlignment="Bottom" Text="{Binding LastUpdate}" FontSize="8" Margin="2" />
 	</Grid>
 </UserControl>

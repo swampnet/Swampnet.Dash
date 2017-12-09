@@ -11,7 +11,7 @@
 			<Setter Property="Margin" Value="1"/>
 		</Style>
 	</UserControl.Resources>
-	<Grid>
+	<Grid Width="100">
 		<Grid.Style>
 			<Style TargetType="Grid">
 				<Setter Property="Background" Value="LightGreen"/>
