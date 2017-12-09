@@ -46,9 +46,10 @@ namespace Swampnet.Dash.Services
 
                     var argos = _argos.Single(t => t.GetType().Name == definition.Type);
 
-                    //Validate(testdefinition, test.Meta);
+					//Validate(testdefinition, test.Meta);
+					Log.Debug("Running {type} - {name}", argos.GetType().Name, definition.Id);
 
-                    var rs = await argos.RunAsync(definition);
+					var rs = await argos.RunAsync(definition);
                     
                     if (!Compare.ArgosResults(rs, lastRun))
                     {

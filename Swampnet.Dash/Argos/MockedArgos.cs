@@ -23,8 +23,13 @@ namespace Swampnet.Dash.Argos
             // Clean up finished items
             _items.RemoveAll(x => x.Output.IntValue("stage") == 5);
 
-            // Generate new items
-            if (!_items.Any())
+			foreach (var item in _items)
+			{
+				Update(item);
+			}
+
+			// Generate new items
+			if (!_items.Any())
             {
                 CreateNewbie();
             }
@@ -36,10 +41,6 @@ namespace Swampnet.Dash.Argos
                 }
             }
 
-            foreach(var item in _items)
-            {
-                Update(item);
-            }
 
             // Nggg, return a copy not our actual items...
             result.Items = _items.Select(i => new DashboardItem() {
@@ -83,7 +84,7 @@ namespace Swampnet.Dash.Argos
 			// Update stage
 			var stage = item.Output.IntValue("stage");
 
-			if(_rnd.NextDouble() < 0.2)
+			if(stage == 0 || _rnd.NextDouble() < 0.2)
 			{
 				stage++;
 				item.Output.Get("stage").Value = stage.ToString();

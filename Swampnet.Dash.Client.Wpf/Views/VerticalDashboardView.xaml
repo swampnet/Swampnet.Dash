@@ -16,7 +16,7 @@
 		<ItemsControl.ItemTemplate>
 			<DataTemplate>
 				<!-- Group -->
-				<Border MinWidth="100" Margin="5">
+				<Border MinWidth="100" Margin="5" BorderBrush="Black" BorderThickness="1">
 					<Grid>
 						<Grid.Resources>
 							<!-- Sort by Order, then Timestamp -->
@@ -27,6 +27,7 @@
 							</CollectionViewSource>
 						</Grid.Resources>
 						<Grid.RowDefinitions>
+							<!-- @todo: Only really want this row if group has a title ... -->
 							<RowDefinition Height="Auto"/>
 							<RowDefinition />
 						</Grid.RowDefinitions>

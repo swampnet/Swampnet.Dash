@@ -199,7 +199,7 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
                     _groups.Add(new DashboardGroupViewModel(new DashboardGroup()
                     {
                         Id = "_default",
-                        Title = "",
+                        Title = "default",
                         IsDefault = true
                     }));
                 }

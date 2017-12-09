@@ -35,7 +35,7 @@ namespace Swampnet.Dash.Services
 
 					Validate(definition, test.Meta);
 
-                    //Log.Debug("Running test {type}", test.GetType().Name);
+                    Log.Debug("Running test {type} - {name}", test.GetType().Name, definition.Id);
 
                     var rs = await test.RunAsync(definition);
 
