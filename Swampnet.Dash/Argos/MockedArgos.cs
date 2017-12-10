@@ -31,13 +31,13 @@ namespace Swampnet.Dash.Argos
 			// Generate new items
 			if (!_items.Any())
             {
-                CreateNewbie();
+                CreateNewbie(argosDefinition);
             }
             else
             {
                 if(_rnd.NextDouble() < 0.3)
                 {
-                    CreateNewbie();
+                    CreateNewbie(argosDefinition);
                 }
             }
 
@@ -59,13 +59,13 @@ namespace Swampnet.Dash.Argos
         }
 
 
-        private void CreateNewbie()
+        private void CreateNewbie(ArgosDefinition argosDefinition)
         {
-            var item = new DashboardItem(++_id);
+            var item = new DashboardItem(argosDefinition.Parameters.StringValue("pre") +_id);
             item.Output.Add(new Property("updated-on", DateTime.Now.ToString("s")));
-            item.Output.Add(new Property("id", item.Id));
 			item.Output.Add(new Property("stage", "0"));
             _items.Add(item);
+			_id++;
 			Log.Debug("Creating new item: {id}", item.Id);
 		}
 

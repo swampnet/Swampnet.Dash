@@ -31,5 +31,15 @@ namespace Swampnet.Dash.Service.Controllers
 		{
 			return Ok(_testRepo.GetDefinitions().Single(d => d.Id == id));
 		}
+
+
+		[Route("tests/{testId}/{propertyName}")]
+		[HttpGet]
+		public IHttpActionResult GetHistory(string testId, string propertyName)
+		{
+			var data = _testRepo.Get(testId, propertyName);
+
+			return Ok(data);
+		}
     }
 }

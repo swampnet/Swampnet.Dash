@@ -68,13 +68,14 @@ namespace Swampnet.Dash.Services
                 {
                     _state.Add(testResult.TestId, testResult);
                 }
-            }
 
-            // @TODO: So, if we're actually writing stuff away to the db as part of this, then it might take a while: We might be
-            //        better off queing it up for later.
+			}
 
+			// @TODO: So, if we're actually writing stuff away to the db as part of this, then it might take a while: We might be
+			//        better off queing it up for later, and doing some kind of batch insert.
+			_testRepository.Add(results);
 
-            return results;
+			return results;
         }
 
 
