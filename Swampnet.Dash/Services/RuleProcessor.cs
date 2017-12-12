@@ -55,14 +55,15 @@ namespace Swampnet.Dash.Services
                     // Evaluate expression against the current test result
                     if (eval.Evaluate(rule.Expression, result))
                     {
-                        // Find which state rule to apply
-                        var modifier = GetModifier(definition, rule.StateModifiers, result);
+						resetState = false;
+
+						// Find which state rule to apply
+						var modifier = GetModifier(definition, rule.StateModifiers, result);
 
                         // Aggregate: Always take the 'worst' status
                         if (modifier.Value > result.Status)
                         {
                             result.Status = modifier.Value;
-                            resetState = false;
                         }
                     }
                 }
