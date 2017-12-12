@@ -1,4 +1,5 @@
-﻿using System;
+﻿using System.Linq;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Text;
@@ -58,5 +59,25 @@ namespace Swampnet.Dash.Common.Entities
         /// Test Rules
         /// </summary>
         public List<Rule> StateRules { get; set; }
+
+        public int MaxRuleStateModifierConsecutiveCount_HolyShitChangeThisNameOmg
+        {
+            get
+            {
+                int x = 0;
+                if(StateRules != null)
+                {
+                    var xx = StateRules
+                        .SelectMany(r => r.StateModifiers)
+                        .Where(r => r.ConsecutiveHits.HasValue);
+
+                    if (xx.Any())
+                    {
+                        x = xx.Max(m => m.ConsecutiveHits.Value);
+                    }
+                }
+                return x;
+            }
+        }
     }
 }

@@ -6,10 +6,10 @@ namespace Swampnet.Dash.Common.Entities
 {
     public enum Status
     {
-        Unknown,
-        Ok,
-        Warn,
-        Alert,
-        Error
+        Unknown = 0,
+        Ok = 1,
+        Warn = 2,
+        Alert = 3,
+        Error = 4
     }
 }

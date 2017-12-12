@@ -17,13 +17,23 @@ namespace Swampnet.Dash.Services
     /// </summary>
     class RuleProcessor : IRuleProcessor
     {
+        private readonly ITestHistory _testHistory;
+
+        public RuleProcessor(ITestHistory testHistory)
+        {
+            _testHistory = testHistory;
+        }
+
+
         public Task ProcessTestResultAsync(TestDefinition definition, TestResult result)
         {
+            var currentState = _testHistory.GetCurrentState(definition);
+            result.Status = currentState == null ? Status.Unknown : currentState.Status;
             var oldStatus = result.Status;
 
             if(definition.StateRules != null)
             {
-                bool hasRuleInPlay = false;
+                bool resetState = true;
 
                 // Check out any rules with both an expression and state modifiers.
                 foreach(var rule in definition.StateRules.Where(r => r.Expression != null && r.StateModifiers != null))
@@ -33,16 +43,20 @@ namespace Swampnet.Dash.Services
                     // Evaluate expression against the current test result
                     if(eval.Evaluate(rule.Expression, result))
                     {
-                        hasRuleInPlay = true;
-
                         // Find which state rule to apply
-                        var modifier = rule.StateModifiers.OrderBy(m => m.Order).First(); // @HACK: Just grab the first
+                        var modifier = GetModifier(definition, rule.StateModifiers, result);
 
-                        result.Status = modifier.Value;
+                        // Aggregate: Always take the 'worst' status
+                        if (modifier.Value > result.Status)
+                        {
+                            result.Status = modifier.Value;
+                            resetState = false;
+                        }
                     }
                 }
 
-                if (!hasRuleInPlay)
+                // None of the rules fired. Reset to default status
+                if (result.Status == Status.Unknown || resetState)
                 {
                     result.Status = Status.Ok;
                 }
@@ -58,7 +72,26 @@ namespace Swampnet.Dash.Services
                     result.Status);
             }
 
+            _testHistory.AddTestResult(definition, result);
+
             return Task.CompletedTask;
+        }
+
+
+        /// <summary>
+        /// Figure out which modifier to use
+        /// </summary>
+        private StateModifier GetModifier(TestDefinition definition, List<StateModifier> modifiers, TestResult result)
+        {
+            IEnumerable<TestResult> history = _testHistory.GetHistory(definition);
+
+            foreach(var modifier in modifiers.OrderBy(m => m.Order))
+            {
+                // Ok, shit, we need to run the expression over the last (x) results...
+                // This needs a rethink. This should be happening up there ^^ in ProcessTestResultAsync
+            }
+
+            return modifiers.OrderBy(m => m.Order).First(); // @HACK: Just grab the first
         }
     }
 }
