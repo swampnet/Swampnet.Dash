@@ -40,8 +40,13 @@ namespace Swampnet.Dash.Services
                 {
                     var eval = new ExpressionEvaluator();
 
+                    // @TODO: So, we actually need to run this expression over the last (x) results. (x) being the
+                    //        definition.MaxRuleStateModifierConsecutiveCount_HolyShitChangeThisNameOmg plus
+                    //        this latest result (unless we add the result to the history earlier in which case we 
+                    //        can just pull the history)
+
                     // Evaluate expression against the current test result
-                    if(eval.Evaluate(rule.Expression, result))
+                    if (eval.Evaluate(rule.Expression, result))
                     {
                         // Find which state rule to apply
                         var modifier = GetModifier(definition, rule.StateModifiers, result);
