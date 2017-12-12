@@ -141,7 +141,7 @@ namespace Swampnet.Dash.Common.Entities
         /// The target state
         /// </summary>
         [XmlAttribute]
-        public string Value { get; set; }
+        public Status Value { get; set; }
     }
 
 }

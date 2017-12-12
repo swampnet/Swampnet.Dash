@@ -25,7 +25,7 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
 
         public string Id { get; private set; }
         public DateTime? Timestamp => _dashItem?.TimestampUtc;
-		public string Status => _dashItem?.Status;
+		public Status Status => _dashItem == null ? Status.Unknown : _dashItem.Status;
 		public string Order
 		{
 			get
@@ -99,7 +99,7 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
 					{
 						// Check some known values
 						case "status":
-							value = _dashItem?.Status;
+							value = (_dashItem == null ? Status.Unknown : _dashItem.Status).ToString();
 							break;
 
 						case "timestamputc":

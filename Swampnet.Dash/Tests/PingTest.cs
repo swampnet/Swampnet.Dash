@@ -12,7 +12,6 @@ namespace Swampnet.Dash.Tests
 	{
 		public async Task<TestResult> RunAsync(TestDefinition testDefinition)
 		{
-
 			Ping ping = new Ping();
 
 			var host = testDefinition.Parameters.StringValue("host");
@@ -20,11 +19,7 @@ namespace Swampnet.Dash.Tests
 			var reply = await ping.SendPingAsync(host);
 			var time = reply.RoundtripTime;
 
-            // @TODO: Figure out state
-            var rs = new TestResult()
-            {
-                Status = "ok"
-            };
+            var rs = new TestResult();
             
 			rs.Output.Add(new Property("value", time));
 

@@ -16,20 +16,6 @@ namespace Swampnet.Dash.Tests
             var to = testDefinition.Parameters.IntValue("max");
             var value = _rnd.Next(from, to);
 
-            // HACK
-            if(value > 5)
-            {
-                rs.Status = "alert";
-            }
-            else if(value > 4)
-            {
-                rs.Status = "warn";
-            }
-            else
-            {
-                rs.Status = "ok";
-            }
-
             rs.Output.Add(new Property("value", value));
             
             return Task.FromResult(rs);

@@ -41,7 +41,7 @@ namespace UnitTests
 			});
 
 			vm.Update(new DashboardItem() {
-				Status = "test-status"
+				Status = Status.Warn
 			});
 
 			var expected = "test-status";

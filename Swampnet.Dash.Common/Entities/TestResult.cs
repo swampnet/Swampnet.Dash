@@ -18,8 +18,7 @@ namespace Swampnet.Dash.Common.Entities
 
         public string TestId { get; set; }
 
-        // We probably need to return error state here as well? We need a way to signal that there was an error running the test.
-        public string Status { get; set; }
+        public Status Status { get; set; }
 
         public DateTime TimestampUtc { get; set; }
 

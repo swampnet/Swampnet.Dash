@@ -44,7 +44,7 @@ namespace Swampnet.Dash.Services
 
                 if (!hasRuleInPlay)
                 {
-                    result.Status = definition.DefaultStatus;
+                    result.Status = Status.Ok;
                 }
             }
             

@@ -15,7 +15,7 @@ namespace UnitTests
 			var lhs = new DashboardItem()
 			{
 				Id = "01",
-				Status = "test",
+				Status = Status.Ok,
 				TimestampUtc = DateTime.MinValue,
 				Output = new System.Collections.Generic.List<Property>()
 				{
@@ -28,7 +28,7 @@ namespace UnitTests
 			var rhs = new DashboardItem()
 			{
 				Id = "01",
-				Status = "test",
+				Status = Status.Ok,
 				TimestampUtc = DateTime.MinValue,
 				Output = new System.Collections.Generic.List<Property>()
 				{
@@ -48,7 +48,7 @@ namespace UnitTests
 			var lhs = new DashboardItem()
 			{
 				Id = "01",
-				Status = "test",
+				Status = Status.Ok,
 				TimestampUtc = DateTime.MinValue,
 				Output = new System.Collections.Generic.List<Property>()
 				{
@@ -62,7 +62,7 @@ namespace UnitTests
 			var rhs = new DashboardItem()
 			{
 				Id = "01",
-				Status = "test",
+				Status = Status.Ok,
 				TimestampUtc = DateTime.MinValue,
 				Output = new System.Collections.Generic.List<Property>()
 				{
@@ -83,7 +83,7 @@ namespace UnitTests
 			var lhs = new DashboardItem()
 			{
 				Id = "01",
-				Status = "test",
+				Status = Status.Ok,
 				TimestampUtc = DateTime.MinValue,
 				Output = new System.Collections.Generic.List<Property>()
 				{
@@ -96,7 +96,7 @@ namespace UnitTests
 			var rhs = new DashboardItem()
 			{
 				Id = "01",
-				Status = "test",
+				Status = Status.Ok,
 				TimestampUtc = DateTime.MinValue,
 				Output = new System.Collections.Generic.List<Property>()
 				{
@@ -195,13 +195,13 @@ namespace UnitTests
                             {
                                 Order = 0,
                                 ConsecutiveHits = 5,
-                                Value = "warn"
+                                Value = Status.Warn
                             },
                             new StateModifier()
                             {
                                 Order = 1,
                                 ConsecutiveHits = 10,
-                                Value = "alert"
+                                Value = Status.Alert
                             }
 
                         }

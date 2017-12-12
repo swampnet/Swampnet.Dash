@@ -27,9 +27,6 @@ namespace Swampnet.Dash.Common.Entities
 		[XmlAttribute]
 		public string Type { get; set; }
 
-        [XmlAttribute]
-        public string DefaultStatus { get; set; }
-
         [XmlIgnore]
 		public TimeSpan Heartbeat { get; set; }
 

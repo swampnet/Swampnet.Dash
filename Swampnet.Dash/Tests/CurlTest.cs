@@ -30,7 +30,7 @@ namespace Swampnet.Dash.Tests
             // @TODO: Figure out state
             var rs = new TestResult()
             {
-                Status = "ok"
+                Status = Status.Ok
             };
 
 			rs.Output.Add(new Property("value", time));

@@ -96,15 +96,15 @@ namespace Swampnet.Dash.Argos
 
 			if(timeInGroup.TotalSeconds < 20)
 			{
-				item.Status = "";
+				item.Status = Status.Ok;
 			}
 			else if (timeInGroup.TotalSeconds < 30)
 			{
-				item.Status = "warn";
+				item.Status = Status.Warn;
 			}
 			else
 			{
-				item.Status = "alert";
+				item.Status = Status.Alert;
 			}
 		}
 	}

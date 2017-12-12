@@ -25,5 +25,10 @@ namespace Swampnet.Dash.Common.Entities
 
 		[XmlAttribute]
 		public string Value { get; set; }
-	}
+
+        public override string ToString()
+        {
+            return $"{Name}: {Value}";
+        }
+    }
 }
