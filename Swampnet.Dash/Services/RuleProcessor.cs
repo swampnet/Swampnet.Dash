@@ -44,6 +44,13 @@ namespace Swampnet.Dash.Services
                     //        definition.MaxRuleStateModifierConsecutiveCount_HolyShitChangeThisNameOmg plus
                     //        this latest result (unless we add the result to the history earlier in which case we 
                     //        can just pull the history)
+                    //
+                    //      Running the test 10 times each time when we've already run it seems dumb, escpecially seeing 
+                    //      as we've already got a bit of history going on...
+                    //
+                    //      I dunno, if I squint real hard I can see the benifit of re-evaluating them each time. If
+                    //      we ever have dynamic stuff in the expression then it's possible the result could change
+                    //      over time. Can't think of a sane example right now though...
 
                     // Evaluate expression against the current test result
                     if (eval.Evaluate(rule.Expression, result))
