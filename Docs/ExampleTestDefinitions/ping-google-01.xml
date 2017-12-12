@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-16"?>
+<!-- 
+  - Ping google every 5 seconds
+  - If response time ('value') is > 250.0ms for 10 consecutive tests, change state to 'alert'  
+  - If response time ('value') is > 250.0ms for 5 consecutive tests, change state to 'warn'
+
+  Notes:
+
+  - Which StateModifier does it know to run? By the time we hit 10 consecutive hits *both* are true.
+    - is it just in order? The first one it finds that satisfies the consecutive hit / elapsed condition is the one?
+
+  - How do we reset the state?
+    ie: If the expression is false, then presumably we want to change the state to ok or whatever. How does that happen?
+    - DefaultState on the TestDefinition itself? If no rules match (or rather, no StateModifiers are invoked) then set the state 
+      to this.
+-->
+<TestDefinition xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+  Id="ping-google-01" 
+  Description="Ping the googs" 
+  Type="PingTest" 
+  DefaultState="ok"
+  Heartbeat="PT5S">
+  <Parameters>
+    <Property Name="host" Value="www.google.com" />
+  </Parameters>
+  <StateRules>
+    <Rule>
+      <Expression Operator="MATCH_ALL" Operand="Null" IsActive="true">
+        <Children>
+          <Expression Operator="GT" Operand="Property" Argument="value" Value="250.0" IsActive="true">
+            <Children />
+          </Expression>
+        </Children>
+      </Expression>
+      <StateModifiers>
+        <StateModifier Order="0" Value="alert">
+          <ConsecutiveHits>10</ConsecutiveHits>
+          <Elapsed xsi:nil="true" />
+        </StateModifier>
+        <StateModifier Order="1" Value="warn">
+          <ConsecutiveHits>5</ConsecutiveHits>
+          <Elapsed xsi:nil="true" />
+        </StateModifier>
+      </StateModifiers>
+    </Rule>
+  </StateRules>
+</TestDefinition>

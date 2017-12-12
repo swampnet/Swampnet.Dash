@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-16"?>
+<!-- 
+  - Shae a 6d every 2 seconds
+  - If value is > 3 for 3 consecutive tests, change state to 'alert'  
+  - If value is > 2 change state to 'warn'  
+-->
+<TestDefinition xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+  Id="shake-d6" 
+  Description="Shake a D6" 
+  Type="RandomNumberTest" 
+  DefaultState="ok"
+  Heartbeat="PT2S">
+  <Parameters>
+    <Property Name="min" Value="1" />
+    <Property Name="max" Value="6" />
+  </Parameters>
+  <StateRules>
+    <Rule>
+      <Expression Operator="MATCH_ALL" Operand="Null" IsActive="true">
+        <Children>
+          <Expression Operator="GT" Operand="Property" Argument="value" Value="3" IsActive="true">
+            <Children />
+          </Expression>
+        </Children>
+      </Expression>
+      <StateModifiers>
+        <StateModifier Order="0" Value="alert">
+          <ConsecutiveHits>3</ConsecutiveHits>
+          <Elapsed xsi:nil="true" />
+        </StateModifier>
+        <StateModifier Order="1" Value="warn">
+          <ConsecutiveHits xsi:nil="true"/>
+          <Elapsed xsi:nil="true" />
+        </StateModifier>
+      </StateModifiers>
+    </Rule>
+  </StateRules>
+</TestDefinition>

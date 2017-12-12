@@ -13,12 +13,13 @@ namespace Swampnet.Dash.Services
         private readonly ITestRepository _testRepository;
         private readonly IEnumerable<ITest> _tests;
         private readonly Dictionary<string, TestResult> _state = new Dictionary<string, TestResult>();
+        private readonly IRuleProcessor _ruleProcessor;
 
-
-        public TestRunner(ITestRepository testRepo, IEnumerable<ITest> tests)
+        public TestRunner(ITestRepository testRepo, IEnumerable<ITest> tests, IRuleProcessor ruleProcessor)
         {
             _testRepository = testRepo;
             _tests = tests;
+            _ruleProcessor = ruleProcessor;
         }
 
 
@@ -37,18 +38,16 @@ namespace Swampnet.Dash.Services
 
                     Log.Debug("Running test {type} - {name}", test.GetType().Name, definition.Id);
 
-                    var rs = await test.RunAsync(definition);
+                    var result = await test.RunAsync(definition);
 
-                    rs.TestId = definition.Id;
+                    result.TestId = definition.Id;
 
                     lock (results)
                     {
-                        results.Add(rs);
+                        results.Add(result);
                     }
 
-                    //Log.Information("{test} '{id}' " + rs,
-                    //    test.GetType().Name,
-                    //    definition.Id);
+                    await _ruleProcessor.ProcessTestResultAsync(definition, result);
                 }
                 catch (Exception ex)
                 {

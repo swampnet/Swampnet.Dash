@@ -15,6 +15,7 @@ namespace Swampnet.Dash.Common.Entities
         public TestDefinition()
         {
             Parameters = new List<Property>();
+            StateRules = new List<Rule>();
         }
 
 		[XmlAttribute]
@@ -26,12 +27,16 @@ namespace Swampnet.Dash.Common.Entities
 		[XmlAttribute]
 		public string Type { get; set; }
 
-		[XmlIgnore]
+        [XmlAttribute]
+        public string DefaultStatus { get; set; }
+
+        [XmlIgnore]
 		public TimeSpan Heartbeat { get; set; }
 
-		// XmlSerializer does not support TimeSpan, so use this property for 
-		// serialization instead.
-		[Browsable(false)]
+
+        // XmlSerializer does not support TimeSpan, so use this property for 
+        // serialization instead.
+        [Browsable(false)]
 		[XmlAttribute(DataType = "duration", AttributeName = "Heartbeat")]
 		public string __heartbeat
 		{
@@ -47,6 +52,14 @@ namespace Swampnet.Dash.Common.Entities
 			}
 		}
 
+        /// <summary>
+        /// Test parameters
+        /// </summary>
 		public List<Property> Parameters { get; set; }
+
+        /// <summary>
+        /// Test Rules
+        /// </summary>
+        public List<Rule> StateRules { get; set; }
     }
 }
