@@ -193,13 +193,11 @@ namespace UnitTests
                         {
                             new StateModifier()
                             {
-                                Order = 0,
                                 ConsecutiveHits = 5,
                                 Value = Status.Warn
                             },
                             new StateModifier()
                             {
-                                Order = 1,
                                 ConsecutiveHits = 10,
                                 Value = Status.Alert
                             }

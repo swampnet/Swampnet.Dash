@@ -24,87 +24,69 @@ namespace Swampnet.Dash.Services
             _testHistory = testHistory;
         }
 
+		/// <summary>
+		/// @TODO:
+		/// 
+		/// - 'value doesn't change for x hits'
+		/// - 'Value > last value for x hits'
+		/// - 'average over last x hits > value for y hits'
+		/// - std deviation stuff
+		/// </summary>
+		/// <param name="definition"></param>
+		/// <param name="result"></param>
+		/// <returns></returns>
+		public Task ProcessTestResultAsync(TestDefinition definition, TestResult result)
+		{
+			// Save result
+			_testHistory.AddTestResult(definition, result);
 
-        public Task ProcessTestResultAsync(TestDefinition definition, TestResult result)
-        {
-            var currentState = _testHistory.GetCurrentState(definition);
-            result.Status = currentState == null ? Status.Unknown : currentState.Status;
-            var oldStatus = result.Status;
+			if (definition.StateRules != null && definition.StateRules.Any())
+			{
+				var history = _testHistory.GetHistory(definition);
 
-            if(definition.StateRules != null)
-            {
-                bool resetState = true;
+				foreach (var rule in definition.StateRules.Where(r => r.Expression != null && r.StateModifiers != null && r.StateModifiers.Any()))
+				{
+					var eval = new ExpressionEvaluator();
 
-                // Check out any rules with both an expression and state modifiers.
-                foreach(var rule in definition.StateRules.Where(r => r.Expression != null && r.StateModifiers != null))
-                {
-                    var eval = new ExpressionEvaluator();
+					// Run expression against all results. Pretty sure we should just be storing this somewhere rather than re-calculate it each time
+					var results = new List<Tuple<DateTime, bool>>();
+					foreach(var r in history)
+					{
+						results.Add(new Tuple<DateTime, bool>(
+							r.TimestampUtc,
+							eval.Evaluate(rule.Expression, r)));
+					}
 
-                    // @TODO: So, we actually need to run this expression over the last (x) results. (x) being the
-                    //        definition.MaxRuleStateModifierConsecutiveCount_HolyShitChangeThisNameOmg plus
-                    //        this latest result (unless we add the result to the history earlier in which case we 
-                    //        can just pull the history)
-                    //
-                    //      Running the test 10 times each time when we've already run it seems dumb, escpecially seeing 
-                    //      as we've already got a bit of history going on...
-                    //
-                    //      I dunno, if I squint real hard I can see the benifit of re-evaluating them each time. If
-                    //      we ever have dynamic stuff in the expression then it's possible the result could change
-                    //      over time. Can't think of a sane example right now though...
+					// Find StateModifier that matches the history
+					// tend towards the modifier with the highest ConsecutiveHits (So a modifier that requires 10 consecutive hits beats one that
+					// only requires 1
+					foreach (var mod in rule.StateModifiers.OrderByDescending(m => m.ConsecutiveHits.HasValue ? m.ConsecutiveHits.Value : 0))
+					{
+						// Hit based
+						if (!mod.ConsecutiveHits.HasValue || results.Count >= mod.ConsecutiveHits.Value)
+						{
+							var range = results.Take(mod.ConsecutiveHits.HasValue ? Math.Max(mod.ConsecutiveHits.Value, 1) : 1); // Consecutive hits of 'zero' then. What does that mean?
+							if (range.All(x => x.Item2))
+							{
+								// All true. Use this modifier
+								//Log.Debug("{hits} Consecutive hits - status: {statue}", mod.ConsecutiveHits.Value, mod.Value);
+								result.Status = mod.Value;
+								break;
+							}
+						}
+					}
 
-                    // Evaluate expression against the current test result
-                    if (eval.Evaluate(rule.Expression, result))
-                    {
-						resetState = false;
+					// @todo: Time based
+				}
+			}
 
-						// Find which state rule to apply
-						var modifier = GetModifier(definition, rule.StateModifiers, result);
+			// Default status if not set
+			if(result.Status == Status.Unknown)
+			{
+				result.Status = Status.Ok;
+			}
 
-                        // Aggregate: Always take the 'worst' status
-                        if (modifier.Value > result.Status)
-                        {
-                            result.Status = modifier.Value;
-                        }
-                    }
-                }
-
-                // None of the rules fired. Reset to default status
-                if (result.Status == Status.Unknown || resetState)
-                {
-                    result.Status = Status.Ok;
-                }
-            }
-            
-            // Check for change of state
-            if(oldStatus != result.Status)
-            {
-                // @todo: Status has changed. Do something!
-                Log.Debug("Test {id} status changed {old} -> {new}", 
-                    definition.Id, 
-                    oldStatus, 
-                    result.Status);
-            }
-
-            _testHistory.AddTestResult(definition, result);
-
-            return Task.CompletedTask;
-        }
-
-
-        /// <summary>
-        /// Figure out which modifier to use
-        /// </summary>
-        private StateModifier GetModifier(TestDefinition definition, List<StateModifier> modifiers, TestResult result)
-        {
-            IEnumerable<TestResult> history = _testHistory.GetHistory(definition);
-
-            foreach(var modifier in modifiers.OrderBy(m => m.Order))
-            {
-                // Ok, shit, we need to run the expression over the last (x) results...
-                // This needs a rethink. This should be happening up there ^^ in ProcessTestResultAsync
-            }
-
-            return modifiers.OrderBy(m => m.Order).First(); // @HACK: Just grab the first
-        }
+			return Task.CompletedTask;
+		}
     }
 }

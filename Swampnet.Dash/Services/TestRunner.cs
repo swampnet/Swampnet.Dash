@@ -36,11 +36,11 @@ namespace Swampnet.Dash.Services
 
 					Validate(definition, test.Meta);
 
-                    Log.Debug("Running test {type} - {name}", test.GetType().Name, definition.Id);
+                    //Log.Debug("Running test {type} - {name}", test.GetType().Name, definition.Id);
 
                     var result = await test.RunAsync(definition);
 
-                    result.TestId = definition.Id;
+					result.TestId = definition.Id;
 
                     lock (results)
                     {
@@ -48,8 +48,10 @@ namespace Swampnet.Dash.Services
                     }
 
                     await _ruleProcessor.ProcessTestResultAsync(definition, result);
-                }
-                catch (Exception ex)
+
+					Log.Debug("Test {type} - {name} = {value} / {status}", test.GetType().Name, definition.Id, result.Output.StringValue("value"), result.Status);
+				}
+				catch (Exception ex)
                 {
 					Log.Error(ex, ex.Message);
                 }

@@ -15,9 +15,9 @@ namespace Swampnet.Dash.Service.Services
     {
         public void Update(string group, IEnumerable<DashboardItem> dashItems)
         {
-            Log.Debug("Update: '{group}' - {dashItems}",
-                group,
-                string.Join(", ", dashItems.Select(di => di.Id)));
+            //Log.Debug("Update: '{group}' - {dashItems}",
+            //    group,
+            //    string.Join(", ", dashItems.Select(di => di.Id)));
 
             GlobalHost.ConnectionManager
                 .GetHubContext<DashboardHub>()
@@ -29,9 +29,9 @@ namespace Swampnet.Dash.Service.Services
 
         public void Refresh(string group, IEnumerable<DashboardItem> dashItems)
         {
-            Log.Debug("Refresh: '{group}' - {dashItems}",
-                group,
-                string.Join(", ", dashItems.Select(di => di.Id)));
+            //Log.Debug("Refresh: '{group}' - {dashItems}",
+            //    group,
+            //    string.Join(", ", dashItems.Select(di => di.Id)));
 
             GlobalHost.ConnectionManager
                 .GetHubContext<DashboardHub>()

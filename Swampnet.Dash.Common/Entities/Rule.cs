@@ -122,12 +122,6 @@ namespace Swampnet.Dash.Common.Entities
     public class StateModifier
     {
         /// <summary>
-        /// The order in which to process this modifier
-        /// </summary>
-        [XmlAttribute]
-        public int Order { get; set; }
-
-        /// <summary>
         /// How many consecucive times the expression has to be true before applying this state
         /// </summary>
         public int? ConsecutiveHits { get; set; }
