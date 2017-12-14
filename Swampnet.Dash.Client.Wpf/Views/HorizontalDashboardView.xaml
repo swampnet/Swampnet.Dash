@@ -7,11 +7,14 @@
              xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
-	<ItemsControl ItemsSource="{Binding}">
+	<UserControl.Resources>
+		<BooleanToVisibilityConverter x:Key="convertBool"/>
+	</UserControl.Resources>
+	<ItemsControl ItemsSource="{Binding Groups}" Grid.IsSharedSizeScope="True">
 		<ItemsControl.ItemTemplate>
 			<DataTemplate>
 				<!-- Group -->
-				<Border MinHeight="100" Margin="5" BorderBrush="Black" BorderThickness="1">
+				<Border MinHeight="100" Margin="5">
 					<Grid>
 						<Grid.Resources>
 							<!-- Sort by Order, then Timestamp -->
@@ -22,11 +25,10 @@
 							</CollectionViewSource>
 						</Grid.Resources>
 						<Grid.ColumnDefinitions>
-							<!-- @todo: Only really want this column if group has a title ... -->
-							<ColumnDefinition Width="100"/>
+							<ColumnDefinition SharedSizeGroup="_header" />
 							<ColumnDefinition/>
 						</Grid.ColumnDefinitions>
-						<TextBlock Grid.Column="0" Text="{Binding Title}" VerticalAlignment="Center" Margin="5" FontWeight="Bold" FontSize="15"/>
+						<TextBlock Grid.Column="0" Text="{Binding Title}" VerticalAlignment="Center" Margin="5" FontWeight="Bold" FontSize="15" Width="Auto" Visibility="{Binding DisplayHeader, Converter={StaticResource convertBool}}"/>
 						<ItemsControl Grid.Column="1" ItemsSource="{Binding Source={StaticResource viewSource}}">
 							<ItemsControl.ItemsPanel>
 								<ItemsPanelTemplate>

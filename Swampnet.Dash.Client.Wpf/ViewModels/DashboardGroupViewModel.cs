@@ -16,8 +16,9 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
         public string Title => _group.Title;
         public string Id => _group.Id;
         public bool IsDefault => _group.IsDefault;
+		public bool DisplayHeader => !IsDefault && !string.IsNullOrEmpty(Title);
 
-        public ICollection<DashboardItemViewModel> Items => _items;
+		public ICollection<DashboardItemViewModel> Items => _items;
 
 
         public DashboardGroupViewModel(DashboardGroup group)

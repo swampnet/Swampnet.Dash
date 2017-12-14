@@ -62,7 +62,7 @@ namespace Swampnet.Dash.Services
 
         private static void Trunc(TestDefinition definition, List<TestResult> results)
         {
-            int max = definition.MaxRuleStateModifierConsecutiveCount_HolyShitChangeThisNameOmg + 1; // Always leave one
+            int max = definition.StateRules.MaxRuleStateModifierConsecutiveCount_HolyShitChangeThisNameOmg() + 1; // Always leave one
             while (results.Count > max) // @TODO: from testDefinition
             {
                 results.RemoveAt(0);

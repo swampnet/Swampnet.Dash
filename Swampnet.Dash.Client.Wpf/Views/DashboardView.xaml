@@ -10,10 +10,10 @@
 	<UserControl.Resources>
 		<local:DashboardTemplateSelector x:Key="myDataTemplateSelector"/>
 		<DataTemplate x:Key="Horizontal">
-			<local:HorizontalDashboardView DataContext="{Binding Groups}"/>
+			<local:HorizontalDashboardView DataContext="{Binding}"/>
 		</DataTemplate>
 		<DataTemplate x:Key="Vertical">
-			<local:VerticalDashboardView DataContext="{Binding Groups}"/>
+			<local:VerticalDashboardView DataContext="{Binding}"/>
 		</DataTemplate>
 	</UserControl.Resources>
 	<Grid Background="LightYellow">
@@ -33,7 +33,7 @@
 			template only resolves when the view virst loads which is too soon..
 			Here's a nasty workaround, not really good enough tbh
 		-->
-		<ContentControl Grid.Row="2" Content="{Binding }">
+		<ContentControl Grid.Row="2" Content="{Binding}">
 			<ContentControl.Style>
 				<Style TargetType="{x:Type ContentControl}">
 					<!-- Default Template -->

@@ -58,7 +58,6 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
 		public string Description => _dashboard?.Description;
         public string Template => _dashboard?.Template;
 
-
         /// <summary>
         /// Update / Add DashItems based on source. Optionally remove those not in the list.
         /// </summary>
@@ -66,6 +65,7 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
         {
             foreach (var di in source)
             {
+				// @todo: Having multiple test definitions with same test id on same dash breaks this
                 var item = _groups.SelectMany(g => g.Items).Where(d => d.Id == di.Id).Distinct().SingleOrDefault();
                 if (item == null)
                 {

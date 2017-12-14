@@ -7,7 +7,10 @@
              xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
-	<ItemsControl ItemsSource="{Binding}">
+	<UserControl.Resources>
+		<BooleanToVisibilityConverter x:Key="convertBool"/>
+	</UserControl.Resources>
+	<ItemsControl ItemsSource="{Binding Groups}" Grid.IsSharedSizeScope="True">
 		<ItemsControl.ItemsPanel>
 			<ItemsPanelTemplate>
 				<StackPanel Orientation="Horizontal"/>
@@ -16,7 +19,7 @@
 		<ItemsControl.ItemTemplate>
 			<DataTemplate>
 				<!-- Group -->
-				<Border MinWidth="100" Margin="5" BorderBrush="Black" BorderThickness="1">
+				<Border MinWidth="100" Margin="5">
 					<Grid>
 						<Grid.Resources>
 							<!-- Sort by Order, then Timestamp -->
@@ -27,11 +30,10 @@
 							</CollectionViewSource>
 						</Grid.Resources>
 						<Grid.RowDefinitions>
-							<!-- @todo: Only really want this row if group has a title ... -->
-							<RowDefinition Height="Auto"/>
+							<RowDefinition SharedSizeGroup="_header"/>
 							<RowDefinition />
 						</Grid.RowDefinitions>
-						<TextBlock Grid.Row="0" Text="{Binding Title}" HorizontalAlignment="Center" Margin="5" FontWeight="Bold" FontSize="15"/>
+						<TextBlock Grid.Row="0" Text="{Binding Title}" HorizontalAlignment="Center" Margin="5" FontWeight="Bold" FontSize="15" Height="Auto" Visibility="{Binding DisplayHeader, Converter={StaticResource convertBool}}"/>
 						<ItemsControl Grid.Row="1" ItemsSource="{Binding Source={StaticResource viewSource}}">
 							<ItemsControl.ItemTemplate>
 								<DataTemplate>

@@ -41,5 +41,7 @@ namespace Swampnet.Dash.Common.Entities
         }
 
         public List<Property> Parameters { get; set; }
-    }
+		public List<Rule> StateRules { get; set; }
+
+	}
 }
