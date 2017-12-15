@@ -44,7 +44,7 @@ namespace UnitTests
 				Status = Status.Warn
 			});
 
-			var expected = "test-status";
+			var expected = "Warn";
 			var actual = vm.Group;
 
 			Assert.AreEqual(expected, actual);

@@ -27,7 +27,7 @@ namespace Swampnet.Dash.Services
 		/// <summary>
 		/// @TODO:
 		/// 
-		/// - Only works on test results. Which makes it no good for argos types.
+		/// - Only works on test results. Which makes it useless for argos types.
 		/// - 'value doesn't change for x hits'
 		/// - 'Value > last value for x hits'
 		/// - 'average over last x hits > value for y hits'
