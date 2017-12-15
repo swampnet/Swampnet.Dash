@@ -12,7 +12,7 @@ namespace Swampnet.Dash.Services
     {
         private readonly ITestRepository _testRepository;
         private readonly IEnumerable<ITest> _tests;
-        private readonly Dictionary<string, TestResult> _state = new Dictionary<string, TestResult>();
+        private readonly Dictionary<string, DashboardItem> _state = new Dictionary<string, DashboardItem>();
         private readonly IRuleProcessor _ruleProcessor;
 
         public TestRunner(ITestRepository testRepo, IEnumerable<ITest> tests, IRuleProcessor ruleProcessor)
@@ -23,9 +23,9 @@ namespace Swampnet.Dash.Services
         }
 
 
-        public async Task<IEnumerable<TestResult>> RunAsync()
+        public async Task<IEnumerable<DashboardItem>> RunAsync()
         {
-            var results = new List<TestResult>();
+            var results = new List<DashboardItem>();
 
             //Parallel.ForEach(GetDue(), testDefinition => { });
 			foreach(var definition in GetDue())
@@ -80,7 +80,7 @@ namespace Swampnet.Dash.Services
         }
 
 
-        public IEnumerable<TestResult> GetTestResults(IEnumerable<string> ids)
+        public IEnumerable<DashboardItem> GetTestResults(IEnumerable<string> ids)
         {
             return _state.Where(x => ids.Contains(x.Key)).Select(x => x.Value);
         }

@@ -36,7 +36,7 @@ namespace Swampnet.Dash.Services
 		/// <param name="definition"></param>
 		/// <param name="result"></param>
 		/// <returns></returns>
-		public Task ProcessTestResultAsync(TestDefinition definition, TestResult result)
+		public Task ProcessTestResultAsync(TestDefinition definition, DashboardItem result)
 		{
 			// Save result
 			_testHistory.AddTestResult(definition, result);

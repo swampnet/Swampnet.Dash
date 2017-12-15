@@ -10,15 +10,15 @@ namespace Swampnet.Dash.Services
 {
 	internal class DashboardItemHistory : IDashboardItemHistory
     {
-        private Dictionary<string, List<TestResult>> _history = new Dictionary<string, List<TestResult>>();
+        private Dictionary<string, List<DashboardItem>> _history = new Dictionary<string, List<DashboardItem>>();
 
 
-        public void AddTestResult(TestDefinition definition, TestResult result)
+        public void AddTestResult(TestDefinition definition, DashboardItem result)
         {
-            List<TestResult> results;
+            List<DashboardItem> results;
             if (!_history.ContainsKey(definition.Id))
             {
-                results = new List<TestResult>();
+                results = new List<DashboardItem>();
                 _history.Add(definition.Id, results);
             }
             else
@@ -27,7 +27,7 @@ namespace Swampnet.Dash.Services
             }
 
             // Add a copy
-            results.Add(new TestResult()
+            results.Add(new DashboardItem()
             {
                 TimestampUtc = result.TimestampUtc,
                 Status = result.Status,
@@ -39,15 +39,15 @@ namespace Swampnet.Dash.Services
         }
 
 
-        public TestResult GetCurrentState(TestDefinition definition)
+        public DashboardItem GetCurrentState(TestDefinition definition)
         {
             return GetHistory(definition).FirstOrDefault();
         }
 
 
-        public IEnumerable<TestResult> GetHistory(TestDefinition definition)
+        public IEnumerable<DashboardItem> GetHistory(TestDefinition definition)
         {
-            IEnumerable<TestResult> result = null;
+            IEnumerable<DashboardItem> result = null;
 
             if (_history.ContainsKey(definition.Id))
             {
@@ -55,12 +55,12 @@ namespace Swampnet.Dash.Services
             }
 
             return result == null
-                ? Enumerable.Empty<TestResult>()
+                ? Enumerable.Empty<DashboardItem>()
                 : result;
         }
 
 
-        private static void Trunc(TestDefinition definition, List<TestResult> results)
+        private static void Trunc(TestDefinition definition, List<DashboardItem> results)
         {
             int max = definition.StateRules.MaxRuleStateModifierConsecutiveCount_HolyShitChangeThisNameOmg() + 1; // Always leave one
             while (results.Count > max) // @TODO: from testDefinition

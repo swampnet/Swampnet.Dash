@@ -18,7 +18,7 @@ namespace Swampnet.Dash.DAL
 
 
 
-		public void Add(IEnumerable<TestResult> testResults)
+		public void Add(IEnumerable<DashboardItem> testResults)
 		{
 			using (var context = new HistoryContext())
 			{

@@ -19,7 +19,7 @@ namespace UnitTests
 			var testHistory = Substitute.For<IDashboardItemHistory>();
 			testHistory.GetHistory(definition).Returns(x => new[] 
 			{
-				new Swampnet.Dash.Common.Entities.TestResult()
+				new Swampnet.Dash.Common.Entities.DashboardItem()
 				{
 					Output = new System.Collections.Generic.List<Property>()
 					{
