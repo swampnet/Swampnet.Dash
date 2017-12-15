@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Linq;
+using Swampnet.Dash.Common.Interfaces;
 
 namespace Swampnet.Dash.Common.Entities
 {
@@ -16,7 +17,7 @@ namespace Swampnet.Dash.Common.Entities
             TimestampUtc = DateTime.UtcNow;
         }
 
-        public string TestId { get; set; }
+        public string Id { get; set; }
 
         public Status Status { get; set; }
 

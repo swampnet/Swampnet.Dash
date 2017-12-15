@@ -8,7 +8,7 @@ using Swampnet.Dash.Common.Entities;
 
 namespace Swampnet.Dash.Services
 {
-    class TestHistory : ITestHistory
+	internal class DashboardItemHistory : IDashboardItemHistory
     {
         private Dictionary<string, List<TestResult>> _history = new Dictionary<string, List<TestResult>>();
 
@@ -31,7 +31,7 @@ namespace Swampnet.Dash.Services
             {
                 TimestampUtc = result.TimestampUtc,
                 Status = result.Status,
-                TestId = result.TestId,
+                Id = result.Id,
                 Output = result.Output.Select(o => new Property(o.Name, o.Value) { Category = o.Category }).ToList()
             });
 

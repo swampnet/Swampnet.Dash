@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Linq;
+using Swampnet.Dash.Common.Interfaces;
 
 namespace Swampnet.Dash.Common.Entities
 {

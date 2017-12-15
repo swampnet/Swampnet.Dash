@@ -40,7 +40,7 @@ namespace Swampnet.Dash.Services
 
                     var result = await test.RunAsync(definition);
 
-					result.TestId = definition.Id;
+					result.Id = definition.Id;
 
                     lock (results)
                     {
@@ -61,13 +61,13 @@ namespace Swampnet.Dash.Services
             // Save state
             foreach (var testResult in results)
             {
-                if (_state.ContainsKey(testResult.TestId))
+                if (_state.ContainsKey(testResult.Id))
                 {
-                    _state[testResult.TestId] = testResult;
+                    _state[testResult.Id] = testResult;
                 }
                 else
                 {
-                    _state.Add(testResult.TestId, testResult);
+                    _state.Add(testResult.Id, testResult);
                 }
 
 			}

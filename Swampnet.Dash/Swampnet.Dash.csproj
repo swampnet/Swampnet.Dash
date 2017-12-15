@@ -58,7 +58,7 @@
     <Compile Include="Services\ArgosRunner.cs" />
     <Compile Include="Services\ExpressionEvaluator.cs" />
     <Compile Include="Services\RuleProcessor.cs" />
-    <Compile Include="Services\TestHistory.cs" />
+    <Compile Include="Services\DashboardItemHistory.cs" />
     <Compile Include="Services\TestRunner.cs" />
     <Compile Include="Tests\CurlTest.cs" />
     <Compile Include="Tests\PingTest.cs" />

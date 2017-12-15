@@ -16,7 +16,7 @@ namespace UnitTests
 			{
 				Id = "test",				
 			};
-			var testHistory = Substitute.For<ITestHistory>();
+			var testHistory = Substitute.For<IDashboardItemHistory>();
 			testHistory.GetHistory(definition).Returns(x => new[] 
 			{
 				new Swampnet.Dash.Common.Entities.TestResult()

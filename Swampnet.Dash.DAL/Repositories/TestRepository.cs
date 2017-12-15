@@ -22,7 +22,7 @@ namespace Swampnet.Dash.DAL
 		{
 			using (var context = new HistoryContext())
 			{
-				foreach(var result in testResults.GroupBy(t => t.TestId))
+				foreach(var result in testResults.GroupBy(t => t.Id))
 				{
 					var root = context.Roots.SingleOrDefault(r => r.Name == result.Key);
 					if (root == null)

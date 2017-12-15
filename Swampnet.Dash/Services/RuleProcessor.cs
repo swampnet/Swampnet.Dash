@@ -17,9 +17,9 @@ namespace Swampnet.Dash.Services
     /// </summary>
     class RuleProcessor : IRuleProcessor
     {
-        private readonly ITestHistory _testHistory;
+        private readonly IDashboardItemHistory _testHistory;
 
-        public RuleProcessor(ITestHistory testHistory)
+        public RuleProcessor(IDashboardItemHistory testHistory)
         {
             _testHistory = testHistory;
         }
@@ -27,6 +27,7 @@ namespace Swampnet.Dash.Services
 		/// <summary>
 		/// @TODO:
 		/// 
+		/// - Only works on test results. Which makes it no good for argos types.
 		/// - 'value doesn't change for x hits'
 		/// - 'Value > last value for x hits'
 		/// - 'average over last x hits > value for y hits'
