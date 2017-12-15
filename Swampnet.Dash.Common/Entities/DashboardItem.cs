@@ -44,6 +44,18 @@ namespace Swampnet.Dash.Common.Entities
 
         public List<Property> Output { get; set; }
 
+		public DashboardItem Copy()
+		{
+			return new DashboardItem()
+			{
+				Id = this.Id,
+				Order = this.Order,
+				Status = this.Status,
+				TimestampUtc = this.TimestampUtc,
+				Output = this.Output.Select(x => new Property() { Category = x.Category, Name = x.Name, Value = x.Value }).ToList()
+			};
+		}
+
         public override string ToString()
         {
             return $"{Status} (" + string.Join(",", Output.Select(p => $"{p.Name}: {p.Value}")) + ")";

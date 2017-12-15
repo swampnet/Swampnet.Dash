@@ -54,7 +54,7 @@ namespace Swampnet.Dash.Services
                     
 					foreach(var item in rs.Items)
 					{
-						//_ruleProcessor.ProcessTestResultAsync()
+						await _ruleProcessor.ProcessTestResultAsync(definition, item);
 					}
 
                     if (!Compare.ArgosResults(rs, lastRun))

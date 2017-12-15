@@ -42,18 +42,8 @@ namespace Swampnet.Dash.Argos
             }
 
 
-            // Nggg, return a copy not our actual items...
-            result.Items = _items.Select(i => new DashboardItem() {
-                Id = i.Id,
-                Status = i.Status,
-                TimestampUtc = i.TimestampUtc,
-                Output = i.Output.Select(o => new Property()
-                {
-                    Category = o.Category,
-                    Name = o.Name,
-                    Value = o.Value
-                }).ToList()
-            }).ToArray();
+			// Return a copy not our actual items...
+			result.Items = _items.Select(i => i.Copy()).ToList();
 
 			return Task.FromResult(result);
         }
@@ -63,6 +53,7 @@ namespace Swampnet.Dash.Argos
         {
             var item = new DashboardItem(argosDefinition.Parameters.StringValue("pre") +_id);
             item.Output.Add(new Property("updated-on", DateTime.Now.ToString("s")));
+			item.Output.Add(new Property("time-in-group", 0));
 			item.Output.Add(new Property("stage", "0"));
             _items.Add(item);
 			_id++;
@@ -93,19 +84,7 @@ namespace Swampnet.Dash.Argos
 
 			// Update status
 			var timeInGroup = DateTime.UtcNow - item.Output.DateTimeValue("updated-on");
-
-			if(timeInGroup.TotalSeconds < 20)
-			{
-				item.Status = Status.Ok;
-			}
-			else if (timeInGroup.TotalSeconds < 30)
-			{
-				item.Status = Status.Warn;
-			}
-			else
-			{
-				item.Status = Status.Alert;
-			}
+			item.Output.Get("time-in-group").Value = timeInGroup.TotalSeconds.ToString("0.0");
 		}
 	}
 }
