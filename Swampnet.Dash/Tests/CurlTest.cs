@@ -13,7 +13,7 @@ namespace Swampnet.Dash.Tests
 {
 	class CurlTest : ITest
 	{
-		public async Task<DashboardItem> RunAsync(TestDefinition testDefinition)
+		public async Task<DashboardItem> RunAsync(DashboardItemDefinition testDefinition)
 		{
 			var uri = testDefinition.Parameters.StringValue("uri");
 

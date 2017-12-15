@@ -11,9 +11,9 @@ namespace Swampnet.Dash.Common.Entities
 	/// <summary>
 	/// Define a single test
 	/// </summary>
-    public class TestDefinition
+    public class DashboardItemDefinition
     {
-        public TestDefinition()
+        public DashboardItemDefinition()
         {
             Parameters = new List<Property>();
             StateRules = new List<Rule>();

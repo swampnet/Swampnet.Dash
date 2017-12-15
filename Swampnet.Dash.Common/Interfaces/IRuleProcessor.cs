@@ -8,6 +8,6 @@ namespace Swampnet.Dash.Common.Interfaces
 {
     public interface IRuleProcessor
     {
-        Task ProcessTestResultAsync(TestDefinition definition, DashboardItem result);
+        Task ProcessTestResultAsync(DashboardItemDefinition definition, DashboardItem result);
     }
 }

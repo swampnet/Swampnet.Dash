@@ -18,25 +18,25 @@ namespace Swampnet.Dash.Common
             return dash;
         }
 
-        public static IEnumerable<TestDefinition> Tests
+        public static IEnumerable<DashboardItemDefinition> Tests
 		{
 			get
 			{
 				if(_tests == null)
 				{
-					_tests = File.ReadAllText("Data\\tests.xml").Deserialize<TestDefinition[]>();
+					_tests = File.ReadAllText("Data\\tests.xml").Deserialize<DashboardItemDefinition[]>();
 				}
 				return _tests;
 			}
 		}
 
-        public static IEnumerable<ArgosDefinition> Argos
+        public static IEnumerable<DashboardItemDefinition> Argos
         {
             get
             {
                 if (_argos == null)
                 {
-                    _argos = File.ReadAllText("Data\\argos.xml").Deserialize<ArgosDefinition[]>();
+                    _argos = File.ReadAllText("Data\\argos.xml").Deserialize<DashboardItemDefinition[]>();
                 }
                 return _argos;
             }
@@ -54,8 +54,8 @@ namespace Swampnet.Dash.Common
 			}
 		}
 
-        private static IEnumerable<ArgosDefinition> _argos = null;
-        private static IEnumerable<TestDefinition> _tests = null;
+        private static IEnumerable<DashboardItemDefinition> _argos = null;
+        private static IEnumerable<DashboardItemDefinition> _tests = null;
 		private static IEnumerable<Dashboard> _dashboards = null;
 	}
 }

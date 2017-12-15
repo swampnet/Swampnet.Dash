@@ -159,8 +159,8 @@ namespace UnitTests
         public void Boosh()
         {
             // Not actuall a test, just want a serialised TestDefinition!
-            var def = new TestDefinition()
-            {
+            var def = new DashboardItemDefinition()
+			{ 				
                 Id = "test-definition",
                 Description = "Some test definition",
                 Heartbeat = TimeSpan.FromSeconds(2),

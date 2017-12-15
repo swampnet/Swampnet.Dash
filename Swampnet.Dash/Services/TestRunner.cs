@@ -87,7 +87,7 @@ namespace Swampnet.Dash.Services
 
 
         // Validate parameters against the test metadata
-        private void Validate(TestDefinition testdefinition, TestMeta meta)
+        private void Validate(DashboardItemDefinition testdefinition, TestMeta meta)
 		{
 			foreach(var parameter in meta.Parameters)
 			{
@@ -99,9 +99,9 @@ namespace Swampnet.Dash.Services
 		}
 
 
-        public IEnumerable<TestDefinition> GetDue()
+        public IEnumerable<DashboardItemDefinition> GetDue()
         {
-            var definitions = new List<TestDefinition>();
+            var definitions = new List<DashboardItemDefinition>();
 
             foreach (var definition in _testRepository.GetDefinitions())
             {

@@ -12,21 +12,21 @@ namespace UnitTests
 		[TestMethod]
 		public void TestMethod1()
 		{
-			var definition = new TestDefinition()
-			{
-				Id = "test",				
-			};
-			var testHistory = Substitute.For<IDashboardItemHistory>();
-			testHistory.GetHistory(definition).Returns(x => new[] 
-			{
-				new Swampnet.Dash.Common.Entities.DashboardItem()
-				{
-					Output = new System.Collections.Generic.List<Property>()
-					{
-						new Property("value", 1)
-					}
-				}
-			});
+			//var definition = new DashboardItemDefinition()
+			//{
+			//	Id = "test",				
+			//};
+			//var testHistory = Substitute.For<IDashboardItemHistory>();
+			//testHistory.GetHistory(definition).Returns(x => new[] 
+			//{
+			//	new Swampnet.Dash.Common.Entities.DashboardItem()
+			//	{
+			//		Output = new System.Collections.Generic.List<Property>()
+			//		{
+			//			new Property("value", 1)
+			//		}
+			//	}
+			//});
 		}
 	}
 }

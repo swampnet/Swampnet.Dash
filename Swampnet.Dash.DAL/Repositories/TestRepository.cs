@@ -11,7 +11,7 @@ namespace Swampnet.Dash.DAL
 {
     class TestRepository : ITestRepository
     {
-        public IEnumerable<TestDefinition> GetDefinitions()
+        public IEnumerable<DashboardItemDefinition> GetDefinitions()
         {
             return Mock.Tests;
         }

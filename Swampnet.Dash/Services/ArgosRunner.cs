@@ -15,13 +15,14 @@ namespace Swampnet.Dash.Services
         private readonly IEnumerable<IArgos> _argos;
         private readonly IArgosRepository _argosRepository;
         private readonly Dictionary<string, ArgosResult> _state = new Dictionary<string, ArgosResult>();
+		private readonly IRuleProcessor _ruleProcessor;
 
-
-        public ArgosRunner(IArgosRepository argosRepo, IEnumerable<IArgos> argos)
+		public ArgosRunner(IArgosRepository argosRepo, IEnumerable<IArgos> argos, IRuleProcessor ruleProcessor)
         {
             _argos = argos;
             _argosRepository = argosRepo;
-        }
+			_ruleProcessor = ruleProcessor;
+		}
 
 
         public async Task<IEnumerable<ArgosResult>> RunAsync()
@@ -51,6 +52,11 @@ namespace Swampnet.Dash.Services
 
 					var rs = await argos.RunAsync(definition);
                     
+					foreach(var item in rs.Items)
+					{
+						//_ruleProcessor.ProcessTestResultAsync()
+					}
+
                     if (!Compare.ArgosResults(rs, lastRun))
                     {
                         //Log.Information("{argos} '{id}' Has changed: " + rs,
@@ -72,9 +78,9 @@ namespace Swampnet.Dash.Services
         }
 
 
-        public IEnumerable<ArgosDefinition> GetDue()
+        public IEnumerable<DashboardItemDefinition> GetDue()
         {
-            var definitions = new List<ArgosDefinition>();
+            var definitions = new List<DashboardItemDefinition>();
 
             foreach (var definition in _argosRepository.GetDefinitions())
             {

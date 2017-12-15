@@ -7,8 +7,8 @@ namespace Swampnet.Dash.Common.Interfaces
 {
     public interface IDashboardItemHistory
     {
-        void AddTestResult(TestDefinition definition, DashboardItem result);
-		DashboardItem GetCurrentState(TestDefinition definition);
-        IEnumerable<DashboardItem> GetHistory(TestDefinition definition);
+        void AddTestResult(DashboardItemDefinition definition, DashboardItem result);
+		DashboardItem GetCurrentState(DashboardItemDefinition definition);
+        IEnumerable<DashboardItem> GetHistory(DashboardItemDefinition definition);
     }
 }

@@ -9,7 +9,7 @@ namespace Swampnet.Dash.Tests
     {
         private readonly Random _rnd = new Random();
 
-        public Task<DashboardItem> RunAsync(TestDefinition testDefinition)
+        public Task<DashboardItem> RunAsync(DashboardItemDefinition testDefinition)
         {
             var rs = new DashboardItem();
             var from = testDefinition.Parameters.IntValue("min");

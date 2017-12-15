@@ -13,7 +13,7 @@ namespace Swampnet.Dash.Services
         private Dictionary<string, List<DashboardItem>> _history = new Dictionary<string, List<DashboardItem>>();
 
 
-        public void AddTestResult(TestDefinition definition, DashboardItem result)
+        public void AddTestResult(DashboardItemDefinition definition, DashboardItem result)
         {
             List<DashboardItem> results;
             if (!_history.ContainsKey(definition.Id))
@@ -39,13 +39,13 @@ namespace Swampnet.Dash.Services
         }
 
 
-        public DashboardItem GetCurrentState(TestDefinition definition)
+        public DashboardItem GetCurrentState(DashboardItemDefinition definition)
         {
             return GetHistory(definition).FirstOrDefault();
         }
 
 
-        public IEnumerable<DashboardItem> GetHistory(TestDefinition definition)
+        public IEnumerable<DashboardItem> GetHistory(DashboardItemDefinition definition)
         {
             IEnumerable<DashboardItem> result = null;
 
@@ -60,7 +60,7 @@ namespace Swampnet.Dash.Services
         }
 
 
-        private static void Trunc(TestDefinition definition, List<DashboardItem> results)
+        private static void Trunc(DashboardItemDefinition definition, List<DashboardItem> results)
         {
             int max = definition.StateRules.MaxRuleStateModifierConsecutiveCount_HolyShitChangeThisNameOmg() + 1; // Always leave one
             while (results.Count > max) // @TODO: from testDefinition

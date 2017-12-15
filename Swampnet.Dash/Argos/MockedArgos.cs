@@ -15,7 +15,7 @@ namespace Swampnet.Dash.Argos
         private int _id = 0;
 		private Random _rnd = new Random();
 
-        public Task<ArgosResult> RunAsync(ArgosDefinition argosDefinition)
+        public Task<ArgosResult> RunAsync(DashboardItemDefinition argosDefinition)
         {
             var result = new ArgosResult();
             result.ArgosId = argosDefinition.Id;
@@ -59,7 +59,7 @@ namespace Swampnet.Dash.Argos
         }
 
 
-        private void CreateNewbie(ArgosDefinition argosDefinition)
+        private void CreateNewbie(DashboardItemDefinition argosDefinition)
         {
             var item = new DashboardItem(argosDefinition.Parameters.StringValue("pre") +_id);
             item.Output.Add(new Property("updated-on", DateTime.Now.ToString("s")));
