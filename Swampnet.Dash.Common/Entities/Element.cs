@@ -6,15 +6,18 @@ using Swampnet.Dash.Common.Interfaces;
 
 namespace Swampnet.Dash.Common.Entities
 {
-    public class DashboardItem
+	/// <summary>
+	/// A snapshot of data at a particular time
+	/// </summary>
+    public class Element
     {
-        public DashboardItem()
+        public Element()
         {
             Output = new List<Property>();
             TimestampUtc = DateTime.UtcNow;
         }
 
-        public DashboardItem(object id)
+        public Element(object id)
             : this()
         {
             Id = id.ToString();
@@ -44,9 +47,9 @@ namespace Swampnet.Dash.Common.Entities
 
         public List<Property> Output { get; set; }
 
-		public DashboardItem Copy()
+		public Element Copy()
 		{
-			return new DashboardItem()
+			return new Element()
 			{
 				Id = this.Id,
 				Order = this.Order,

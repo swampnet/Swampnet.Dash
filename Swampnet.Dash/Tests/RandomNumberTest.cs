@@ -9,9 +9,9 @@ namespace Swampnet.Dash.Tests
     {
         private readonly Random _rnd = new Random();
 
-        public Task<DashboardItem> RunAsync(DashboardItemDefinition testDefinition)
+        public Task<Element> RunAsync(ElementDefinition testDefinition)
         {
-            var rs = new DashboardItem();
+            var rs = new Element();
             var from = testDefinition.Parameters.IntValue("min");
             var to = testDefinition.Parameters.IntValue("max");
             var value = _rnd.Next(from, to);

@@ -10,15 +10,15 @@ namespace Swampnet.Dash.Services
 {
 	internal class DashboardItemHistory : IDashboardItemHistory
     {
-        private Dictionary<string, List<DashboardItem>> _history = new Dictionary<string, List<DashboardItem>>();
+        private Dictionary<string, List<Element>> _history = new Dictionary<string, List<Element>>();
 
 
-        public void AddTestResult(DashboardItemDefinition definition, DashboardItem result)
+        public void AddTestResult(ElementDefinition definition, Element result)
         {
-            List<DashboardItem> results;
+            List<Element> results;
             if (!_history.ContainsKey(definition.Id))
             {
-                results = new List<DashboardItem>();
+                results = new List<Element>();
                 _history.Add(definition.Id, results);
             }
             else
@@ -27,7 +27,7 @@ namespace Swampnet.Dash.Services
             }
 
             // Add a copy
-            results.Add(new DashboardItem()
+            results.Add(new Element()
             {
                 TimestampUtc = result.TimestampUtc,
                 Status = result.Status,
@@ -39,15 +39,15 @@ namespace Swampnet.Dash.Services
         }
 
 
-        public DashboardItem GetCurrentState(DashboardItemDefinition definition)
+        public Element GetCurrentState(ElementDefinition definition)
         {
             return GetHistory(definition).FirstOrDefault();
         }
 
 
-        public IEnumerable<DashboardItem> GetHistory(DashboardItemDefinition definition)
+        public IEnumerable<Element> GetHistory(ElementDefinition definition)
         {
-            IEnumerable<DashboardItem> result = null;
+            IEnumerable<Element> result = null;
 
             if (_history.ContainsKey(definition.Id))
             {
@@ -55,12 +55,12 @@ namespace Swampnet.Dash.Services
             }
 
             return result == null
-                ? Enumerable.Empty<DashboardItem>()
+                ? Enumerable.Empty<Element>()
                 : result;
         }
 
 
-        private static void Trunc(DashboardItemDefinition definition, List<DashboardItem> results)
+        private static void Trunc(ElementDefinition definition, List<Element> results)
         {
             int max = definition.StateRules.MaxRuleStateModifierConsecutiveCount_HolyShitChangeThisNameOmg() + 1; // Always leave one
             while (results.Count > max) // @TODO: from testDefinition

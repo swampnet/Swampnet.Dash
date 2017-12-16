@@ -10,7 +10,7 @@ namespace Swampnet.Dash.Tests
 {
 	class PingTest : ITest
 	{
-		public async Task<DashboardItem> RunAsync(DashboardItemDefinition testDefinition)
+		public async Task<Element> RunAsync(ElementDefinition testDefinition)
 		{
 			Ping ping = new Ping();
 
@@ -19,7 +19,7 @@ namespace Swampnet.Dash.Tests
 			var reply = await ping.SendPingAsync(host);
 			var time = reply.RoundtripTime;
 
-            var rs = new DashboardItem();
+            var rs = new Element();
             
 			rs.Output.Add(new Property("value", time));
 

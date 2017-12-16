@@ -40,7 +40,7 @@ namespace UnitTests
 				}
 			});
 
-			vm.Update(new DashboardItem() {
+			vm.Update(new Element() {
 				Status = Status.Warn
 			});
 

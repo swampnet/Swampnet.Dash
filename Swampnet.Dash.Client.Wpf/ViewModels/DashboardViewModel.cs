@@ -61,7 +61,7 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
         /// <summary>
         /// Update / Add DashItems based on source. Optionally remove those not in the list.
         /// </summary>
-        private void Update(IEnumerable<DashboardItem> source, bool isFullRefresh = false)
+        private void Update(IEnumerable<Element> source, bool isFullRefresh = false)
         {
             foreach (var di in source)
             {
@@ -154,7 +154,7 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
         /// <summary>
         /// Get MetaData for this item
         /// </summary>
-        private IEnumerable<Meta> GetMetaData(DashboardItem item)
+        private IEnumerable<Meta> GetMetaData(Element item)
         {
             // @TODO: There's a heirachy here:
             //  Test / Argos specific
@@ -225,12 +225,12 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
                 var dashItems = await Api.GetDashState(dashId);
                 Update(dashItems);
 
-                _hub.Proxy.On(UPDATE_MESSAGE, (IEnumerable<DashboardItem> di) => _uiFactory.StartNew(() =>
+                _hub.Proxy.On(UPDATE_MESSAGE, (IEnumerable<Element> di) => _uiFactory.StartNew(() =>
                 {
                     Update(di, false);
                 }));
 
-                _hub.Proxy.On(REFRESH_MESSAGE, (IEnumerable<DashboardItem> di) => _uiFactory.StartNew(() =>
+                _hub.Proxy.On(REFRESH_MESSAGE, (IEnumerable<Element> di) => _uiFactory.StartNew(() =>
                 {
                     Update(di, true);
                 }));

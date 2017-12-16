@@ -29,7 +29,7 @@ namespace Swampnet.Dash.Common
         }
 
 
-        private static bool IsEqual(IEnumerable<DashboardItem> lhs, IEnumerable<DashboardItem> rhs)
+        private static bool IsEqual(IEnumerable<Element> lhs, IEnumerable<Element> rhs)
         {
             if((lhs != null && rhs == null) || (lhs == null && rhs != null))
             {
@@ -55,7 +55,7 @@ namespace Swampnet.Dash.Common
         }
 
 
-        public static bool DashboardItems(DashboardItem lhs, DashboardItem rhs)
+        public static bool DashboardItems(Element lhs, Element rhs)
         {
             if (lhs.Id != rhs.Id || lhs.Status != rhs.Status)
             {

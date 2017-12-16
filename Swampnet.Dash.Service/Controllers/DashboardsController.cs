@@ -48,7 +48,7 @@ namespace Swampnet.Dash.Service.Controllers
 		public async Task<IHttpActionResult> GetState(string id)
 		{
             // @TODO: Yeah, way too much going on in here. Farm all this off to another service or something.
-            var states = new List<DashboardItem>();
+            var states = new List<Element>();
 
             var dashboard = await _dashRepo.GetDashboardAsync(id);
 
@@ -60,7 +60,7 @@ namespace Swampnet.Dash.Service.Controllers
             // Get all tests for dashboard
             if (dashboard.Tests != null)
 			{
-				states.AddRange(_testRunner.GetTestResults(dashboard.Tests.Select(t => t.Id)).Select(x => new DashboardItem(x.Id)
+				states.AddRange(_testRunner.GetTestResults(dashboard.Tests.Select(t => t.Id)).Select(x => new Element(x.Id)
                 {
                     Output = x.Output,
                     Status = x.Status,

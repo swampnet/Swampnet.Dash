@@ -7,7 +7,7 @@ namespace Swampnet.Dash.Common.Interfaces
 {
     public interface IBroadcast
     {
-        void Update(string group, IEnumerable<DashboardItem> dashItems);
-        void Refresh(string group, IEnumerable<DashboardItem> dashItems);
+        void Update(string group, IEnumerable<Element> dashItems);
+        void Refresh(string group, IEnumerable<Element> dashItems);
     }
 }

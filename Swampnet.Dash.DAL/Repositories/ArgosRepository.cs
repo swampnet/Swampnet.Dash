@@ -11,7 +11,7 @@ namespace Swampnet.Dash.DAL
 {
     class ArgosRepository : IArgosRepository
     {
-        public IEnumerable<DashboardItemDefinition> GetDefinitions()
+        public IEnumerable<ElementDefinition> GetDefinitions()
         {
             return Mock.Argos;
         }

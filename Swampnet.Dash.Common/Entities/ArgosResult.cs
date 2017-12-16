@@ -8,7 +8,7 @@ namespace Swampnet.Dash.Common.Entities
     public class ArgosResult
     {
         public string ArgosId { get; set; }
-        public IEnumerable<DashboardItem> Items { get; set; }
+        public IEnumerable<Element> Items { get; set; }
         public DateTime TimestampUtc { get; private set; }
 
         public ArgosResult()

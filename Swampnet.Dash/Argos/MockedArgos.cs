@@ -11,11 +11,11 @@ namespace Swampnet.Dash.Argos
 {
     class MockedArgos : IArgos
     {
-        private readonly List<DashboardItem> _items = new List<DashboardItem>();
+        private readonly List<Element> _items = new List<Element>();
         private int _id = 0;
 		private Random _rnd = new Random();
 
-        public Task<ArgosResult> RunAsync(DashboardItemDefinition argosDefinition)
+        public Task<ArgosResult> RunAsync(ElementDefinition argosDefinition)
         {
             var result = new ArgosResult();
             result.ArgosId = argosDefinition.Id;
@@ -49,9 +49,9 @@ namespace Swampnet.Dash.Argos
         }
 
 
-        private void CreateNewbie(DashboardItemDefinition argosDefinition)
+        private void CreateNewbie(ElementDefinition argosDefinition)
         {
-            var item = new DashboardItem(argosDefinition.Parameters.StringValue("pre") +_id);
+            var item = new Element(argosDefinition.Parameters.StringValue("pre") +_id);
             item.Output.Add(new Property("updated-on", DateTime.Now.ToString("s")));
 			item.Output.Add(new Property("time-in-group", 0));
 			item.Output.Add(new Property("stage", "0"));
@@ -70,7 +70,7 @@ namespace Swampnet.Dash.Argos
 		//	"finished"
 		//};
 
-		private void Update(DashboardItem item)
+		private void Update(Element item)
         {
 			// Update stage
 			var stage = item.Output.IntValue("stage");

@@ -11,14 +11,14 @@ namespace Swampnet.Dash.DAL
 {
     class TestRepository : ITestRepository
     {
-        public IEnumerable<DashboardItemDefinition> GetDefinitions()
+        public IEnumerable<ElementDefinition> GetDefinitions()
         {
             return Mock.Tests;
         }
 
 
 
-		public void Add(IEnumerable<DashboardItem> testResults)
+		public void Add(IEnumerable<Element> testResults)
 		{
 			using (var context = new HistoryContext())
 			{

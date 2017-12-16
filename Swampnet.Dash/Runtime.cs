@@ -69,7 +69,7 @@ namespace Swampnet.Dash
 							var dashTestUpdates = testResults.Where(r => dash.Tests.Select(t => t.Id).Contains(r.Id));
 							if (dashTestUpdates.Any())
 							{
-								var dashItems = dashTestUpdates.Select(tr => new DashboardItem()
+								var dashItems = dashTestUpdates.Select(tr => new Element()
 								{
 									Id = tr.Id,
 									Status = tr.Status,
@@ -85,7 +85,7 @@ namespace Swampnet.Dash
                         if(dash.Argos != null && dash.Argos.Any())
                         {
                             // We collate *all* the 'argos' stuff into one single per-dash update.
-                            var broadcast = new List<DashboardItem>();
+                            var broadcast = new List<Element>();
                             
                             foreach(var rs in argosResults.Where(a => dash.Argos.Select(b => b.Id).Contains(a.ArgosId)))
                             {

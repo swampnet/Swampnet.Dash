@@ -12,7 +12,7 @@ namespace Swampnet.Dash.Services
     {
         private readonly ITestRepository _testRepository;
         private readonly IEnumerable<ITest> _tests;
-        private readonly Dictionary<string, DashboardItem> _state = new Dictionary<string, DashboardItem>();
+        private readonly Dictionary<string, Element> _state = new Dictionary<string, Element>();
         private readonly IRuleProcessor _ruleProcessor;
 
         public TestRunner(ITestRepository testRepo, IEnumerable<ITest> tests, IRuleProcessor ruleProcessor)
@@ -23,9 +23,9 @@ namespace Swampnet.Dash.Services
         }
 
 
-        public async Task<IEnumerable<DashboardItem>> RunAsync()
+        public async Task<IEnumerable<Element>> RunAsync()
         {
-            var results = new List<DashboardItem>();
+            var results = new List<Element>();
 
             //Parallel.ForEach(GetDue(), testDefinition => { });
 			foreach(var definition in GetDue())
@@ -80,14 +80,14 @@ namespace Swampnet.Dash.Services
         }
 
 
-        public IEnumerable<DashboardItem> GetTestResults(IEnumerable<string> ids)
+        public IEnumerable<Element> GetTestResults(IEnumerable<string> ids)
         {
             return _state.Where(x => ids.Contains(x.Key)).Select(x => x.Value);
         }
 
 
         // Validate parameters against the test metadata
-        private void Validate(DashboardItemDefinition testdefinition, TestMeta meta)
+        private void Validate(ElementDefinition testdefinition, TestMeta meta)
 		{
 			foreach(var parameter in meta.Parameters)
 			{
@@ -99,9 +99,9 @@ namespace Swampnet.Dash.Services
 		}
 
 
-        public IEnumerable<DashboardItemDefinition> GetDue()
+        public IEnumerable<ElementDefinition> GetDue()
         {
-            var definitions = new List<DashboardItemDefinition>();
+            var definitions = new List<ElementDefinition>();
 
             foreach (var definition in _testRepository.GetDefinitions())
             {

@@ -7,8 +7,8 @@ namespace Swampnet.Dash.Common.Interfaces
 {
     public interface ITestRepository
     {
-        IEnumerable<DashboardItemDefinition> GetDefinitions();
-		void Add(IEnumerable<DashboardItem> testResults);
+        IEnumerable<ElementDefinition> GetDefinitions();
+		void Add(IEnumerable<Element> testResults);
 		IEnumerable<Varient> Get(string testId, string property);
 	}
 }

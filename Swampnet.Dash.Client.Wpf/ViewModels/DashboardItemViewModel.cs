@@ -9,7 +9,7 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
 	class DashboardItemViewModel : BindableBase
 	{
 		private readonly IEnumerable<Meta> _meta;
-		private DashboardItem _dashItem;
+		private Element _dashItem;
 
 		public DashboardItemViewModel(object id, IEnumerable<Meta> meta)
 		{
@@ -17,7 +17,7 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
             Id = id.ToString();
 		}
 
-		public void Update(DashboardItem dashItem)
+		public void Update(Element dashItem)
 		{
 			_dashItem = dashItem;
 			RaisePropertyChanged("");

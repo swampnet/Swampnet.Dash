@@ -9,11 +9,16 @@ using System.Xml.Serialization;
 namespace Swampnet.Dash.Common.Entities
 {
 	/// <summary>
-	/// Define a single test
+	/// Define a single dashboard element
 	/// </summary>
-    public class DashboardItemDefinition
+	/// <remarks>
+	/// This can define:
+	///		- A single test
+	///		- A single 'argos' type structure (which may, and probably will, emit multiple Elements)
+	/// </remarks>
+    public class ElementDefinition
     {
-        public DashboardItemDefinition()
+        public ElementDefinition()
         {
             Parameters = new List<Property>();
             StateRules = new List<Rule>();
