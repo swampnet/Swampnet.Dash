@@ -9,6 +9,6 @@ namespace Swampnet.Dash.Common.Interfaces
     {
         IEnumerable<ElementDefinition> GetDefinitions();
 		void Add(IEnumerable<Element> testResults);
-		IEnumerable<Varient> Get(string testId, string property);
+		IEnumerable<Varient> Get(string testId, string property, TimeSpan? history);
 	}
 }

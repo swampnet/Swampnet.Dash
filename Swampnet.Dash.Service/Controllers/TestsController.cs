@@ -35,11 +35,11 @@ namespace Swampnet.Dash.Service.Controllers
 
 		[Route("tests/{testId}/{propertyName}")]
 		[HttpGet]
-		public IHttpActionResult GetHistory(string testId, string propertyName)
+		public IHttpActionResult GetHistory(string testId, string propertyName, [FromUri]int? seconds)
 		{
-			var data = _testRepo.Get(testId, propertyName);
+			var data = _testRepo.Get(testId, propertyName, seconds.HasValue ? TimeSpan.FromSeconds(seconds.Value) : (TimeSpan?)null);
 
 			return Ok(data);
 		}
-    }
+	}
 }

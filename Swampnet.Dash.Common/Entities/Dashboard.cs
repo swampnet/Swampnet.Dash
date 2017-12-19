@@ -30,16 +30,4 @@ namespace Swampnet.Dash.Common.Entities
 
         public List<DashboardGroup> Groups { get; set; }
     }
-
-
-    /// <summary>
-    /// Define test id and any property mapping that goes with it
-    /// </summary>
-    public class ItemDefinition
-	{
-		[XmlAttribute]
-		public string Id { get; set; }
-
-		public List<Meta> MetaData { get; set; }
-	}
 }

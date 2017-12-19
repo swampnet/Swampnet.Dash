@@ -54,15 +54,19 @@ namespace Swampnet.Dash.DAL
 		}
 
 
-		public IEnumerable<Varient> Get(string testId, string property)
+		public IEnumerable<Varient> Get(string testId, string property, TimeSpan? history)
 		{
+			var dt = history.HasValue
+				? DateTime.UtcNow.Subtract(history.Value)
+				: DateTime.UtcNow.AddSeconds(-60);
+
 			using(var context = new HistoryContext())
 			{
 				context.Configuration.AutoDetectChangesEnabled = false;
 				return context.Roots
 					.Where(r => r.Name == testId)
 					.SelectMany(t => t.History
-						.Where(h => h.Name == property)
+						.Where(h => h.Name == property && h.TimestampUtc > dt)
 						.Select(h => new { h.TimestampUtc, h.Value }))
 					.OrderByDescending(h => h.TimestampUtc)
 					.ToList()
