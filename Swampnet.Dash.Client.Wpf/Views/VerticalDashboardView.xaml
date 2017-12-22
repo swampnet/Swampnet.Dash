@@ -16,6 +16,8 @@
 				<StackPanel Orientation="Horizontal"/>
 			</ItemsPanelTemplate>
 		</ItemsControl.ItemsPanel>
+
+
 		<ItemsControl.ItemTemplate>
 			<DataTemplate>
 				<!-- Group -->
@@ -37,8 +39,22 @@
 						<ItemsControl Grid.Row="1" ItemsSource="{Binding Source={StaticResource viewSource}}">
 							<ItemsControl.ItemTemplate>
 								<DataTemplate>
+									<DataTemplate.Resources>
+										<Storyboard x:Key="FadeIn" AutoReverse="False">
+											<DoubleAnimation Storyboard.TargetProperty="Opacity" From="0" To="1" Duration="0:0:2" />
+											<!--<DoubleAnimation Storyboard.TargetProperty="LayoutTransform.ScaleY" From="15" To="1" Duration="0:0:2"/>
+											<DoubleAnimation Storyboard.TargetProperty="LayoutTransform.ScaleX" From="15" To="1" Duration="0:0:2"/>-->
+										</Storyboard>
+									</DataTemplate.Resources>
+									
+									<DataTemplate.Triggers>
+										<EventTrigger RoutedEvent="FrameworkElement.Loaded">
+											<BeginStoryboard Storyboard="{StaticResource FadeIn}" />
+										</EventTrigger>
+									</DataTemplate.Triggers>
+									
 									<!-- Item -->
-									<local:DashboardItemView Margin="10"/>
+									<local:DashboardItemView Margin="5"/>
 								</DataTemplate>
 							</ItemsControl.ItemTemplate>
 						</ItemsControl>
