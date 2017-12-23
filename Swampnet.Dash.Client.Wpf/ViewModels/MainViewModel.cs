@@ -22,7 +22,7 @@ namespace Swampnet.Dash.Client.Wpf
 			//_dashboards.Add(new DashboardViewModel("dash-02"));
 			//_dashboards.Add(new DashboardViewModel("dash-02"));
 			//_dashboards.Add(new DashboardViewModel("local-dash"));
-			_dashboards.Add(new DashboardViewModel("argos-test"));
+			//_dashboards.Add(new DashboardViewModel("argos-test"));
 		}
 
 		public IEnumerable<DashboardViewModel> Dashboards => _dashboards;

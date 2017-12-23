@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Swampnet.Dash.Client.Wpf.Views"
+			 xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
 	<UserControl.Resources>
@@ -12,7 +13,20 @@
 		</Style>
 	</UserControl.Resources>
 	<Grid Width="100">
-		<Grid.Style>
+		<Grid.Resources>
+			<Style TargetType="lvc:LineSeries">
+				<Setter Property="StrokeThickness" Value="2"></Setter>
+				<Setter Property="Stroke" Value="Black"></Setter>
+				<Setter Property="Fill" Value="DarkGray"></Setter>
+				<Setter Property="PointGeometrySize" Value="0"></Setter>
+				<Setter Property="LineSmoothness" Value="1"></Setter>
+			</Style>
+
+			<Style TargetType="lvc:Axis">
+				<Setter Property="ShowLabels" Value="False"></Setter>
+				<Setter Property="IsEnabled" Value="False"></Setter>
+			</Style>
+
 			<Style TargetType="Grid">
 				<Setter Property="Background" Value="LightGreen"/>
 				<Style.Triggers>
@@ -24,7 +38,10 @@
 					</DataTrigger>
 				</Style.Triggers>
 			</Style>
-		</Grid.Style>
+
+		</Grid.Resources>
+
+
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto"/>
 			<RowDefinition />
@@ -34,17 +51,55 @@
 			<ColumnDefinition />
 			<ColumnDefinition />
 		</Grid.ColumnDefinitions>
-		<!-- Header -->
+
+		<lvc:CartesianChart
+			Opacity="0.5"
+			Margin="0" 
+			Grid.Column="0" Grid.ColumnSpan="2" 
+			Grid.Row="0" Grid.RowSpan="3" 
+			Series="{Binding Series}" 
+			Hoverable="False" 
+			AnimationsSpeed="0:0:0.5"
+			DataTooltip="{x:Null}">
+			<lvc:CartesianChart.AxisX>
+				<lvc:Axis MaxValue="0" MinValue="60"/>
+			</lvc:CartesianChart.AxisX>
+			<lvc:CartesianChart.AxisY>
+				<lvc:Axis MaxValue="10" MinValue="0"/>
+			</lvc:CartesianChart.AxisY>
+		</lvc:CartesianChart>
+
+		<!--<lvc:CartesianChart Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="0" Grid.RowSpan="3" AnimationsSpeed="0:0:0.5" Hoverable="False" DataTooltip="{x:Null}">
+			<lvc:CartesianChart.Series>
+				<lvc:LineSeries Values="{Binding ChartValues}" 
+                                PointGeometry="{x:Null}" 
+                                LineSmoothness="1"
+                                StrokeThickness="1" 
+                                Stroke="LightGray"
+                                Fill="LightGray"/>
+			</lvc:CartesianChart.Series>
+
+			<lvc:CartesianChart.AxisX>
+				<lvc:Axis MaxValue="{Binding AxisMax}" MinValue="{Binding AxisMin}" Unit="{Binding AxisUnit}">
+					<lvc:Axis.Separator>
+						<lvc:Separator Step="{Binding AxisStep}" />
+					</lvc:Axis.Separator>
+				</lvc:Axis>
+			</lvc:CartesianChart.AxisX>
+		</lvc:CartesianChart>-->
+
+		<!--Header--> 
 		<TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Text="{Binding Header}" HorizontalAlignment="Center"/>
 		<TextBlock Grid.Row="0" Grid.Column="0" Text="{Binding HeaderLeft}" HorizontalAlignment="Center"/>
 		<TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding HeaderRight}" HorizontalAlignment="Center"/>
 
-		<!-- Main -->
+		 <!--Main--> 
 		<TextBlock Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Text="{Binding Main}" HorizontalAlignment="Center" FontSize="25" FontWeight="Bold"/>
 
-		<!-- Footer -->
+		 <!--Footer--> 
 		<TextBlock Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Text="{Binding Footer}" HorizontalAlignment="Center"/>
 		<TextBlock Grid.Row="2" Grid.Column="0" Text="{Binding FooterLeft}" HorizontalAlignment="Center"/>
 		<TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding FooterRight}" HorizontalAlignment="Center"/>
+
 	</Grid>
 </UserControl>

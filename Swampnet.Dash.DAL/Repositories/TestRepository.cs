@@ -70,7 +70,7 @@ namespace Swampnet.Dash.DAL
 						.Select(h => new { h.TimestampUtc, h.Value }))
 					.OrderByDescending(h => h.TimestampUtc)
 					.ToList()
-					.Select(x => new Varient(x.TimestampUtc, x.Value));
+					.Select(x => new Varient(x.TimestampUtc, Convert.ToDouble(x.Value)));
 			}
 		}
 	}

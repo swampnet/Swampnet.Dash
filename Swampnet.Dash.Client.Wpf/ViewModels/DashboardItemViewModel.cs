@@ -1,4 +1,7 @@
-﻿using Prism.Mvvm;
+﻿using LiveCharts;
+using LiveCharts.Configurations;
+using LiveCharts.Wpf;
+using Prism.Mvvm;
 using Swampnet.Dash.Common.Entities;
 using System;
 using System.Collections.Generic;
@@ -11,19 +14,49 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
 		private readonly IEnumerable<Meta> _meta;
 		private Element _dashItem;
 
+		static DashboardItemViewModel()
+		{
+			// Map x axis to seconds
+			var mapper = Mappers.Xy<Varient>()
+				.X(m => (DateTime.UtcNow - m.Timestamp).TotalSeconds)
+				.Y(m => m.Value);
+
+			Charting.For<Varient>(mapper);
+		}
+
 		public DashboardItemViewModel(object id, IEnumerable<Meta> meta)
 		{
 			_meta = meta;
             Id = id.ToString();
+
+			Series = new SeriesCollection
+			{
+				new LineSeries
+				{
+					AreaLimit = -10,
+					Values = new ChartValues<Varient>()
+				}
+			};
 		}
 
 		public void Update(Element dashItem)
 		{
 			_dashItem = dashItem;
+
+			Series[0].Values.Add(new Varient(dashItem.TimestampUtc, dashItem.Output.DoubleValue("value", 0.0)));
+
+			while (Series[0].Values.Count > 100)
+			{
+				Series[0].Values.RemoveAt(0);
+			}
+
+
 			RaisePropertyChanged("");
 		}
 
-        public string Id { get; private set; }
+		public SeriesCollection Series { get; set; }
+
+		public string Id { get; private set; }
         public DateTime? Timestamp => _dashItem?.TimestampUtc;
 		public Status Status => _dashItem == null ? Status.Unknown : _dashItem.Status;
 		public string Order
@@ -79,6 +112,7 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
 		{
 			get { return GetValue("footer-right"); }
 		}
+
 
 		//@TODO: Need unit tests all over this!
 		private string GetValue(string region)
