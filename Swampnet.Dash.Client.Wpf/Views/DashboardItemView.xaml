@@ -8,6 +8,8 @@
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
 	<UserControl.Resources>
+		<BooleanToVisibilityConverter x:Key="visibleIfTrue"/>
+		
 		<Style TargetType="TextBlock">
 			<Setter Property="Margin" Value="1"/>
 		</Style>
@@ -15,7 +17,7 @@
 	<Grid Width="100">
 		<Grid.Resources>
 			<Style TargetType="lvc:LineSeries">
-				<Setter Property="StrokeThickness" Value="2"></Setter>
+				<Setter Property="StrokeThickness" Value="1"></Setter>
 				<Setter Property="Stroke" Value="Black"></Setter>
 				<Setter Property="Fill" Value="DarkGray"></Setter>
 				<Setter Property="PointGeometrySize" Value="0"></Setter>
@@ -53,6 +55,7 @@
 		</Grid.ColumnDefinitions>
 
 		<lvc:CartesianChart
+			Visibility="{Binding DisplayGraph, Converter={StaticResource visibleIfTrue}}"
 			Opacity="0.5"
 			Margin="0" 
 			Grid.Column="0" Grid.ColumnSpan="2" 
@@ -63,13 +66,11 @@
 			DataTooltip="{x:Null}">
 			
 			<lvc:CartesianChart.AxisX>
-				<!-- @TODO: Currently hardcoded to 60 seconds -->
-				<lvc:Axis MaxValue="0" MinValue="60"/>
+				<lvc:Axis MaxValue="0" MinValue="{Binding HistorySeconds}"/>
 			</lvc:CartesianChart.AxisX>
 			
 			<lvc:CartesianChart.AxisY>
-				<!-- @TODO: Currently hardcoded to 0-10-->
-				<lvc:Axis MaxValue="10" MinValue="0"/>
+				<lvc:Axis MaxValue="{Binding AxisYMaxValue}" MinValue="{Binding AxisYMinValue}"/>
 			</lvc:CartesianChart.AxisY>
 		</lvc:CartesianChart>
 

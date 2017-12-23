@@ -48,6 +48,7 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
 
 			Series[0].Values.Add(new Varient(element.TimestampUtc, element.Output.DoubleValue("value", 0.0)));
 
+			// @todo: this, properly!
 			while (Series[0].Values.Count > 100)
 			{
 				Series[0].Values.RemoveAt(0);
@@ -58,7 +59,7 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
 		}
 
 		public SeriesCollection Series { get; set; }
-
+		public bool DisplayGraph => _itemDefinition.Plot != null;
 		public string Id { get; private set; }
         public DateTime? Timestamp => _element?.TimestampUtc;
 		public Status Status => _element == null ? Status.Unknown : _element.Status;
@@ -116,6 +117,22 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
 			get { return GetValue("footer-right"); }
 		}
 
+
+		#region Graphing stuff
+
+		public int AxisYMinValue => DisplayGraph
+			? _itemDefinition.Plot.MinY
+			: 0;
+
+		public int AxisYMaxValue => DisplayGraph
+			? _itemDefinition.Plot.MaxY
+			: 0;
+
+		public int HistorySeconds => DisplayGraph
+			? (int)_itemDefinition.Plot.History.TotalSeconds
+			: 0;
+
+		#endregion
 
 		//@TODO: Need unit tests all over this!
 		private string GetValue(string region)

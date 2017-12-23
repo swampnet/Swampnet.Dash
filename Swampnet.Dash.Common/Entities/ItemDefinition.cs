@@ -17,7 +17,7 @@ namespace Swampnet.Dash.Common.Entities
 
 		public List<Meta> MetaData { get; set; }
 
-		public List<Plot> Plots { get; set; }
+		public Plot Plot { get; set; }
 	}
 
 
@@ -29,6 +29,11 @@ namespace Swampnet.Dash.Common.Entities
 		[XmlIgnore]
 		public TimeSpan History { get; set; }
 
+		[XmlAttribute]
+		public int MinY { get; set; }
+
+		[XmlAttribute]
+		public int MaxY { get; set; }
 
 		// XmlSerializer does not support TimeSpan, so use this property for 
 		// serialization instead.
