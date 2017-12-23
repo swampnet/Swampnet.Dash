@@ -16,19 +16,6 @@
 	</UserControl.Resources>
 	<Grid Width="100">
 		<Grid.Resources>
-			<Style TargetType="lvc:LineSeries">
-				<Setter Property="StrokeThickness" Value="1"></Setter>
-				<Setter Property="Stroke" Value="Black"></Setter>
-				<Setter Property="Fill" Value="DarkGray"></Setter>
-				<Setter Property="PointGeometrySize" Value="0"></Setter>
-				<Setter Property="LineSmoothness" Value="1"></Setter>
-			</Style>
-
-			<Style TargetType="lvc:Axis">
-				<Setter Property="ShowLabels" Value="False"></Setter>
-				<Setter Property="IsEnabled" Value="False"></Setter>
-			</Style>
-
 			<Style TargetType="Grid">
 				<Setter Property="Background" Value="LightGreen"/>
 				<Style.Triggers>
@@ -40,7 +27,6 @@
 					</DataTrigger>
 				</Style.Triggers>
 			</Style>
-
 		</Grid.Resources>
 
 
@@ -62,15 +48,25 @@
 			Grid.Row="0" Grid.RowSpan="3" 
 			Series="{Binding Series}" 
 			Hoverable="False" 
-			AnimationsSpeed="0:0:0.5"
+			AnimationsSpeed="0:0:0.2"
 			DataTooltip="{x:Null}">
 			
+			<lvc:CartesianChart.Resources>
+				<Style TargetType="lvc:LineSeries">
+					<Setter Property="StrokeThickness" Value="1"></Setter>
+					<Setter Property="Stroke" Value="Black"></Setter>
+					<Setter Property="Fill" Value="DarkGray"></Setter>
+					<Setter Property="PointGeometrySize" Value="0"></Setter>
+					<Setter Property="LineSmoothness" Value="1"></Setter>
+				</Style>
+			</lvc:CartesianChart.Resources>
+			
 			<lvc:CartesianChart.AxisX>
-				<lvc:Axis MaxValue="0" MinValue="{Binding HistorySeconds}"/>
+				<lvc:Axis MaxValue="0" MinValue="{Binding HistorySeconds}" ShowLabels="False" IsEnabled="False"/>
 			</lvc:CartesianChart.AxisX>
 			
 			<lvc:CartesianChart.AxisY>
-				<lvc:Axis MaxValue="{Binding AxisYMaxValue}" MinValue="{Binding AxisYMinValue}"/>
+				<lvc:Axis MaxValue="{Binding AxisYMaxValue}" MinValue="{Binding AxisYMinValue}" ShowLabels="False" IsEnabled="False"/>
 			</lvc:CartesianChart.AxisY>
 		</lvc:CartesianChart>
 
