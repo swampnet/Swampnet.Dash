@@ -65,6 +65,8 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
         {
             foreach (var di in source)
             {
+				var itemDefinition = GetItemDefinition(di.ItemDefinitionId);
+
 				// @todo: Having multiple test definitions with same test id on same dash breaks this
                 var item = _groups.SelectMany(g => g.Items).Where(d => d.Id == di.Id).Distinct().SingleOrDefault();
                 if (item == null)
@@ -79,7 +81,7 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
                     {
                         metaData = test.MetaData;
                     }
-                    item = new DashboardItemViewModel(di.Id, metaData);
+                    item = new DashboardItemViewModel(_dashboard, itemDefinition, di.Id);
                 }
 
                 item.Update(di);
@@ -102,12 +104,28 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
             LastUpdate = DateTime.Now;
         }
 
+		private ItemDefinition GetItemDefinition(string id)
+		{
+			var itemDefinition = _dashboard.Tests.SingleOrDefault(t => t.Id == id);
+			if(itemDefinition == null)
+			{
+				itemDefinition = _dashboard.Argos.SingleOrDefault(t => t.Id == id);
+			}
 
-        /// <summary>
-        /// Add item to a group (or groups)
-        /// </summary>
-        /// <param name="item"></param>
-        private void AssignGroup(DashboardItemViewModel item)
+			if(itemDefinition == null)
+			{
+				System.Diagnostics.Debugger.Break();
+			}
+
+			return itemDefinition;
+		}
+
+
+		/// <summary>
+		/// Add item to a group (or groups)
+		/// </summary>
+		/// <param name="item"></param>
+		private void AssignGroup(DashboardItemViewModel item)
         {
             var targetGroups = GetTargetGroups(item);
 
@@ -216,7 +234,7 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
                 {
                     foreach (var item in _dashboard.Tests)
                     {
-                        AssignGroup(new DashboardItemViewModel(item.Id, item.MetaData));
+                        AssignGroup(new DashboardItemViewModel(_dashboard, item, item.Id));
                         //_groups.First().Items.Add(new DashboardItemViewModel(item.Id, item.MetaData));
                     }
                 }

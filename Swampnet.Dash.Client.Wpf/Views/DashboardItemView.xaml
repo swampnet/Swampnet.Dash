@@ -61,32 +61,17 @@
 			Hoverable="False" 
 			AnimationsSpeed="0:0:0.5"
 			DataTooltip="{x:Null}">
+			
 			<lvc:CartesianChart.AxisX>
+				<!-- @TODO: Currently hardcoded to 60 seconds -->
 				<lvc:Axis MaxValue="0" MinValue="60"/>
 			</lvc:CartesianChart.AxisX>
+			
 			<lvc:CartesianChart.AxisY>
+				<!-- @TODO: Currently hardcoded to 0-10-->
 				<lvc:Axis MaxValue="10" MinValue="0"/>
 			</lvc:CartesianChart.AxisY>
 		</lvc:CartesianChart>
-
-		<!--<lvc:CartesianChart Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="0" Grid.RowSpan="3" AnimationsSpeed="0:0:0.5" Hoverable="False" DataTooltip="{x:Null}">
-			<lvc:CartesianChart.Series>
-				<lvc:LineSeries Values="{Binding ChartValues}" 
-                                PointGeometry="{x:Null}" 
-                                LineSmoothness="1"
-                                StrokeThickness="1" 
-                                Stroke="LightGray"
-                                Fill="LightGray"/>
-			</lvc:CartesianChart.Series>
-
-			<lvc:CartesianChart.AxisX>
-				<lvc:Axis MaxValue="{Binding AxisMax}" MinValue="{Binding AxisMin}" Unit="{Binding AxisUnit}">
-					<lvc:Axis.Separator>
-						<lvc:Separator Step="{Binding AxisStep}" />
-					</lvc:Axis.Separator>
-				</lvc:Axis>
-			</lvc:CartesianChart.AxisX>
-		</lvc:CartesianChart>-->
 
 		<!--Header--> 
 		<TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Text="{Binding Header}" HorizontalAlignment="Center"/>

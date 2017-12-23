@@ -60,7 +60,7 @@ namespace Swampnet.Dash.Service.Controllers
             // Get all tests for dashboard
             if (dashboard.Tests != null)
 			{
-				states.AddRange(_testRunner.GetTestResults(dashboard.Tests.Select(t => t.Id)).Select(x => new Element(x.Id)
+				states.AddRange(_testRunner.GetTestResults(dashboard.Tests.Select(t => t.Id)).Select(x => new Element(x.Id, x.Id)
                 {
                     Output = x.Output,
                     Status = x.Status,

@@ -17,10 +17,11 @@ namespace Swampnet.Dash.Common.Entities
             TimestampUtc = DateTime.UtcNow;
         }
 
-        public Element(object id)
+        public Element(string itemDefinitionId, object id)
             : this()
         {
-            Id = id.ToString();
+			ItemDefinitionId = itemDefinitionId;
+			Id = id.ToString();
         }
 
         /// <summary>
@@ -32,10 +33,15 @@ namespace Swampnet.Dash.Common.Entities
         /// </remarks>
         public string Id { get; set; }
 
-        /// <summary>
-        /// Sorting hint
-        /// </summary>
-        public string Order { get; set; }
+		/// <summary>
+		/// Item definition id. Most of the time this will be the same as Id
+		/// </summary>
+		public string ItemDefinitionId { get; set; }
+
+		/// <summary>
+		/// Sorting hint
+		/// </summary>
+		public string Order { get; set; }
 
         public Status Status { get; set; }
 
@@ -52,6 +58,7 @@ namespace Swampnet.Dash.Common.Entities
 			return new Element()
 			{
 				Id = this.Id,
+				ItemDefinitionId = this.ItemDefinitionId,
 				Order = this.Order,
 				Status = this.Status,
 				TimestampUtc = this.TimestampUtc,

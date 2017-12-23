@@ -51,7 +51,7 @@ namespace Swampnet.Dash.Argos
 
         private void CreateNewbie(ElementDefinition argosDefinition)
         {
-            var item = new Element(argosDefinition.Parameters.StringValue("pre") +_id);
+            var item = new Element(argosDefinition.Id, argosDefinition.Parameters.StringValue("pre") +_id);
             item.Output.Add(new Property("updated-on", DateTime.Now.ToString("s")));
 			item.Output.Add(new Property("time-in-group", 0));
 			item.Output.Add(new Property("stage", "0"));

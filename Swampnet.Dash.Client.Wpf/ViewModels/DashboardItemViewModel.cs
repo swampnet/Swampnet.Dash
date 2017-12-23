@@ -11,8 +11,9 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
 {
 	class DashboardItemViewModel : BindableBase
 	{
-		private readonly IEnumerable<Meta> _meta;
-		private Element _dashItem;
+		private Element _element;
+		private readonly Dashboard _dashboard;
+		private readonly ItemDefinition _itemDefinition;
 
 		static DashboardItemViewModel()
 		{
@@ -24,9 +25,11 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
 			Charting.For<Varient>(mapper);
 		}
 
-		public DashboardItemViewModel(object id, IEnumerable<Meta> meta)
+		public DashboardItemViewModel(Dashboard dashboard, ItemDefinition itemDefinition, object id)
 		{
-			_meta = meta;
+			_dashboard = dashboard;
+			_itemDefinition = itemDefinition;
+
             Id = id.ToString();
 
 			Series = new SeriesCollection
@@ -39,11 +42,11 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
 			};
 		}
 
-		public void Update(Element dashItem)
+		public void Update(Element element)
 		{
-			_dashItem = dashItem;
+			_element = element;
 
-			Series[0].Values.Add(new Varient(dashItem.TimestampUtc, dashItem.Output.DoubleValue("value", 0.0)));
+			Series[0].Values.Add(new Varient(element.TimestampUtc, element.Output.DoubleValue("value", 0.0)));
 
 			while (Series[0].Values.Count > 100)
 			{
@@ -57,8 +60,8 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
 		public SeriesCollection Series { get; set; }
 
 		public string Id { get; private set; }
-        public DateTime? Timestamp => _dashItem?.TimestampUtc;
-		public Status Status => _dashItem == null ? Status.Unknown : _dashItem.Status;
+        public DateTime? Timestamp => _element?.TimestampUtc;
+		public Status Status => _element == null ? Status.Unknown : _element.Status;
 		public string Order
 		{
 			get
@@ -66,7 +69,7 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
 				var value = GetValue("order");
 				if (string.IsNullOrEmpty(value))
 				{
-					value = _dashItem?.Order; // @todo: Possibly the other way round? Use dashItem.Order first, falling back to mapping? Dunno.
+					value = _element?.Order; // @todo: Possibly the other way round? Use dashItem.Order first, falling back to mapping? Dunno.
 				}
 				return value;
 			}
@@ -119,7 +122,8 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
 		{
 			string value = null;
 
-			var meta = _meta.SingleOrDefault(m => m.Region.EqualsNoCase(region));
+			var meta = GetMeta().SingleOrDefault(m => m.Region.EqualsNoCase(region));
+
 			if(meta != null)
 			{
 				// Check static values
@@ -133,20 +137,20 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
 					{
 						// Check some known values
 						case "status":
-							value = (_dashItem == null ? Status.Unknown : _dashItem.Status).ToString();
+							value = (_element == null ? Status.Unknown : _element.Status).ToString();
 							break;
 
 						case "timestamputc":
-							value = _dashItem?.TimestampUtc.ToLongTimeString(); // .Format()
+							value = _element?.TimestampUtc.ToLongTimeString(); // .Format()
 							break;
 
 						case "id":
-							value = _dashItem?.Id;
+							value = _element?.Id;
 							break;
 
 						// Check dash item properties
 						default:
-							value = _dashItem?.Output.StringValue(meta.Name);
+							value = _element?.Output.StringValue(meta.Name);
 							break;
 					}
 				}
@@ -177,6 +181,23 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
 			}
 
 			return value;
+		}
+
+
+		private IEnumerable<Meta> GetMeta()
+		{
+			if(_itemDefinition.MetaData != null && _itemDefinition.MetaData.Any())
+			{
+				return _itemDefinition.MetaData;
+			}
+			else if(_dashboard.DefaultMetaData != null && _dashboard.DefaultMetaData.Any())
+			{
+				return _dashboard.DefaultMetaData;
+			}
+			else
+			{
+				return Enumerable.Empty<Meta>();
+			}
 		}
 	}
 }
