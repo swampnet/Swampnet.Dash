@@ -6,22 +6,21 @@
         xmlns:local="clr-namespace:Swampnet.Dash.Client.Wpf"
         xmlns:view="clr-namespace:Swampnet.Dash.Client.Wpf.Views"
         mc:Ignorable="d"
-		SizeToContent="WidthAndHeight"
         Title="MainWindow">
-    <!--WindowState="Minimized"-->
+	<Grid>
+		<TabControl ItemsSource="{Binding Dashboards}">
 
-    <Grid>
-		<ItemsControl ItemsSource="{Binding Dashboards}" HorizontalContentAlignment="Stretch">
-			<ItemsControl.ItemsPanel>
-				<ItemsPanelTemplate>
-					<StackPanel Orientation="Horizontal"/>
-				</ItemsPanelTemplate>
-			</ItemsControl.ItemsPanel>
-			<ItemsControl.ItemTemplate>
+			<TabControl.ItemTemplate>
+				<DataTemplate>
+					<TextBlock Text="{Binding Description}" />
+				</DataTemplate>
+			</TabControl.ItemTemplate>
+
+			<TabControl.ContentTemplate>
 				<DataTemplate>
 					<view:DashboardView Margin="10"/>
 				</DataTemplate>
-			</ItemsControl.ItemTemplate>
-		</ItemsControl>
+			</TabControl.ContentTemplate>
+		</TabControl>
 	</Grid>
 </Window>

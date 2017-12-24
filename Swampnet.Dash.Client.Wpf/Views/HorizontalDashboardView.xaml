@@ -14,7 +14,7 @@
 		<ItemsControl.ItemTemplate>
 			<DataTemplate>
 				<!-- Group -->
-				<Border MinHeight="100" Margin="5">
+				<Border MinHeight="100" Margin="5" BorderBrush="LightGreen" BorderThickness="0.2">
 					<Grid>
 						<Grid.Resources>
 							<!-- Sort by Order, then Timestamp -->
@@ -29,7 +29,8 @@
 							<ColumnDefinition/>
 						</Grid.ColumnDefinitions>
 						<TextBlock Grid.Column="0" Text="{Binding Title}" VerticalAlignment="Center" Margin="5" FontWeight="Bold" FontSize="15" Width="Auto" Visibility="{Binding DisplayHeader, Converter={StaticResource convertBool}}"/>
-						<ItemsControl Grid.Column="1" ItemsSource="{Binding Source={StaticResource viewSource}}">
+						
+						<ItemsControl Grid.Column="1" ItemsSource="{Binding Source={StaticResource viewSource}}" BorderBrush="LightGray" BorderThickness="0.2">
 							<ItemsControl.ItemsPanel>
 								<ItemsPanelTemplate>
 									<StackPanel Orientation="Horizontal"/>
@@ -37,6 +38,18 @@
 							</ItemsControl.ItemsPanel>
 							<ItemsControl.ItemTemplate>
 								<DataTemplate>
+									<DataTemplate.Resources>
+										<Storyboard x:Key="_fadeIn" AutoReverse="False">
+											<DoubleAnimation Storyboard.TargetProperty="Opacity" From="0" To="1" Duration="0:0:0.5" />
+										</Storyboard>
+									</DataTemplate.Resources>
+
+									<DataTemplate.Triggers>
+										<EventTrigger RoutedEvent="FrameworkElement.Loaded">
+											<BeginStoryboard Storyboard="{StaticResource _fadeIn}" />
+										</EventTrigger>
+									</DataTemplate.Triggers>
+
 									<!-- Item -->
 									<local:DashboardItemView Margin="10"/>
 								</DataTemplate>
