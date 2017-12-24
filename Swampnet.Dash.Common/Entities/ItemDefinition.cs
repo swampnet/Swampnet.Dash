@@ -35,6 +35,9 @@ namespace Swampnet.Dash.Common.Entities
 		[XmlAttribute]
 		public int MaxY { get; set; }
 
+		[XmlAttribute]
+		public string PropertyName { get; set; }
+
 		// XmlSerializer does not support TimeSpan, so use this property for 
 		// serialization instead.
 		[Browsable(false)]

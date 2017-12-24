@@ -66,6 +66,7 @@
     <Compile Include="Repositories\ArgosRepository.cs" />
     <Compile Include="Repositories\DashboardRepository.cs" />
     <Compile Include="Repositories\TestRepository.cs" />
+    <Compile Include="Repositories\ValuesRepository.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Swampnet.Dash.Common\Swampnet.Dash.Common.csproj">

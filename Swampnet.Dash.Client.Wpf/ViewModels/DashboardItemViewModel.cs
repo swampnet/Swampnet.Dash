@@ -6,6 +6,7 @@ using Swampnet.Dash.Common.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Swampnet.Dash.Client.Wpf.ViewModels
 {
@@ -40,22 +41,35 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
 					Values = new ChartValues<Varient>()
 				}
 			};
+
+			LoadHistory(); // @todo: .ContinueWith -> Start updating
 		}
+
 
 		public void Update(Element element)
 		{
+			if (_loadingHistory)
+			{
+				return; // HACK
+			}
+
 			_element = element;
 
-			Series[0].Values.Add(new Varient(element.TimestampUtc, element.Output.DoubleValue("value", 0.0)));
+			AddHistory(new Varient(element.TimestampUtc, element.Output.DoubleValue("value", 0.0)));
+
+			RaisePropertyChanged("");
+		}
+
+
+		private void AddHistory(Varient data)
+		{
+			Series[0].Values.Add(data);
 
 			// @todo: this, properly!
 			while (Series[0].Values.Count > 100)
 			{
 				Series[0].Values.RemoveAt(0);
 			}
-
-
-			RaisePropertyChanged("");
 		}
 
 		public SeriesCollection Series { get; set; }
@@ -214,6 +228,24 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
 			else
 			{
 				return Enumerable.Empty<Meta>();
+			}
+		}
+
+		private bool _loadingHistory = false;
+
+		private async Task LoadHistory()
+		{
+			if (_itemDefinition.Plot != null)
+			{
+				_loadingHistory = true;
+
+				var data = await Api.GetHistory(_itemDefinition.Id, _itemDefinition.Plot.PropertyName, _itemDefinition.Plot.History);
+				foreach (var d in data.OrderBy(x => x.Timestamp))
+				{
+					AddHistory(d);
+				}
+
+				_loadingHistory = false;
 			}
 		}
 	}

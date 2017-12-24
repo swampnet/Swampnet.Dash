@@ -1,6 +1,7 @@
 ﻿using Autofac;
 using Swampnet.Dash.Common.Interfaces;
 using Swampnet.Dash.DAL;
+using Swampnet.Dash.DAL.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,6 +18,7 @@ namespace Swampnet.Dash
             builder.RegisterType<ArgosRepository>().As<IArgosRepository>().InstancePerLifetimeScope();
             builder.RegisterType<DashboardRepository>().As<IDashboardRepository>().InstancePerLifetimeScope();
             builder.RegisterType<TestRepository>().As<ITestRepository>().InstancePerLifetimeScope();
-        }
+			builder.RegisterType<ValuesRepository>().As<IValuesRepository>().InstancePerLifetimeScope();
+		}
     }
 }
