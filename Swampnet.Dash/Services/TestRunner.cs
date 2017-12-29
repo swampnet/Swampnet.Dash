@@ -12,7 +12,7 @@ namespace Swampnet.Dash.Services
     {
         private readonly ITestRepository _testRepository;
         private readonly IEnumerable<ITest> _tests;
-        private readonly Dictionary<string, Element> _state = new Dictionary<string, Element>();
+        private readonly Dictionary<string, ElementState> _state = new Dictionary<string, ElementState>();
         private readonly IRuleProcessor _ruleProcessor;
 		private readonly IValuesRepository _valuesRepository;
 
@@ -25,9 +25,9 @@ namespace Swampnet.Dash.Services
 		}
 
 
-        public async Task<IEnumerable<Element>> RunAsync()
+        public async Task<IEnumerable<ElementState>> RunAsync()
         {
-            var results = new List<Element>();
+            var results = new List<ElementState>();
 
             //Parallel.ForEach(GetDue(), testDefinition => { });
 			foreach(var definition in GetDue())
@@ -82,14 +82,14 @@ namespace Swampnet.Dash.Services
         }
 
 
-        public IEnumerable<Element> GetTestResults(IEnumerable<string> ids)
+        public IEnumerable<ElementState> GetTestResults(IEnumerable<string> ids)
         {
             return _state.Where(x => ids.Contains(x.Key)).Select(x => x.Value);
         }
 
 
         // Validate parameters against the test metadata
-        private void Validate(ElementDefinition testdefinition, TestMeta meta)
+        private void Validate(Element testdefinition, TestMeta meta)
 		{
 			foreach(var parameter in meta.Parameters)
 			{
@@ -101,9 +101,9 @@ namespace Swampnet.Dash.Services
 		}
 
 
-        public IEnumerable<ElementDefinition> GetDue()
+        public IEnumerable<Element> GetDue()
         {
-            var definitions = new List<ElementDefinition>();
+            var definitions = new List<Element>();
 
             foreach (var definition in _testRepository.GetDefinitions())
             {

@@ -10,15 +10,15 @@ namespace Swampnet.Dash.Services
 {
 	internal class DashboardItemHistory : IDashboardItemHistory
     {
-        private Dictionary<string, List<Element>> _history = new Dictionary<string, List<Element>>();
+        private Dictionary<string, List<ElementState>> _history = new Dictionary<string, List<ElementState>>();
 
 
-        public void AddTestResult(ElementDefinition definition, Element result)
+        public void AddTestResult(Element definition, ElementState result)
         {
-            List<Element> results;
+            List<ElementState> results;
             if (!_history.ContainsKey(definition.Id))
             {
-                results = new List<Element>();
+                results = new List<ElementState>();
                 _history.Add(definition.Id, results);
             }
             else
@@ -27,7 +27,7 @@ namespace Swampnet.Dash.Services
             }
 
             // Add a copy
-            results.Add(new Element()
+            results.Add(new ElementState()
             {
                 TimestampUtc = result.TimestampUtc,
                 Status = result.Status,
@@ -39,15 +39,15 @@ namespace Swampnet.Dash.Services
         }
 
 
-        public Element GetCurrentState(ElementDefinition definition)
+        public ElementState GetCurrentState(Element definition)
         {
             return GetHistory(definition).FirstOrDefault();
         }
 
 
-        public IEnumerable<Element> GetHistory(ElementDefinition definition)
+        public IEnumerable<ElementState> GetHistory(Element definition)
         {
-            IEnumerable<Element> result = null;
+            IEnumerable<ElementState> result = null;
 
             if (_history.ContainsKey(definition.Id))
             {
@@ -55,12 +55,12 @@ namespace Swampnet.Dash.Services
             }
 
             return result == null
-                ? Enumerable.Empty<Element>()
+                ? Enumerable.Empty<ElementState>()
                 : result;
         }
 
 
-        private static void Trunc(ElementDefinition definition, List<Element> results)
+        private static void Trunc(Element definition, List<ElementState> results)
         {
             int max = definition.StateRules.MaxRuleStateModifierConsecutiveCount_HolyShitChangeThisNameOmg() + 1; // Always leave one
             while (results.Count > max) // @TODO: from testDefinition

@@ -7,6 +7,6 @@ namespace Swampnet.Dash.Common.Interfaces
 {
     public interface IArgosRepository
     {
-        IEnumerable<ElementDefinition> GetDefinitions();
+        IEnumerable<Element> GetDefinitions();
     }
 }

@@ -11,7 +11,7 @@ namespace Swampnet.Dash.DAL.Repositories
 {
 	class ValuesRepository : IValuesRepository
 	{
-		public async Task Add(IEnumerable<Element> elements)
+		public async Task Add(IEnumerable<ElementState> elements)
 		{
 			using (var context = new HistoryContext())
 			{

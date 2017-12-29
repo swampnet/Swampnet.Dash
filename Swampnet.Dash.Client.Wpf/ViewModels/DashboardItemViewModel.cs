@@ -12,7 +12,7 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
 {
 	class DashboardItemViewModel : BindableBase
 	{
-		private Element _element;
+		private ElementState _element;
 		private readonly Dashboard _dashboard;
 		private readonly ItemDefinition _itemDefinition;
 
@@ -47,7 +47,7 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
 		}
 
 
-		public void Update(Element element)
+		public void Update(ElementState element)
 		{
 			if (_loadingHistory)
 			{

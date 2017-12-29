@@ -1,74 +1,68 @@
-﻿using System;
+﻿using System.Linq;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Text;
-using System.Linq;
-using Swampnet.Dash.Common.Interfaces;
+using System.Xml;
+using System.Xml.Serialization;
 
 namespace Swampnet.Dash.Common.Entities
 {
 	/// <summary>
-	/// A snapshot of data at a particular time
+	/// Define a single dashboard element
 	/// </summary>
+	/// <remarks>
+	/// This can define:
+	///		- A single test
+	///		- A single 'argos' type structure (which may, and probably will, emit multiple Elements)
+	/// </remarks>
     public class Element
     {
         public Element()
         {
-            Output = new List<Property>();
-            TimestampUtc = DateTime.UtcNow;
+            Parameters = new List<Property>();
+            StateRules = new List<Rule>();
         }
 
-        public Element(string itemDefinitionId, object id)
-            : this()
-        {
-			ItemDefinitionId = itemDefinitionId;
-			Id = id.ToString();
-        }
+		[XmlAttribute]
+		public string Id { get; set; }
 
-        /// <summary>
-        /// Identifies this item within a dashboard
-        /// </summary>
-        /// <remarks>
-        /// This could be a test definition id, or something else. It kind of doesn't matter as long as
-        /// the client can use it to find this item on an update
-        /// </remarks>
-        public string Id { get; set; }
+		[XmlAttribute]
+		public string Description { get; set; }
 
-		/// <summary>
-		/// Item definition id. Most of the time this will be the same as Id
-		/// </summary>
-		public string ItemDefinitionId { get; set; }
+		[XmlAttribute]
+		public string Type { get; set; }
 
-		/// <summary>
-		/// Sorting hint
-		/// </summary>
-		public string Order { get; set; }
+        [XmlIgnore]
+		public TimeSpan Heartbeat { get; set; }
 
-        public Status Status { get; set; }
 
-        /// <summary>
-        /// What is Timestamp? Is it the last time the item was updated, or the time it was initially created. We kinda need both under different
-        /// circumstances. (We might want to display the last updated but, at least in an argos style dash, we probably want to order it by created)
-        /// </summary>
-        public DateTime TimestampUtc { get; set; }
-
-        public List<Property> Output { get; set; }
-
-		public Element Copy()
+        // XmlSerializer does not support TimeSpan, so use this property for 
+        // serialization instead.
+        [Browsable(false)]
+		[XmlAttribute(DataType = "duration", AttributeName = "Heartbeat")]
+		public string __heartbeat
 		{
-			return new Element()
+			get
 			{
-				Id = this.Id,
-				ItemDefinitionId = this.ItemDefinitionId,
-				Order = this.Order,
-				Status = this.Status,
-				TimestampUtc = this.TimestampUtc,
-				Output = this.Output.Select(x => new Property() { Category = x.Category, Name = x.Name, Value = x.Value }).ToList()
-			};
+				return XmlConvert.ToString(Heartbeat);
+			}
+			set
+			{
+				Heartbeat = string.IsNullOrEmpty(value) 
+					? TimeSpan.Zero 
+					: XmlConvert.ToTimeSpan(value);
+			}
 		}
 
-        public override string ToString()
-        {
-            return $"{Status} (" + string.Join(",", Output.Select(p => $"{p.Name}: {p.Value}")) + ")";
-        }
-	}
+        /// <summary>
+        /// Test parameters
+        /// </summary>
+		public List<Property> Parameters { get; set; }
+
+        /// <summary>
+        /// Test Rules
+        /// </summary>
+        public List<Rule> StateRules { get; set; }
+    }
 }

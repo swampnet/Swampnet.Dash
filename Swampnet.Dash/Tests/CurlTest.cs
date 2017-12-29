@@ -13,7 +13,7 @@ namespace Swampnet.Dash.Tests
 {
 	class CurlTest : ITest
 	{
-		public async Task<Element> RunAsync(ElementDefinition testDefinition)
+		public async Task<ElementState> RunAsync(Element testDefinition)
 		{
 			var uri = testDefinition.Parameters.StringValue("uri");
 
@@ -28,7 +28,7 @@ namespace Swampnet.Dash.Tests
 			var time = timer.Elapsed.TotalMilliseconds;
 
             // @TODO: Figure out state
-            var rs = new Element()
+            var rs = new ElementState()
             {
                 Status = Status.Ok
             };

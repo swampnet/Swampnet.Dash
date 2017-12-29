@@ -12,7 +12,7 @@ namespace UnitTests
 		[TestMethod]
 		public void Compare_DashboardItem_01()
 		{
-			var lhs = new Element()
+			var lhs = new ElementState()
 			{
 				Id = "01",
 				Status = Status.Ok,
@@ -25,7 +25,7 @@ namespace UnitTests
 				}
 			};
 
-			var rhs = new Element()
+			var rhs = new ElementState()
 			{
 				Id = "01",
 				Status = Status.Ok,
@@ -45,7 +45,7 @@ namespace UnitTests
 		[TestMethod]
 		public void Compare_DashboardItem_02()
 		{
-			var lhs = new Element()
+			var lhs = new ElementState()
 			{
 				Id = "01",
 				Status = Status.Ok,
@@ -59,7 +59,7 @@ namespace UnitTests
 			};
 
 			// Properties are the same, but in a different order
-			var rhs = new Element()
+			var rhs = new ElementState()
 			{
 				Id = "01",
 				Status = Status.Ok,
@@ -80,7 +80,7 @@ namespace UnitTests
         [TestMethod]
 		public void Compare_DashboardItem_03()
 		{
-			var lhs = new Element()
+			var lhs = new ElementState()
 			{
 				Id = "01",
 				Status = Status.Ok,
@@ -93,7 +93,7 @@ namespace UnitTests
 				}
 			};
 
-			var rhs = new Element()
+			var rhs = new ElementState()
 			{
 				Id = "01",
 				Status = Status.Ok,
@@ -159,7 +159,7 @@ namespace UnitTests
         public void Boosh()
         {
             // Not actuall a test, just want a serialised TestDefinition!
-            var def = new ElementDefinition()
+            var def = new Element()
 			{ 				
                 Id = "test-definition",
                 Description = "Some test definition",

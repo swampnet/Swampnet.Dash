@@ -13,7 +13,7 @@ namespace Swampnet.Dash.Service.Services
 {
     class Broadcast : IBroadcast
     {
-        public void Update(string group, IEnumerable<Element> dashItems)
+        public void Update(string group, IEnumerable<ElementState> dashItems)
         {
             //Log.Debug("Update: '{group}' - {dashItems}",
             //    group,
@@ -27,7 +27,7 @@ namespace Swampnet.Dash.Service.Services
         }
 
 
-        public void Refresh(string group, IEnumerable<Element> dashItems)
+        public void Refresh(string group, IEnumerable<ElementState> dashItems)
         {
             //Log.Debug("Refresh: '{group}' - {dashItems}",
             //    group,

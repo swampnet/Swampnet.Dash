@@ -11,7 +11,7 @@ namespace Swampnet.Dash.Services
     /// </summary>
     class ExpressionEvaluator
     {
-        public bool Evaluate(Expression expression, Element evt)
+        public bool Evaluate(Expression expression, ElementState evt)
         {
             bool result = false;
 
@@ -63,7 +63,7 @@ namespace Swampnet.Dash.Services
         }
 
 
-        private string GetOperand(Expression expression, Element evt)
+        private string GetOperand(Expression expression, ElementState evt)
         {
             string op = "";
 
@@ -138,7 +138,7 @@ namespace Swampnet.Dash.Services
         /// <summary>
         /// Returns true if all children expressions evaluate to true
         /// </summary>
-        private bool MatchAll(Expression expression, Element evt)
+        private bool MatchAll(Expression expression, ElementState evt)
         {
             foreach (var child in expression.Children)
             {
@@ -158,7 +158,7 @@ namespace Swampnet.Dash.Services
         /// <remarks>
         /// This will return true on the first expressionthat returns true, so may not evaluate all the expressions
         /// </remarks>
-        private bool MatchAny(Expression expression, Element evt)
+        private bool MatchAny(Expression expression, ElementState evt)
         {
             foreach (var child in expression.Children)
             {

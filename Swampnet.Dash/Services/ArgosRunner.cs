@@ -78,9 +78,9 @@ namespace Swampnet.Dash.Services
         }
 
 
-        public IEnumerable<ElementDefinition> GetDue()
+        public IEnumerable<Element> GetDue()
         {
-            var definitions = new List<ElementDefinition>();
+            var definitions = new List<Element>();
 
             foreach (var definition in _argosRepository.GetDefinitions())
             {

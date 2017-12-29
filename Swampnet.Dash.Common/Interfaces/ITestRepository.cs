@@ -7,6 +7,6 @@ namespace Swampnet.Dash.Common.Interfaces
 {
     public interface ITestRepository
     {
-        IEnumerable<ElementDefinition> GetDefinitions();
+        IEnumerable<Element> GetDefinitions();
 	}
 }

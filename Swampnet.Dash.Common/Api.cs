@@ -20,9 +20,9 @@ namespace Swampnet.Dash
 		}
 
 
-		public static Task<IEnumerable<Element>> GetDashState(string dashId)
+		public static Task<IEnumerable<ElementState>> GetDashState(string dashId)
 		{
-			return GetAsync<IEnumerable<Element>>($"dashboards/{dashId}/state");
+			return GetAsync<IEnumerable<ElementState>>($"dashboards/{dashId}/state");
 		}
 
 		public static Task<IEnumerable<Varient>> GetHistory(string itemDefinitionId, string propertyName, TimeSpan history)
