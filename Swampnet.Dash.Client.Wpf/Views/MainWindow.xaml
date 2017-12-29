@@ -8,7 +8,7 @@
         mc:Ignorable="d"
         Title="MainWindow">
 	<Grid>
-		<TabControl ItemsSource="{Binding Dashboards}">
+		<TabControl ItemsSource="{Binding Dashboards}" SelectedIndex="0">
 
 			<TabControl.ItemTemplate>
 				<DataTemplate>

@@ -14,11 +14,13 @@ namespace Swampnet.Dash.Service.Controllers
     {
 		private readonly ITestRepository _testRepo;
 		private readonly IEnumerable<ITest> _tests;
+		private readonly IValuesRepository _valuesRepository;
 
-		public TestsController(ITestRepository testRepo, IEnumerable<ITest> tests)
+		public TestsController(ITestRepository testRepo, IEnumerable<ITest> tests, IValuesRepository valuesRepository)
         {
 			_testRepo = testRepo;
 			_tests = tests;
+			_valuesRepository = valuesRepository;
 		}
 
 
@@ -35,9 +37,9 @@ namespace Swampnet.Dash.Service.Controllers
 
 		[Route("tests/{testId}/{propertyName}")]
 		[HttpGet]
-		public IHttpActionResult GetHistory(string testId, string propertyName, [FromUri]int? seconds)
+		public async Task<IHttpActionResult> GetHistory(string testId, string propertyName, [FromUri]int? seconds)
 		{
-			var data = _testRepo.Get(testId, propertyName, seconds.HasValue ? TimeSpan.FromSeconds(seconds.Value) : (TimeSpan?)null);
+			var data = await _valuesRepository.GetHistory(testId, propertyName, seconds.HasValue ? TimeSpan.FromSeconds(seconds.Value) : TimeSpan.MaxValue);
 
 			return Ok(data);
 		}

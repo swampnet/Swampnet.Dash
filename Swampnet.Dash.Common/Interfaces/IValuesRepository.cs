@@ -8,6 +8,7 @@ namespace Swampnet.Dash.Common.Interfaces
 {
 	public interface IValuesRepository
 	{
+		Task Add(IEnumerable<Element> elements);
 		Task<IEnumerable<Varient>> GetHistory(string itemDefinitionId, string propertyName, TimeSpan history);
 	}
 }

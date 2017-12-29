@@ -6,13 +6,13 @@ namespace Swampnet.Dash.Common.Entities
 {
     public class Varient
     {
-		public Varient(DateTime timestamp, double value)
+		public Varient(DateTime timestampUtc, double value)
 		{
-			Timestamp = timestamp;
+			TimestampUtc = timestampUtc;
 			Value = value;
 		}
 
-		public DateTime Timestamp { get; set; }
+		public DateTime TimestampUtc { get; set; }
 		public double Value { get; set; }
 	}
 }

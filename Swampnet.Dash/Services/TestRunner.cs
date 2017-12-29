@@ -14,13 +14,15 @@ namespace Swampnet.Dash.Services
         private readonly IEnumerable<ITest> _tests;
         private readonly Dictionary<string, Element> _state = new Dictionary<string, Element>();
         private readonly IRuleProcessor _ruleProcessor;
+		private readonly IValuesRepository _valuesRepository;
 
-        public TestRunner(ITestRepository testRepo, IEnumerable<ITest> tests, IRuleProcessor ruleProcessor)
+		public TestRunner(ITestRepository testRepo, IEnumerable<ITest> tests, IRuleProcessor ruleProcessor, IValuesRepository valuesRepository)
         {
             _testRepository = testRepo;
             _tests = tests;
             _ruleProcessor = ruleProcessor;
-        }
+			_valuesRepository = valuesRepository;
+		}
 
 
         public async Task<IEnumerable<Element>> RunAsync()
@@ -74,7 +76,7 @@ namespace Swampnet.Dash.Services
 
 			// @TODO: So, if we're actually writing stuff away to the db as part of this, then it might take a while: We might be
 			//        better off queing it up for later, and doing some kind of batch insert.
-			_testRepository.Add(results);
+			await _valuesRepository.Add(results);
 
 			return results;
         }

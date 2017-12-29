@@ -20,7 +20,7 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
 		{
 			// Map x axis to seconds
 			var mapper = Mappers.Xy<Varient>()
-				.X(m => (DateTime.UtcNow - m.Timestamp).TotalSeconds)
+				.X(m => (DateTime.UtcNow - m.TimestampUtc).TotalSeconds)
 				.Y(m => m.Value);
 
 			Charting.For<Varient>(mapper);
@@ -42,6 +42,7 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
 				}
 			};
 
+			// We don't want to start updating until we've loaded the history (or at least manage it somehow)
 			LoadHistory(); // @todo: .ContinueWith -> Start updating
 		}
 
@@ -63,12 +64,18 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
 
 		private void AddHistory(Varient data)
 		{
-			Series[0].Values.Add(data);
-
-			// @todo: this, properly!
-			while (Series[0].Values.Count > 100)
+			if(_itemDefinition.Plot != null)
 			{
-				Series[0].Values.RemoveAt(0);
+				Series[0].Values.Add(data);
+
+				// truncate everything older than this date
+				var dt = DateTime.UtcNow.Subtract(_itemDefinition.Plot.History);
+				
+				// @todo: this, properly!
+				while (Series[0].Values.Count > 100)
+				{
+					Series[0].Values.RemoveAt(0);
+				}
 			}
 		}
 
@@ -240,7 +247,7 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
 				_loadingHistory = true;
 
 				var data = await Api.GetHistory(_itemDefinition.Id, _itemDefinition.Plot.PropertyName, _itemDefinition.Plot.History);
-				foreach (var d in data.OrderBy(x => x.Timestamp))
+				foreach (var d in data.OrderBy(x => x.TimestampUtc))
 				{
 					AddHistory(d);
 				}
