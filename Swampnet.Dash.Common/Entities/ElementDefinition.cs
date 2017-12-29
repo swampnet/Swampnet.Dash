@@ -10,31 +10,49 @@ namespace Swampnet.Dash.Common.Entities
 	/// <summary>
 	/// Define test id and any property mapping that goes with it
 	/// </summary>
-	public class ItemDefinition
+	public class ElementDefinition
 	{
 		[XmlAttribute]
 		public string Id { get; set; }
 
+		/// <summary>
+		/// Element level meta data
+		/// </summary>
 		public List<Meta> MetaData { get; set; }
 
+		/// <summary>
+		/// Plot/Graph info
+		/// </summary>
 		public Plot Plot { get; set; }
 	}
 
 
+	/// <summary>
+	/// Define a Time based plot.
+	/// </summary>
 	public class Plot
 	{
-		[XmlAttribute]
-		public ResolutionType Resolution { get; set; }
-
+		/// <summary>
+		/// How much history to keep
+		/// </summary>
 		[XmlIgnore]
 		public TimeSpan History { get; set; }
 
+		/// <summary>
+		/// Minimum Y value
+		/// </summary>
 		[XmlAttribute]
-		public int MinY { get; set; }
+		public double MinY { get; set; }
 
+		/// <summary>
+		/// Maximum Y value
+		/// </summary>
 		[XmlAttribute]
-		public int MaxY { get; set; }
+		public double MaxY { get; set; }
 
+		/// <summary>
+		/// The Output property used for Y
+		/// </summary>
 		[XmlAttribute]
 		public string PropertyName { get; set; }
 
@@ -55,12 +73,5 @@ namespace Swampnet.Dash.Common.Entities
 					: XmlConvert.ToTimeSpan(value);
 			}
 		}
-	}
-
-	public enum ResolutionType
-	{
-		Seconds,
-		Minutes,
-		Hours
 	}
 }

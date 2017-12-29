@@ -22,9 +22,9 @@ namespace Swampnet.Dash.Common.Entities
         [XmlAttribute]
         public string Template { get; set; }
 
-        public List<ItemDefinition> Tests { get; set; }
+        public List<ElementDefinition> Tests { get; set; }
 
-        public List<ItemDefinition> Argos { get; set; }
+        public List<ElementDefinition> Argos { get; set; }
 
         public List<Meta> DefaultMetaData { get; set; }
 

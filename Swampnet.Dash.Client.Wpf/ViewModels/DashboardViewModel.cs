@@ -104,7 +104,7 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
             LastUpdate = DateTime.Now;
         }
 
-		private ItemDefinition GetItemDefinition(string id)
+		private ElementDefinition GetItemDefinition(string id)
 		{
 			var itemDefinition = _dashboard.Tests.SingleOrDefault(t => t.Id == id);
 			if(itemDefinition == null)

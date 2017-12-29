@@ -14,7 +14,7 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
 	{
 		private ElementState _element;
 		private readonly Dashboard _dashboard;
-		private readonly ItemDefinition _itemDefinition;
+		private readonly ElementDefinition _itemDefinition;
 
 		static DashboardItemViewModel()
 		{
@@ -26,7 +26,7 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
 			Charting.For<Varient>(mapper);
 		}
 
-		public DashboardItemViewModel(Dashboard dashboard, ItemDefinition itemDefinition, object id)
+		public DashboardItemViewModel(Dashboard dashboard, ElementDefinition itemDefinition, object id)
 		{
 			_dashboard = dashboard;
 			_itemDefinition = itemDefinition;
@@ -141,11 +141,11 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
 
 		#region Graphing stuff
 
-		public int AxisYMinValue => DisplayGraph
+		public double AxisYMinValue => DisplayGraph
 			? _itemDefinition.Plot.MinY
 			: 0;
 
-		public int AxisYMaxValue => DisplayGraph
+		public double AxisYMaxValue => DisplayGraph
 			? _itemDefinition.Plot.MaxY
 			: 0;
 
