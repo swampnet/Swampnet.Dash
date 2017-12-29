@@ -16,6 +16,9 @@ namespace Swampnet.Dash.Common.Entities
         [XmlAttribute]
         public bool IsDefault { get; set; }
 
-        // @TODO: Group specific metadata?
-    }
+		/// <summary>
+		/// @TODO: Group level mapping (NotImplemented)
+		/// </summary>
+		public List<Map> Mapping { get; set; }
+	}
 }

@@ -14,7 +14,7 @@
 			<Setter Property="Margin" Value="1"/>
 		</Style>
 	</UserControl.Resources>
-	<Grid Width="100">
+	<Grid Width="200" Height="200">
 		<Grid.Resources>
 			<Style TargetType="Grid">
 				<Setter Property="Background" Value="LightGreen"/>
@@ -76,7 +76,7 @@
 		<TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding HeaderRight}" HorizontalAlignment="Center"/>
 
 		 <!--Main--> 
-		<TextBlock Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Text="{Binding Main}" HorizontalAlignment="Center" FontSize="25" FontWeight="Bold"/>
+		<TextBlock Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Text="{Binding Main}" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="50" FontWeight="Bold"/>
 
 		 <!--Footer--> 
 		<TextBlock Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Text="{Binding Footer}" HorizontalAlignment="Center"/>

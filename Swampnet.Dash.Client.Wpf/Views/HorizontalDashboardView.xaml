@@ -14,7 +14,7 @@
 		<ItemsControl.ItemTemplate>
 			<DataTemplate>
 				<!-- Group -->
-				<Border MinHeight="100" Margin="5" BorderBrush="LightGreen" BorderThickness="0.2">
+				<Border MinHeight="100" MinWidth="100" Margin="5" BorderBrush="LightGreen" BorderThickness="0.2">
 					<Grid>
 						<Grid.Resources>
 							<!-- Sort by Order, then Timestamp -->
@@ -33,7 +33,7 @@
 						<ItemsControl Grid.Column="1" ItemsSource="{Binding Source={StaticResource viewSource}}" BorderBrush="LightGray" BorderThickness="0.2">
 							<ItemsControl.ItemsPanel>
 								<ItemsPanelTemplate>
-									<StackPanel Orientation="Horizontal"/>
+									<WrapPanel Orientation="Horizontal"/>
 								</ItemsPanelTemplate>
 							</ItemsControl.ItemsPanel>
 							<ItemsControl.ItemTemplate>
