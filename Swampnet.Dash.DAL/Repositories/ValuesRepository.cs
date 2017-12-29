@@ -61,11 +61,11 @@ namespace Swampnet.Dash.DAL.Repositories
 					.Where(r => r.Name == itemDefinitionId)
 					.SelectMany(t => t.History
 						.Where(h => h.Name == propertyName && h.TimestampUtc > dt)
-						.Select(h => new { h.TimestampUtc, h.Value }))
+						.Select(h => new {h.Id, h.TimestampUtc, h.Value }))
 					.OrderByDescending(h => h.TimestampUtc)
 					.ToListAsync();
 
-				return results.Select(x => new Variant(x.TimestampUtc, Convert.ToDouble(x.Value)));
+				return results.Select(h => new Variant(h.TimestampUtc, Convert.ToDouble(h.Value)));
 			}
 		}
 	}

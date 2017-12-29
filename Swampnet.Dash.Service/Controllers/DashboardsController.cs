@@ -37,9 +37,14 @@ namespace Swampnet.Dash.Service.Controllers
         [HttpGet]
         public async Task<IHttpActionResult> Get(string id)
         {
-			var dashboards = await _dashRepo.GetDashboardsAsync();
+			var dashboard = await _dashRepo.GetDashboardAsync(id);
 
-			return Ok(dashboards.Single(d => d.Id == id));
+			if (dashboard == null)
+			{
+				return NotFound();
+			}
+
+			return Ok(dashboard);
         }
 
 		

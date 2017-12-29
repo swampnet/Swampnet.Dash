@@ -54,7 +54,7 @@ namespace Swampnet.Dash.Common.Entities
 		/// The Output property used for Y
 		/// </summary>
 		[XmlAttribute]
-		public string PropertyName { get; set; }
+		public string Output { get; set; }
 
 		// XmlSerializer does not support TimeSpan, so use this property for 
 		// serialization instead.

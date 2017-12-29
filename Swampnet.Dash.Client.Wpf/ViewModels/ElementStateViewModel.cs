@@ -46,17 +46,22 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
 			LoadHistory(); // @todo: .ContinueWith -> Start updating
 		}
 
+		private List<Variant> _buffer = new List<Variant>();
 
 		public void Update(ElementState element)
 		{
-			if (_loadingHistory)
-			{
-				return; // HACK
-			}
-
 			_element = element;
 
-			AddVariant(new Variant(element.TimestampUtc, element.Output.DoubleValue("value", 0.0)));
+			var variant = new Variant(element.TimestampUtc, element.Output.DoubleValue("value", 0.0));
+
+			// If we're currently loading the history, ignore the update for now (but keep track of the incoming data so we can merge it later)
+			if (_loadingHistory)
+			{
+				_buffer.Add(variant);
+				return;
+			}
+
+			AddVariant(variant);
 
 			RaisePropertyChanged("");
 		}
@@ -66,11 +71,15 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
 		{
 			if(_itemDefinition.Plot != null)
 			{
-				Series[0].Values.Add(data);
+				// Add value if it doesn't already exist
+				if (!Series[0].Values.Cast<Variant>().Any(h => h.TimestampUtc == data.TimestampUtc))
+				{
+					Series[0].Values.Add(data);
+				}
 
 				// truncate everything older than this date
 				var dt = DateTime.UtcNow.Subtract(_itemDefinition.Plot.History);
-				
+
 				// @todo: this, properly!
 				while (Series[0].Values.Count > 100)
 				{
@@ -175,7 +184,7 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
 				// Else it's a property lookup
 				else
 				{
-					switch (meta.PropertyName.ToLowerInvariant())
+					switch (meta.Property.ToLowerInvariant())
 					{
 						// Check some known values
 						case "status":
@@ -192,7 +201,7 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
 
 						// Check dash item properties
 						default:
-							value = _element?.Output.StringValue(meta.PropertyName);
+							value = _element?.Output.StringValue(meta.Property);
 							break;
 					}
 
@@ -250,8 +259,8 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
 			{
 				_loadingHistory = true;
 
-				var data = await Api.GetHistory(_itemDefinition.Id, _itemDefinition.Plot.PropertyName, _itemDefinition.Plot.History);
-				foreach (var d in data.OrderBy(x => x.TimestampUtc))
+				var data = await Api.GetHistory(_itemDefinition.Id, _itemDefinition.Plot.Output, _itemDefinition.Plot.History);
+				foreach (var d in data.Concat(_buffer).OrderBy(x => x.TimestampUtc))
 				{
 					AddVariant(d);
 				}

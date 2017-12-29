@@ -13,13 +13,8 @@ namespace Swampnet.Dash.Common.Entities
 	/// </remarks>
 	public class Map
 	{
-		public Map()
-		{
-		}
-
-
 		[XmlAttribute]
-		public string PropertyName { get; set; }
+		public string Property { get; set; }
 
 		[XmlAttribute]
 		public string Constant { get; set; }
