@@ -4,9 +4,9 @@ using System.Text;
 
 namespace Swampnet.Dash.Common.Entities
 {
-    public class Varient
+    public class Variant
     {
-		public Varient(DateTime timestampUtc, double value)
+		public Variant(DateTime timestampUtc, double value)
 		{
 			TimestampUtc = timestampUtc;
 			Value = value;

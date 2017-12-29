@@ -18,9 +18,9 @@ namespace Swampnet.Dash.Client.Wpf.Views
 	/// <summary>
 	/// Interaction logic for DashItemView.xaml
 	/// </summary>
-	public partial class DashboardItemView : UserControl
+	public partial class ElementStateView : UserControl
 	{
-		public DashboardItemView()
+		public ElementStateView()
 		{
 			InitializeComponent();
 		}

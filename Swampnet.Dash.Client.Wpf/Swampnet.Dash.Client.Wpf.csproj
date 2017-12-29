@@ -100,7 +100,7 @@
     <Compile Include="DashboardHub.cs" />
     <Compile Include="ViewModels\DashboardGroupViewModel.cs" />
     <Compile Include="ViewModels\DashboardViewModel.cs" />
-    <Compile Include="ViewModels\DashboardItemViewModel.cs" />
+    <Compile Include="ViewModels\ElementStateViewModel.cs" />
     <Compile Include="Views\DashboardView.xaml.cs">
       <DependentUpon>DashboardView.xaml</DependentUpon>
     </Compile>
@@ -110,7 +110,7 @@
     <Compile Include="Views\VerticalDashboardView.xaml.cs">
       <DependentUpon>VerticalDashboardView.xaml</DependentUpon>
     </Compile>
-    <Page Include="Views\DashboardItemView.xaml">
+    <Page Include="Views\ElementStateView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -127,8 +127,8 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="ViewModels\MainViewModel.cs" />
-    <Compile Include="Views\DashboardItemView.xaml.cs">
-      <DependentUpon>DashboardItemView.xaml</DependentUpon>
+    <Compile Include="Views\ElementStateView.xaml.cs">
+      <DependentUpon>ElementStateView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>

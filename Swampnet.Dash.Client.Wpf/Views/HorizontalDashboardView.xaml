@@ -50,8 +50,8 @@
 										</EventTrigger>
 									</DataTemplate.Triggers>
 
-									<!-- Item -->
-									<local:DashboardItemView Margin="10"/>
+									<!-- ElementState -->
+									<local:ElementStateView Margin="10"/>
 								</DataTemplate>
 							</ItemsControl.ItemTemplate>
 						</ItemsControl>

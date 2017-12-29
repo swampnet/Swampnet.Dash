@@ -10,23 +10,23 @@ using System.Threading.Tasks;
 
 namespace Swampnet.Dash.Client.Wpf.ViewModels
 {
-	class DashboardItemViewModel : BindableBase
+	class ElementStateViewModel : BindableBase
 	{
 		private ElementState _element;
 		private readonly Dashboard _dashboard;
 		private readonly ElementDefinition _itemDefinition;
 
-		static DashboardItemViewModel()
+		static ElementStateViewModel()
 		{
 			// Map x axis to seconds
-			var mapper = Mappers.Xy<Varient>()
+			var mapper = Mappers.Xy<Variant>()
 				.X(m => (DateTime.UtcNow - m.TimestampUtc).TotalSeconds)
 				.Y(m => m.Value);
 
-			Charting.For<Varient>(mapper);
+			Charting.For<Variant>(mapper);
 		}
 
-		public DashboardItemViewModel(Dashboard dashboard, ElementDefinition itemDefinition, object id)
+		public ElementStateViewModel(Dashboard dashboard, ElementDefinition itemDefinition, object id)
 		{
 			_dashboard = dashboard;
 			_itemDefinition = itemDefinition;
@@ -38,7 +38,7 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
 				new LineSeries
 				{
 					AreaLimit = -10,
-					Values = new ChartValues<Varient>()
+					Values = new ChartValues<Variant>()
 				}
 			};
 
@@ -56,13 +56,13 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
 
 			_element = element;
 
-			AddHistory(new Varient(element.TimestampUtc, element.Output.DoubleValue("value", 0.0)));
+			AddVariant(new Variant(element.TimestampUtc, element.Output.DoubleValue("value", 0.0)));
 
 			RaisePropertyChanged("");
 		}
 
 
-		private void AddHistory(Varient data)
+		private void AddVariant(Variant data)
 		{
 			if(_itemDefinition.Plot != null)
 			{
@@ -97,6 +97,7 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
 			}
 		}
 
+		#region Regions
 		public string Group
 		{
 			get { return GetValue("group"); }
@@ -137,6 +138,7 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
 		{
 			get { return GetValue("footer-right"); }
 		}
+		#endregion
 
 
 		#region Graphing stuff
@@ -251,7 +253,7 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
 				var data = await Api.GetHistory(_itemDefinition.Id, _itemDefinition.Plot.PropertyName, _itemDefinition.Plot.History);
 				foreach (var d in data.OrderBy(x => x.TimestampUtc))
 				{
-					AddHistory(d);
+					AddVariant(d);
 				}
 
 				_loadingHistory = false;

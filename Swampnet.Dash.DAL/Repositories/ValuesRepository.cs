@@ -49,7 +49,7 @@ namespace Swampnet.Dash.DAL.Repositories
 
 
 
-		public async Task<IEnumerable<Varient>> GetHistory(string itemDefinitionId, string propertyName, TimeSpan history)
+		public async Task<IEnumerable<Variant>> GetHistory(string itemDefinitionId, string propertyName, TimeSpan history)
 		{
 			var dt = DateTime.UtcNow.Subtract(history);
 
@@ -65,7 +65,7 @@ namespace Swampnet.Dash.DAL.Repositories
 					.OrderByDescending(h => h.TimestampUtc)
 					.ToListAsync();
 
-				return results.Select(x => new Varient(x.TimestampUtc, Convert.ToDouble(x.Value)));
+				return results.Select(x => new Variant(x.TimestampUtc, Convert.ToDouble(x.Value)));
 			}
 		}
 	}

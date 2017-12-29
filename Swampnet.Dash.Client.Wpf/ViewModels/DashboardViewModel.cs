@@ -81,7 +81,7 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
                     {
                         metaData = test.Mapping;
                     }
-                    item = new DashboardItemViewModel(_dashboard, definition, elementState.Id);
+                    item = new ElementStateViewModel(_dashboard, definition, elementState.Id);
                 }
 
                 item.Update(elementState);
@@ -125,7 +125,7 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
 		/// Add item to a group (or groups)
 		/// </summary>
 		/// <param name="item"></param>
-		private void AssignGroup(DashboardItemViewModel item)
+		private void AssignGroup(ElementStateViewModel item)
         {
             var targetGroups = GetTargetGroups(item);
 
@@ -151,7 +151,7 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
         /// </summary>
         /// <param name="item"></param>
         /// <returns></returns>
-        private IEnumerable<DashboardGroupViewModel> GetTargetGroups(DashboardItemViewModel item)
+        private IEnumerable<DashboardGroupViewModel> GetTargetGroups(ElementStateViewModel item)
         {
             IEnumerable<DashboardGroupViewModel> targets = null;
 
@@ -205,7 +205,7 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
                 {
                     foreach (var item in _dashboard.Tests)
                     {
-                        AssignGroup(new DashboardItemViewModel(_dashboard, item, item.Id));
+                        AssignGroup(new ElementStateViewModel(_dashboard, item, item.Id));
                         //_groups.First().Items.Add(new DashboardItemViewModel(item.Id, item.MetaData));
                     }
                 }

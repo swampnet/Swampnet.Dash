@@ -10,7 +10,7 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
     /// </summary>
     class DashboardGroupViewModel : BindableBase
     {
-        private readonly ObservableCollection<DashboardItemViewModel> _items = new ObservableCollection<DashboardItemViewModel>();
+        private readonly ObservableCollection<ElementStateViewModel> _items = new ObservableCollection<ElementStateViewModel>();
         private readonly DashboardGroup _group;
 
         public string Title => _group.Title;
@@ -18,7 +18,7 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
         public bool IsDefault => _group.IsDefault;
 		public bool DisplayHeader => !IsDefault && !string.IsNullOrEmpty(Title);
 
-		public ICollection<DashboardItemViewModel> Items => _items;
+		public ICollection<ElementStateViewModel> Items => _items;
 
 
         public DashboardGroupViewModel(DashboardGroup group)
