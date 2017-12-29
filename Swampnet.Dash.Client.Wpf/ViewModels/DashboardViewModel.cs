@@ -68,7 +68,7 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
 				var definition = GetElementDefinition(elementState.ElementId);
 
 				// @todo: Having multiple test definitions with same test id on same dash breaks this
-                var item = _groups.SelectMany(g => g.Items).Where(d => d.Id == elementState.Id).Distinct().SingleOrDefault();
+                var item = _groups.SelectMany(g => g.ElementStates).Where(d => d.Id == elementState.Id).Distinct().SingleOrDefault();
                 if (item == null)
                 {
                     IEnumerable<Map> metaData = null;
@@ -92,11 +92,11 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
             if (isFullRefresh)
             {
                 // Remove any DashItems that do not appear in source
-                foreach (var id in _groups.SelectMany(g => g.Items).Where(i => !source.Select(s => s.Id).Contains(i.Id)).Select(x => x.Id).ToArray())
+                foreach (var id in _groups.SelectMany(g => g.ElementStates).Where(i => !source.Select(s => s.Id).Contains(i.Id)).Select(x => x.Id).ToArray())
                 {
                     foreach (var group in _groups)
                     {
-                        group.Items.Remove(group.Items.SingleOrDefault(i => i.Id == id));
+                        group.ElementStates.Remove(group.ElementStates.SingleOrDefault(i => i.Id == id));
                     }
                 }
             }
@@ -130,17 +130,17 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
             var targetGroups = GetTargetGroups(item);
 
             // Remove from any groups this item already exists in (excluding the 'target' groups)
-            foreach(var group in _groups.Where(g => !targetGroups.Contains(g) && g.Items.Select(i => i.Id).Contains(item.Id)))
+            foreach(var group in _groups.Where(g => !targetGroups.Contains(g) && g.ElementStates.Select(i => i.Id).Contains(item.Id)))
             {
-                group.Items.Remove(item);
+                group.ElementStates.Remove(item);
             }
 
             // Add to target groups
             foreach (var group in targetGroups)
             {
-                if (!group.Items.Contains(item))
+                if (!group.ElementStates.Contains(item))
                 {
-                    group.Items.Add(item);
+                    group.ElementStates.Add(item);
                 }
             }
         }

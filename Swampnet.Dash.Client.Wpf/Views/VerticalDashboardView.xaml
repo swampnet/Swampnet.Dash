@@ -25,7 +25,7 @@
 					<Grid>
 						<Grid.Resources>
 							<!-- Sort by Order, then Timestamp -->
-							<CollectionViewSource x:Key="viewSource" Source="{Binding Items}">
+							<CollectionViewSource x:Key="viewSource" Source="{Binding ElementStates}">
 								<CollectionViewSource.SortDescriptions>
 									<scm:SortDescription PropertyName="Order" Direction="Ascending" />
 								</CollectionViewSource.SortDescriptions>
