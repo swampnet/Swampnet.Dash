@@ -26,7 +26,7 @@ namespace Swampnet.Dash.Common.Entities
 
         public List<ElementDefinition> Argos { get; set; }
 
-        public List<Meta> DefaultMetaData { get; set; }
+        public List<Map> Mapping { get; set; }
 
         public List<DashboardGroup> Groups { get; set; }
     }

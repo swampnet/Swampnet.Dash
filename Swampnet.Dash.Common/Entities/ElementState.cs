@@ -20,7 +20,7 @@ namespace Swampnet.Dash.Common.Entities
         public ElementState(string itemDefinitionId, object id)
             : this()
         {
-			ItemDefinitionId = itemDefinitionId;
+			ElementId = itemDefinitionId;
 			Id = id.ToString();
         }
 
@@ -34,9 +34,9 @@ namespace Swampnet.Dash.Common.Entities
         public string Id { get; set; }
 
 		/// <summary>
-		/// Item definition id. Most of the time this will be the same as Id
+		/// Element id. Most of the time this will be the same as Id
 		/// </summary>
-		public string ItemDefinitionId { get; set; }
+		public string ElementId { get; set; }
 
 		/// <summary>
 		/// Sorting hint
@@ -58,7 +58,7 @@ namespace Swampnet.Dash.Common.Entities
 			return new ElementState()
 			{
 				Id = this.Id,
-				ItemDefinitionId = this.ItemDefinitionId,
+				ElementId = this.ElementId,
 				Order = this.Order,
 				Status = this.Status,
 				TimestampUtc = this.TimestampUtc,

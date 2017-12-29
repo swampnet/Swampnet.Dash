@@ -156,6 +156,7 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
 		#endregion
 
 		//@TODO: Need unit tests all over this!
+		// Get value for a particular region
 		private string GetValue(string region)
 		{
 			string value = null;
@@ -164,14 +165,15 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
 
 			if(meta != null)
 			{
-				// Check static values
-				if (meta.Type.EqualsNoCase("static"))
+				// Check for constant value
+				if (!string.IsNullOrEmpty(meta.Constant))
 				{
-					value = meta.Name;
+					value = meta.Constant;
 				}
+				// Else it's a property lookup
 				else
 				{
-					switch (meta.Name.ToLowerInvariant())
+					switch (meta.PropertyName.ToLowerInvariant())
 					{
 						// Check some known values
 						case "status":
@@ -188,12 +190,12 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
 
 						// Check dash item properties
 						default:
-							value = _element?.Output.StringValue(meta.Name);
+							value = _element?.Output.StringValue(meta.PropertyName);
 							break;
 					}
-				}
 
-				value = Format(meta.Type, meta.Format, value);
+					value = Format(meta.Type, meta.Format, value);
+				}
 			}
 
 			return value;
@@ -222,19 +224,19 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
 		}
 
 
-		private IEnumerable<Meta> GetMeta()
+		private IEnumerable<Map> GetMeta()
 		{
-			if(_itemDefinition.MetaData != null && _itemDefinition.MetaData.Any())
+			if(_itemDefinition.Mapping != null && _itemDefinition.Mapping.Any())
 			{
-				return _itemDefinition.MetaData;
+				return _itemDefinition.Mapping;
 			}
-			else if(_dashboard.DefaultMetaData != null && _dashboard.DefaultMetaData.Any())
+			else if(_dashboard.Mapping != null && _dashboard.Mapping.Any())
 			{
-				return _dashboard.DefaultMetaData;
+				return _dashboard.Mapping;
 			}
 			else
 			{
-				return Enumerable.Empty<Meta>();
+				return Enumerable.Empty<Map>();
 			}
 		}
 

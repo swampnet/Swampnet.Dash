@@ -11,21 +11,18 @@ namespace Swampnet.Dash.Common.Entities
 	/// <remarks>
 	/// Includes stuff like the datatype so we can format it, the (string) format, and which region in the UI to display it.
 	/// </remarks>
-	public class Meta
+	public class Map
 	{
-		public Meta()
+		public Map()
 		{
 		}
 
-		public Meta(string name, string type, string region)
-		{
-			Name = name;
-			Type = type;
-			Region = region;
-		}
 
 		[XmlAttribute]
-		public string Name { get; set; }
+		public string PropertyName { get; set; }
+
+		[XmlAttribute]
+		public string Constant { get; set; }
 
 		[XmlAttribute]
 		public string Type { get; set; }  // Possibly VarEnum?

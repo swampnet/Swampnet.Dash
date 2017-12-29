@@ -72,7 +72,7 @@ namespace Swampnet.Dash
 								var dashItems = dashTestUpdates.Select(tr => new ElementState()
 								{
 									Id = tr.Id,
-									ItemDefinitionId = tr.Id, // Tests item definition id always == the test id. @TODO: Yeah, this is messy.
+									ElementId = tr.Id, // Tests item definition id always == the test id. @TODO: Yeah, this is messy.
 									Status = tr.Status,
 									TimestampUtc = tr.TimestampUtc,
 									Output = tr.Output

@@ -18,7 +18,7 @@ namespace Swampnet.Dash.Common.Entities
 		/// <summary>
 		/// Element level meta data
 		/// </summary>
-		public List<Meta> MetaData { get; set; }
+		public List<Map> Mapping { get; set; }
 
 		/// <summary>
 		/// Plot/Graph info

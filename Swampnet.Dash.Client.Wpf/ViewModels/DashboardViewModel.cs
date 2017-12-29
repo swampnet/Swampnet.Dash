@@ -63,28 +63,28 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
         /// </summary>
         private void Update(IEnumerable<ElementState> source, bool isFullRefresh = false)
         {
-            foreach (var di in source)
+            foreach (var elementState in source)
             {
-				var itemDefinition = GetItemDefinition(di.ItemDefinitionId);
+				var definition = GetElementDefinition(elementState.ElementId);
 
 				// @todo: Having multiple test definitions with same test id on same dash breaks this
-                var item = _groups.SelectMany(g => g.Items).Where(d => d.Id == di.Id).Distinct().SingleOrDefault();
+                var item = _groups.SelectMany(g => g.Items).Where(d => d.Id == elementState.Id).Distinct().SingleOrDefault();
                 if (item == null)
                 {
-                    IEnumerable<Meta> metaData = null;
-                    var test = _dashboard.Tests?.SingleOrDefault(t => t.Id == di.Id);
+                    IEnumerable<Map> metaData = null;
+                    var test = _dashboard.Tests?.SingleOrDefault(t => t.Id == elementState.Id);
                     if (test == null)
                     {
-                        metaData = _dashboard.DefaultMetaData;
+                        metaData = _dashboard.Mapping;
                     }
                     else
                     {
-                        metaData = test.MetaData;
+                        metaData = test.Mapping;
                     }
-                    item = new DashboardItemViewModel(_dashboard, itemDefinition, di.Id);
+                    item = new DashboardItemViewModel(_dashboard, definition, elementState.Id);
                 }
 
-                item.Update(di);
+                item.Update(elementState);
 
                 AssignGroup(item);
             }
@@ -104,7 +104,7 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
             LastUpdate = DateTime.Now;
         }
 
-		private ElementDefinition GetItemDefinition(string id)
+		private ElementDefinition GetElementDefinition(string id)
 		{
 			var itemDefinition = _dashboard.Tests.SingleOrDefault(t => t.Id == id);
 			if(itemDefinition == null)
@@ -168,35 +168,6 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
             return targets;
         }
 
-
-        /// <summary>
-        /// Get MetaData for this item
-        /// </summary>
-        private IEnumerable<Meta> GetMetaData(ElementState item)
-        {
-            // @TODO: There's a heirachy here:
-            //  Test / Argos specific
-            //  Group specific
-            //  Default
-
-            IEnumerable<Meta> metaData;
-
-            // Look for a test with the same id
-            var test = _dashboard.Tests?.SingleOrDefault(t => t.Id == item.Id);
-            if (test != null)
-            {
-                metaData = test.MetaData;
-            }
-
-            
-            // No test going by that id - use default metadata
-            else
-            {
-                metaData = _dashboard.DefaultMetaData;
-            }
-
-            return metaData;
-        }
 
         // @todo: So this is quite a chunky method. We can probably split it up a bit.
         private async void InitialiseDash(string dashId)
