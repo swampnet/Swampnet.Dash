@@ -33,9 +33,12 @@
 						<ItemsControl Grid.Column="1" ItemsSource="{Binding Source={StaticResource viewSource}}" BorderBrush="LightGray" BorderThickness="0.2">
 							<ItemsControl.ItemsPanel>
 								<ItemsPanelTemplate>
-									<WrapPanel Orientation="Horizontal"/>
+									<UniformGrid Background="Transparent" 
+										 Rows="{Binding RowCount}" 
+										 Columns="{Binding ColumnCount}"/>
 								</ItemsPanelTemplate>
 							</ItemsControl.ItemsPanel>
+							
 							<ItemsControl.ItemTemplate>
 								<DataTemplate>
 									<DataTemplate.Resources>

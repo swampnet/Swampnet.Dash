@@ -180,17 +180,18 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
                 _dashboard = await Api.GetDashboard(dashId);
 
                 // Create groups
-                _groups = new ObservableCollection<DashboardGroupViewModel>(_dashboard.Groups?.Select(g => new DashboardGroupViewModel(g)));
+                _groups = new ObservableCollection<DashboardGroupViewModel>(_dashboard.Groups?.Select(g => new DashboardGroupViewModel(_dashboard, g)));
 
                 // Add a default group if none defined
                 if (!_groups.Any())
                 {
-                    _groups.Add(new DashboardGroupViewModel(new DashboardGroup()
-                    {
-                        Id = "_default",
-                        Title = "default",
-                        IsDefault = true
-                    }));
+                    _groups.Add(new DashboardGroupViewModel(
+						_dashboard, new DashboardGroup()
+						{
+							Id = "_default",
+							Title = "default",
+							IsDefault = true
+						}));
                 }
 
                 // Figure out default groups
