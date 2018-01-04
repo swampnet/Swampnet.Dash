@@ -16,14 +16,29 @@ namespace Swampnet.Dash.Services
         private readonly IRuleProcessor _ruleProcessor;
 		private readonly IValuesRepository _valuesRepository;
 
-		public TestRunner(ITestRepository testRepo, IEnumerable<ITest> tests, IRuleProcessor ruleProcessor, IValuesRepository valuesRepository)
+		public TestRunner(ITestRepository testRepo, IRuleProcessor ruleProcessor, IValuesRepository valuesRepository)
         {
             _testRepository = testRepo;
-            _tests = tests;
             _ruleProcessor = ruleProcessor;
-			_valuesRepository = valuesRepository;
+			_valuesRepository = valuesRepository;            
 		}
 
+        private IEnumerable<ITest> Tests
+        {
+            get
+            {
+                if(_tests == null)
+                {
+                    var tests = new List<ITest>();
+                    foreach(var definition in _testRepository.GetDefinitions())
+                    {
+                        string type = definition.Type;
+                    }
+                    _tests = tests;
+                }
+                return _tests;
+            }
+        }
 
         public async Task<IEnumerable<ElementState>> RunAsync()
         {

@@ -8,26 +8,26 @@ using System.Threading.Tasks;
 
 namespace Swampnet.Dash.Tests
 {
-	class PingTest : ITest
+	class PingTest : TestBase
 	{
-		public async Task<ElementState> RunAsync(Element testDefinition)
-		{
-			Ping ping = new Ping();
+        protected override Task<ElementState> Boosh()
+        {
+            Ping ping = new Ping();
 
-			var host = testDefinition.Parameters.StringValue("host");
+            var host = Definition.Parameters.StringValue("host");
 
-			var reply = await ping.SendPingAsync(host);
-			var time = reply.RoundtripTime;
+            var reply = await ping.SendPingAsync(host);
+            var time = reply.RoundtripTime;
 
             var rs = new ElementState();
-            
-			rs.Output.Add(new Property("value", time));
 
-			return rs;
-		}
+            rs.Output.Add(new Property("value", time));
+
+            return rs;
+        }
 
 
-		public TestMeta Meta
+		public override TestMeta Meta
 		{
 			get
 			{
