@@ -13,7 +13,6 @@ namespace Swampnet.Dash.Services
     {
 		private IEnumerable<ITest> _tests;
 		private readonly ITestRepository _testRepository;
-        private readonly Dictionary<string, ElementState> _state = new Dictionary<string, ElementState>();
         private readonly IRuleProcessor _ruleProcessor;
 		private readonly IValuesRepository _valuesRepository;
 		private readonly ILifetimeScope _scope;
@@ -35,6 +34,7 @@ namespace Swampnet.Dash.Services
                     var tests = new List<ITest>();
                     foreach(var definition in _testRepository.GetDefinitions())
                     {
+						// @todo: Maybe pull this out into a TestFactory service, then you can keep your smelly service locator bullshit out of here!
 						var x = Type.GetType(definition.Type);
 						if(x != null)
 						{
@@ -45,9 +45,6 @@ namespace Swampnet.Dash.Services
 								tests.Add(test);
 							}
 						}
-						// resolve instance of definition.Type
-						// call .Configure(definition)
-						// Add to tests
 					}
 					_tests = tests;
                 }
@@ -59,13 +56,13 @@ namespace Swampnet.Dash.Services
         {
             var results = new List<ElementState>();
 
-			//Parallel.ForEach(_tests.Where(t => t.IsDue), test => { });
+			//Parallel.ForEach(_tests.Where(t => t.IsDue), async test => { });
 			foreach (var test in Tests.Where(t => t.IsDue))
 			{
 				try
 				{
 					var result = await test.RunAsync();
-					result.Id = test.Id;    // nah, TestBase can do this
+
 					lock (results)
 					{
 						results.Add(result);
@@ -81,21 +78,6 @@ namespace Swampnet.Dash.Services
 				}
 			}
 
-
-            // Save state
-            foreach (var testResult in results)
-            {
-                if (_state.ContainsKey(testResult.Id))
-                {
-                    _state[testResult.Id] = testResult;
-                }
-                else
-                {
-                    _state.Add(testResult.Id, testResult);
-                }
-
-			}
-
 			// @TODO: So, if we're actually writing stuff away to the db as part of this, then it might take a while: We might be
 			//        better off queing it up for later, and doing some kind of batch insert.
 			await _valuesRepository.Add(results);
@@ -106,45 +88,7 @@ namespace Swampnet.Dash.Services
 
 		public IEnumerable<ElementState> GetTestResults(IEnumerable<string> ids)
 		{
-			return _state.Where(x => ids.Contains(x.Key)).Select(x => x.Value);
+			return Tests.Where(t => ids.Contains(t.Id)).Select(t => t.State);
 		}
-
-
-		// Validate parameters against the test metadata
-		//      private void Validate(Element testdefinition, TestMeta meta)
-		//{
-		//	foreach(var parameter in meta.Parameters)
-		//	{
-		//		if(testdefinition.Parameters.StringValue(parameter.Name, "") == "")
-		//		{
-		//			throw new ArgumentNullException($"Missing parameter '{parameter.Name}'");
-		//		}
-		//	}
-		//}
-
-
-		//public IEnumerable<Element> GetDue()
-		//{
-		//    var definitions = new List<Element>();
-
-		//    foreach (var definition in _testRepository.GetDefinitions())
-		//    {
-		//        // Never been run
-		//        if (!_state.ContainsKey(definition.Id))
-		//        {
-		//            definitions.Add(definition);
-		//        }
-		//        else
-		//        {
-		//            if (_state[definition.Id].TimestampUtc.Add(definition.Heartbeat) < DateTime.UtcNow)
-		//            {
-		//                definitions.Add(definition);
-		//            }
-		//        }
-		//    }
-
-		//    return definitions;
-		//}
-
 	}
 }

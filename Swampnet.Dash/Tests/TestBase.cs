@@ -12,18 +12,21 @@ namespace Swampnet.Dash.Tests
     {
         private Element _testDefinition;
         private DateTime _lastRunUtc = DateTime.MinValue;
-
         public Element Definition => _testDefinition;
 
         public string Id => _testDefinition.Id;
+		public ElementState State { get; private set; }
 
-        abstract public TestMeta Meta { get; }
+		abstract public TestMeta Meta { get; }
 
-        public Task<ElementState> RunAsync()
+        public async Task<ElementState> RunAsync()
         {
-            var rs = Boosh();
+            var rs = await Boosh();
 
+			rs.Id = Definition.Id;
             _lastRunUtc = DateTime.UtcNow;
+
+			State = rs;
 
             return rs;
         }
