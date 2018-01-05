@@ -10,8 +10,8 @@ namespace Swampnet.Dash.Services
 {
 	class TestRunner : ITestRunner
     {
-        private readonly ITestRepository _testRepository;
-        private readonly IEnumerable<ITest> _tests;
+		private IEnumerable<ITest> _tests;
+		private readonly ITestRepository _testRepository;
         private readonly Dictionary<string, ElementState> _state = new Dictionary<string, ElementState>();
         private readonly IRuleProcessor _ruleProcessor;
 		private readonly IValuesRepository _valuesRepository;
@@ -33,8 +33,11 @@ namespace Swampnet.Dash.Services
                     foreach(var definition in _testRepository.GetDefinitions())
                     {
                         string type = definition.Type;
-                    }
-                    _tests = tests;
+						// resolve instance of definition.Type
+						// call .Configure(definition)
+						// Add to tests
+					}
+					_tests = tests;
                 }
                 return _tests;
             }
@@ -44,35 +47,27 @@ namespace Swampnet.Dash.Services
         {
             var results = new List<ElementState>();
 
-            //Parallel.ForEach(GetDue(), testDefinition => { });
-			foreach(var definition in GetDue())
-            {
-                try
-                {
-                    var test = _tests.Single(t => t.GetType().Name == definition.Type);
+			//Parallel.ForEach(_tests.Where(t => t.IsDue), test => { });
+			foreach (var test in _tests.Where(t => t.IsDue))
+			{
+				try
+				{
+					var result = await test.RunAsync();
+					result.Id = test.Id;    // nah, TestBase can do this
+					lock (results)
+					{
+						results.Add(result);
+					}
 
-					Validate(definition, test.Meta);
+					await _ruleProcessor.ProcessTestResultAsync(test.Definition, result);
 
-                    //Log.Debug("Running test {type} - {name}", test.GetType().Name, definition.Id);
-
-                    var result = await test.RunAsync(definition);
-
-					result.Id = definition.Id;
-
-                    lock (results)
-                    {
-                        results.Add(result);
-                    }
-
-                    await _ruleProcessor.ProcessTestResultAsync(definition, result);
-
-					Log.Debug("Test {type} - {name} = {value} / {status}", test.GetType().Name, definition.Id, result.Output.StringValue("value"), result.Status);
+					Log.Debug("Test {type} - {name} = {value} / {status}", test.GetType().Name, test.Id, result.Output.StringValue("value"), result.Status);
 				}
 				catch (Exception ex)
-                {
+				{
 					Log.Error(ex, ex.Message);
-                }
-            }
+				}
+			}
 
 
             // Save state
@@ -97,47 +92,47 @@ namespace Swampnet.Dash.Services
         }
 
 
-        public IEnumerable<ElementState> GetTestResults(IEnumerable<string> ids)
-        {
-            return _state.Where(x => ids.Contains(x.Key)).Select(x => x.Value);
-        }
-
-
-        // Validate parameters against the test metadata
-        private void Validate(Element testdefinition, TestMeta meta)
+		public IEnumerable<ElementState> GetTestResults(IEnumerable<string> ids)
 		{
-			foreach(var parameter in meta.Parameters)
-			{
-				if(testdefinition.Parameters.StringValue(parameter.Name, "") == "")
-				{
-					throw new ArgumentNullException($"Missing parameter '{parameter.Name}'");
-				}
-			}
+			return _state.Where(x => ids.Contains(x.Key)).Select(x => x.Value);
 		}
 
 
-        public IEnumerable<Element> GetDue()
-        {
-            var definitions = new List<Element>();
+		// Validate parameters against the test metadata
+		//      private void Validate(Element testdefinition, TestMeta meta)
+		//{
+		//	foreach(var parameter in meta.Parameters)
+		//	{
+		//		if(testdefinition.Parameters.StringValue(parameter.Name, "") == "")
+		//		{
+		//			throw new ArgumentNullException($"Missing parameter '{parameter.Name}'");
+		//		}
+		//	}
+		//}
 
-            foreach (var definition in _testRepository.GetDefinitions())
-            {
-                // Never been run
-                if (!_state.ContainsKey(definition.Id))
-                {
-                    definitions.Add(definition);
-                }
-                else
-                {
-                    if (_state[definition.Id].TimestampUtc.Add(definition.Heartbeat) < DateTime.UtcNow)
-                    {
-                        definitions.Add(definition);
-                    }
-                }
-            }
 
-            return definitions;
-        }
+		//public IEnumerable<Element> GetDue()
+		//{
+		//    var definitions = new List<Element>();
 
-    }
+		//    foreach (var definition in _testRepository.GetDefinitions())
+		//    {
+		//        // Never been run
+		//        if (!_state.ContainsKey(definition.Id))
+		//        {
+		//            definitions.Add(definition);
+		//        }
+		//        else
+		//        {
+		//            if (_state[definition.Id].TimestampUtc.Add(definition.Heartbeat) < DateTime.UtcNow)
+		//            {
+		//                definitions.Add(definition);
+		//            }
+		//        }
+		//    }
+
+		//    return definitions;
+		//}
+
+	}
 }

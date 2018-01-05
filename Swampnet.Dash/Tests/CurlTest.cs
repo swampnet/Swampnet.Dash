@@ -13,7 +13,7 @@ namespace Swampnet.Dash.Tests
 {
 	class CurlTest : TestBase
 	{
-        protected override Task<ElementState> Boosh()
+        protected override async Task<ElementState> Boosh()
         {
             var uri = Definition.Parameters.StringValue("uri");
 

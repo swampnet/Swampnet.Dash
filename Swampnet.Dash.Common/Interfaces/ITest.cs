@@ -15,5 +15,6 @@ namespace Swampnet.Dash.Common.Interfaces
 		TestMeta Meta { get; }
         string Id { get; }
         bool IsDue { get; }
+		Element Definition { get; }
 	}
 }

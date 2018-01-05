@@ -10,7 +10,7 @@ namespace Swampnet.Dash.Tests
 {
 	class PingTest : TestBase
 	{
-        protected override Task<ElementState> Boosh()
+        protected override async Task<ElementState> Boosh()
         {
             Ping ping = new Ping();
 

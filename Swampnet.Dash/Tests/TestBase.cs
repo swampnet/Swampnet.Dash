@@ -13,7 +13,7 @@ namespace Swampnet.Dash.Tests
         private Element _testDefinition;
         private DateTime _lastRunUtc = DateTime.MinValue;
 
-        protected Element Definition => _testDefinition;
+        public Element Definition => _testDefinition;
 
         public string Id => _testDefinition.Id;
 
