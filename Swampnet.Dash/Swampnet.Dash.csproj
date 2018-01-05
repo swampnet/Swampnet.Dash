@@ -63,6 +63,8 @@
     <Compile Include="Tests\CurlTest.cs" />
     <Compile Include="Tests\PingTest.cs" />
     <Compile Include="Tests\RandomNumberTest.cs" />
+    <Compile Include="Tests\SinTest.cs" />
+    <Compile Include="Tests\TestBase.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Swampnet.Dash.Common\Swampnet.Dash.Common.csproj">

@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27004.2002
+VisualStudioVersion = 15.0.27130.2010
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Swampnet.Dash.Service", "Swampnet.Dash.Service\Swampnet.Dash.Service.csproj", "{10CC770A-05B6-4ABA-80AB-7DBF21ADE24A}"
 EndProject
@@ -18,12 +18,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Swampnet.Dash.DAL", "Swampnet.Dash.DAL\Swampnet.Dash.DAL.csproj", "{397F66B0-1F67-471B-8B04-5B5502916A22}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{8854A127-BA40-4D9D-8BED-C9372E58991B}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ExampleTestDefinitions", "ExampleTestDefinitions", "{E1833793-B5DA-4B3B-84E0-B1EC8F58E44C}"
-	ProjectSection(SolutionItems) = preProject
-		Docs\ExampleTestDefinitions\ping-google-01.xml = Docs\ExampleTestDefinitions\ping-google-01.xml
-		Docs\ExampleTestDefinitions\shake-d6.xml = Docs\ExampleTestDefinitions\shake-d6.xml
-	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -61,7 +55,6 @@ Global
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{E2BB9999-85C0-4060-97C8-193F583FC43E} = {693897B7-0CB9-4F6D-BCB8-CE87C9AE3FC5}
-		{E1833793-B5DA-4B3B-84E0-B1EC8F58E44C} = {8854A127-BA40-4D9D-8BED-C9372E58991B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AD29F51A-5B03-466A-AFF0-594EDB11A9DA}

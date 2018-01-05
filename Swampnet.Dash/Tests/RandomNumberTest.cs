@@ -5,24 +5,25 @@ using System.Threading.Tasks;
 
 namespace Swampnet.Dash.Tests
 {
-	public class RandomNumberTest : ITest
+	class RandomNumberTest : TestBase
     {
         private readonly Random _rnd = new Random();
 
-        public Task<ElementState> RunAsync(Element testDefinition)
+        protected override Task<ElementState> RunAsync()
         {
             var rs = new ElementState();
-            var from = testDefinition.Parameters.IntValue("min");
-            var to = testDefinition.Parameters.IntValue("max");
+            var from = Definition.Parameters.IntValue("min");
+            var to = Definition.Parameters.IntValue("max");
             var value = _rnd.Next(from, to);
 
             rs.Output.Add(new Property("value", value));
-            
+
             return Task.FromResult(rs);
         }
 
 
-		public TestMeta Meta
+
+        public override TestMeta Meta
 		{
 			get
 			{

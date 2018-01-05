@@ -11,34 +11,31 @@ using System.Diagnostics;
 
 namespace Swampnet.Dash.Tests
 {
-	class CurlTest : ITest
+	class CurlTest : TestBase
 	{
-		public async Task<ElementState> RunAsync(Element testDefinition)
-		{
-			var uri = testDefinition.Parameters.StringValue("uri");
+        protected override async Task<ElementState> RunAsync()
+        {
+            var uri = Definition.Parameters.StringValue("uri");
 
-			var timer = Stopwatch.StartNew();
+            var timer = Stopwatch.StartNew();
 
-			using (HttpClient httpClient = new HttpClient())
-			{
-				var response = await httpClient.GetAsync(uri);
-				var content = await response.Content.ReadAsStringAsync();
-			}
-
-			var time = timer.Elapsed.TotalMilliseconds;
-
-            // @TODO: Figure out state
-            var rs = new ElementState()
+            using (var httpClient = new HttpClient())
             {
-                Status = Status.Ok
-            };
+                var response = await httpClient.GetAsync(uri);
+                var content = await response.Content.ReadAsStringAsync();
+            }
 
-			rs.Output.Add(new Property("value", time));
+            var time = timer.Elapsed.TotalMilliseconds;
 
-			return rs;
-		}
+			var rs = new ElementState();
 
-		public TestMeta Meta
+            rs.Output.Add(new Property("value", time));
+
+            return rs;
+        }
+
+
+		public override TestMeta Meta
 		{
 			get
 			{

@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:Swampnet.Dash.Client.Wpf"
         xmlns:view="clr-namespace:Swampnet.Dash.Client.Wpf.Views"
         mc:Ignorable="d"
-        Title="MainWindow">
+        Title="Dashy">
 	<Grid>
 		<TabControl ItemsSource="{Binding Dashboards}" SelectedIndex="0">
 
