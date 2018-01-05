@@ -16,14 +16,7 @@ namespace Swampnet.Dash
         public static void UseDashboardRuntime(this ContainerBuilder builder)
         {
             builder.RegisterType<Runtime>().As<IRuntime>();
-
-			// Must be a better way of doing this...
-			builder.RegisterType<CurlTest>();
-			builder.RegisterType<PingTest>();
-			builder.RegisterType<RandomNumberTest>();
-
-			//builder.RegisterAssemblyTypes(typeof(DashStartup).Assembly).As<ITest>().SingleInstance();
-
+			builder.RegisterAssemblyTypes(typeof(DashStartup).Assembly).AssignableTo<ITest>();
 			builder.RegisterAssemblyTypes(typeof(DashStartup).Assembly).As<IArgos>().SingleInstance();
             builder.RegisterType<TestRunner>().As<ITestRunner>().SingleInstance();
 			builder.RegisterType<ArgosRunner>().As<IArgosRunner>().SingleInstance();
