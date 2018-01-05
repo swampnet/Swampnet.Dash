@@ -12,38 +12,55 @@ namespace Swampnet.Dash.Tests
     {
         private Element _testDefinition;
         private DateTime _lastRunUtc = DateTime.MinValue;
-        public Element Definition => _testDefinition;
 
-        public string Id => _testDefinition.Id;
+		#region ITest
+		public Element Definition => _testDefinition;
+
+		public string Id => _testDefinition.Id;
+
 		public ElementState State { get; private set; }
 
 		abstract public TestMeta Meta { get; }
 
-        public async Task<ElementState> RunAsync()
-        {
-            var rs = await Boosh();
+		/// <summary>
+		/// Run test
+		/// </summary>
+		/// <returns></returns>
+		public async Task<ElementState> ExecuteAsync()
+		{
+			var rs = await RunAsync();
 
 			rs.Id = Definition.Id;
-            _lastRunUtc = DateTime.UtcNow;
+			_lastRunUtc = DateTime.UtcNow;
 
 			State = rs;
 
-            return rs;
-        }
+			return rs;
+		}
 
-        public void Configure(Element testDefinition)
-        {
-            _testDefinition = testDefinition;
-        }
 
-        public bool IsDue
-        {
-            get
-            {
-                return _testDefinition != null && ((DateTime.UtcNow - _lastRunUtc) > _testDefinition.Heartbeat);
-            }
-        }
+		/// <summary>
+		/// Set configuration for test
+		/// </summary>
+		/// <param name="testDefinition"></param>
+		public void Configure(Element testDefinition)
+		{
+			_testDefinition = testDefinition;
+		}
 
-        protected abstract Task<ElementState> Boosh();
+
+		/// <summary>
+		/// True if this test is due
+		/// </summary>
+		public bool IsDue
+		{
+			get
+			{
+				return _testDefinition != null && ((DateTime.UtcNow - _lastRunUtc) > _testDefinition.Heartbeat);
+			}
+		}
+		#endregion
+
+		protected abstract Task<ElementState> RunAsync();
     }
 }

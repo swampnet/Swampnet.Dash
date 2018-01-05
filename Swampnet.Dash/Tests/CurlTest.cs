@@ -13,13 +13,13 @@ namespace Swampnet.Dash.Tests
 {
 	class CurlTest : TestBase
 	{
-        protected override async Task<ElementState> Boosh()
+        protected override async Task<ElementState> RunAsync()
         {
             var uri = Definition.Parameters.StringValue("uri");
 
             var timer = Stopwatch.StartNew();
 
-            using (HttpClient httpClient = new HttpClient())
+            using (var httpClient = new HttpClient())
             {
                 var response = await httpClient.GetAsync(uri);
                 var content = await response.Content.ReadAsStringAsync();
@@ -27,11 +27,7 @@ namespace Swampnet.Dash.Tests
 
             var time = timer.Elapsed.TotalMilliseconds;
 
-            // @TODO: Figure out state
-            var rs = new ElementState()
-            {
-                Status = Status.Ok
-            };
+			var rs = new ElementState();
 
             rs.Output.Add(new Property("value", time));
 

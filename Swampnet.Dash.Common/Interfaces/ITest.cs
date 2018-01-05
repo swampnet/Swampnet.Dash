@@ -10,12 +10,16 @@ namespace Swampnet.Dash.Common.Interfaces
     {
         void Configure(Element testDefinition);
 
-        Task<ElementState> RunAsync();
+        Task<ElementState> ExecuteAsync();
 
 		TestMeta Meta { get; }
+
         string Id { get; }
+
         bool IsDue { get; }
+
 		Element Definition { get; }
+
 		ElementState State { get; }
 	}
 }

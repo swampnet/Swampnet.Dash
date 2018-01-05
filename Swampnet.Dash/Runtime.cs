@@ -13,6 +13,8 @@ namespace Swampnet.Dash
 {
     public class Runtime : IRuntime
     {
+		private const int HEARTBEAT = 1000;
+
         private readonly Thread _runtimeThread;
         private readonly IDashboardRepository _dashboardRepository;
         private readonly ITestRunner _testRunner;
@@ -58,6 +60,7 @@ namespace Swampnet.Dash
                     // Get latest Argos results. Note, this will probably be *all* the dashItems from *all* the argos style dashes
 					var argosResults = await _argosRunner.RunAsync();
 
+					// Update dashboards
                     var dashboards = await _dashboardRepository.GetDashboardsAsync();
 
                     foreach (var dash in dashboards)
@@ -110,7 +113,7 @@ namespace Swampnet.Dash
                 }
                 finally
                 {
-                    Thread.Sleep(1000);
+                    Thread.Sleep(HEARTBEAT);
                 }
             }
         }

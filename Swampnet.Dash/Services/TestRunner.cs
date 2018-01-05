@@ -61,7 +61,7 @@ namespace Swampnet.Dash.Services
 			{
 				try
 				{
-					var result = await test.RunAsync();
+					var result = await test.ExecuteAsync();
 
 					lock (results)
 					{

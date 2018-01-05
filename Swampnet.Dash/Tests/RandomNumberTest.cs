@@ -9,7 +9,7 @@ namespace Swampnet.Dash.Tests
     {
         private readonly Random _rnd = new Random();
 
-        protected override Task<ElementState> Boosh()
+        protected override Task<ElementState> RunAsync()
         {
             var rs = new ElementState();
             var from = Definition.Parameters.IntValue("min");
