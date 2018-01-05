@@ -1,4 +1,5 @@
-﻿using Serilog;
+﻿using Autofac;
+using Serilog;
 using Swampnet.Dash.Common.Entities;
 using Swampnet.Dash.Common.Interfaces;
 using System;
@@ -15,12 +16,14 @@ namespace Swampnet.Dash.Services
         private readonly Dictionary<string, ElementState> _state = new Dictionary<string, ElementState>();
         private readonly IRuleProcessor _ruleProcessor;
 		private readonly IValuesRepository _valuesRepository;
+		private readonly ILifetimeScope _scope;
 
-		public TestRunner(ITestRepository testRepo, IRuleProcessor ruleProcessor, IValuesRepository valuesRepository)
+		public TestRunner(ITestRepository testRepo, IRuleProcessor ruleProcessor, IValuesRepository valuesRepository, ILifetimeScope scope)
         {
             _testRepository = testRepo;
             _ruleProcessor = ruleProcessor;
-			_valuesRepository = valuesRepository;            
+			_valuesRepository = valuesRepository;
+			_scope = scope;
 		}
 
         private IEnumerable<ITest> Tests
@@ -32,7 +35,16 @@ namespace Swampnet.Dash.Services
                     var tests = new List<ITest>();
                     foreach(var definition in _testRepository.GetDefinitions())
                     {
-                        string type = definition.Type;
+						var x = Type.GetType(definition.Type);
+						if(x != null)
+						{
+							var test = _scope.Resolve(x) as ITest;
+							if(test != null)
+							{
+								test.Configure(definition);
+								tests.Add(test);
+							}
+						}
 						// resolve instance of definition.Type
 						// call .Configure(definition)
 						// Add to tests
@@ -48,7 +60,7 @@ namespace Swampnet.Dash.Services
             var results = new List<ElementState>();
 
 			//Parallel.ForEach(_tests.Where(t => t.IsDue), test => { });
-			foreach (var test in _tests.Where(t => t.IsDue))
+			foreach (var test in Tests.Where(t => t.IsDue))
 			{
 				try
 				{

@@ -37,7 +37,7 @@ namespace Swampnet.Dash.Tests
         {
             get
             {
-                return (DateTime.UtcNow - _lastRunUtc) > _testDefinition.Heartbeat;
+                return _testDefinition != null && ((DateTime.UtcNow - _lastRunUtc) > _testDefinition.Heartbeat);
             }
         }
 

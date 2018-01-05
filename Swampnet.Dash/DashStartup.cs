@@ -1,6 +1,7 @@
 ﻿using Autofac;
 using Swampnet.Dash.Common.Interfaces;
 using Swampnet.Dash.Services;
+using Swampnet.Dash.Tests;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,8 +16,15 @@ namespace Swampnet.Dash
         public static void UseDashboardRuntime(this ContainerBuilder builder)
         {
             builder.RegisterType<Runtime>().As<IRuntime>();
-            builder.RegisterAssemblyTypes(typeof(DashStartup).Assembly).As<ITest>().SingleInstance();
-            builder.RegisterAssemblyTypes(typeof(DashStartup).Assembly).As<IArgos>().SingleInstance();
+
+			// Must be a better way of doing this...
+			builder.RegisterType<CurlTest>();
+			builder.RegisterType<PingTest>();
+			builder.RegisterType<RandomNumberTest>();
+
+			//builder.RegisterAssemblyTypes(typeof(DashStartup).Assembly).As<ITest>().SingleInstance();
+
+			builder.RegisterAssemblyTypes(typeof(DashStartup).Assembly).As<IArgos>().SingleInstance();
             builder.RegisterType<TestRunner>().As<ITestRunner>().SingleInstance();
 			builder.RegisterType<ArgosRunner>().As<IArgosRunner>().SingleInstance();
             builder.RegisterType<RuleProcessor>().As<IRuleProcessor>().SingleInstance();
