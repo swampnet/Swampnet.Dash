@@ -1,7 +1,9 @@
 ﻿using Prism.Mvvm;
 using Swampnet.Dash.Common.Entities;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 
 namespace Swampnet.Dash.Client.Wpf.ViewModels
 {
@@ -10,7 +12,7 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
     /// </summary>
     class DashboardGroupViewModel : BindableBase
     {
-        private readonly ObservableCollection<ElementStateViewModel> _items = new ObservableCollection<ElementStateViewModel>();
+        private readonly ObservableCollection<ElementStateViewModel> _elementStates = new ObservableCollection<ElementStateViewModel>();
         private readonly DashboardGroup _group;
 		private readonly Dashboard _dashboard;
 
@@ -22,17 +24,17 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
 		public int RowCount => (ElementStates.Count / ColumnCount) + 1;
 		public int ColumnCount => _dashboard.ElementsPerRow;
 
-		public ICollection<ElementStateViewModel> ElementStates => _items;
+		public ICollection<ElementStateViewModel> ElementStates => _elementStates;
 
 
         public DashboardGroupViewModel(Dashboard dashboard, DashboardGroup group)
         {
 			_dashboard = dashboard;
 			_group = group;
-			_items.CollectionChanged += _items_CollectionChanged;
+			_elementStates.CollectionChanged += CollectionChanged;
 		}
 
-		private void _items_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+		private void CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
 		{
 			RaisePropertyChanged("RowCount");
 		}
