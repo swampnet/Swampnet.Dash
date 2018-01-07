@@ -13,10 +13,9 @@
 	<ItemsControl ItemsSource="{Binding Groups}" Grid.IsSharedSizeScope="True">
 		<ItemsControl.ItemsPanel>
 			<ItemsPanelTemplate>
-				<StackPanel Orientation="Horizontal"/>
+				<UniformGrid Rows="1" Columns="{Binding Groups.Count}"/>
 			</ItemsPanelTemplate>
 		</ItemsControl.ItemsPanel>
-
 
 		<ItemsControl.ItemTemplate>
 			<DataTemplate>
