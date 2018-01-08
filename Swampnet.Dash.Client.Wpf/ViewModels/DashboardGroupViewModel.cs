@@ -21,7 +21,7 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
         public bool IsDefault => _group.IsDefault;
 		public bool DisplayHeader => !IsDefault && !string.IsNullOrEmpty(Title);
 
-		public int RowCount => (ElementStates.Count / ColumnCount) + 1;
+		public int RowCount => (ElementStates.Count / ColumnCount) + ((ElementStates.Count % ColumnCount) > 0 ? 1 : 0);
 		public int ColumnCount => _dashboard.ElementsPerRow;
 
 		public ICollection<ElementStateViewModel> ElementStates => _elementStates;
