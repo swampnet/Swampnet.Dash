@@ -38,6 +38,7 @@
       <HintPath>..\packages\Serilog.2.6.0\lib\net46\Serilog.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.IO.Compression.FileSystem" />
@@ -64,6 +65,7 @@
     <Compile Include="Tests\PingTest.cs" />
     <Compile Include="Tests\RandomNumberTest.cs" />
     <Compile Include="Tests\SinTest.cs" />
+    <Compile Include="Tests\SqlCommandTest.cs" />
     <Compile Include="Tests\TestBase.cs" />
   </ItemGroup>
   <ItemGroup>
