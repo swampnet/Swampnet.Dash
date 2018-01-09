@@ -77,7 +77,10 @@ namespace Swampnet.Dash.Services
 
 					await _ruleProcessor.ProcessTestResultAsync(test.Definition, result);
 
-					Log.Debug("Test {type} - {name} = {value} / {status}", test.GetType().Name, test.Id, result.Output.StringValue("value"), result.Status);
+					Log.Debug("Test {type} ({id}) {state}", 
+						test.GetType().Name, 
+						test.Id, 
+						result);
 				}
 				catch (Exception ex)
 				{

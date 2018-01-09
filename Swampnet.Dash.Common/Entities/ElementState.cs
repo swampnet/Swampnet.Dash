@@ -68,7 +68,7 @@ namespace Swampnet.Dash.Common.Entities
 
         public override string ToString()
         {
-            return $"{Status} (" + string.Join(",", Output.Select(p => $"{p.Name}: {p.Value}")) + ")";
+            return $"{Status} (" + string.Join(", ", Output.Select(p => $"{p.Name}: {p.Value}")) + ")";
         }
 	}
 }
