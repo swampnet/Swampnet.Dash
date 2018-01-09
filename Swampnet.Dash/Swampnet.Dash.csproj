@@ -62,6 +62,7 @@
     <Compile Include="Services\DashboardItemHistory.cs" />
     <Compile Include="Services\TestRunner.cs" />
     <Compile Include="Tests\CurlTest.cs" />
+    <Compile Include="Tests\FileCountTest.cs" />
     <Compile Include="Tests\PingTest.cs" />
     <Compile Include="Tests\RandomNumberTest.cs" />
     <Compile Include="Tests\SinTest.cs" />
