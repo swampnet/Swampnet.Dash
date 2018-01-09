@@ -35,25 +35,18 @@ namespace Swampnet.Dash.Tests
         }
 
 
-		public override TestMeta Meta
+		public override TestMeta Meta => new TestMeta()
 		{
-			get
+			Type = GetType().Name,
+			Description = "Get the response from an Http GET request",
+			Parameters = new []
 			{
-				return new TestMeta()
-				{
-					Type = GetType().Name,
-					Description = "Get the response from an Http GET request",
-					Parameters = new []
-					{
-						new Property("uri", "Request Uri")
-					},
-					Output = new[]
-					{
-						new Property("value", "Response time (ms)")
-					}
-				};
+				new Property(Constants.MANDATORY_CATEGORY, "uri", "Request Uri")
+			},
+			Output = new[]
+			{
+				new Property("value", "Response time (ms)")
 			}
-		}
-
+		};
 	}
 }

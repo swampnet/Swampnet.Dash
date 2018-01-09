@@ -34,16 +34,23 @@ namespace Swampnet.Dash.Services
                     var tests = new List<ITest>();
                     foreach(var definition in _testRepository.GetDefinitions())
                     {
-						// @todo: Maybe pull this out into a TestFactory service, then you can keep your smelly service locator bullshit out of here!
-						var x = Type.GetType(definition.Type);
-						if(x != null)
+						try
 						{
-							var test = _scope.Resolve(x) as ITest;
-							if(test != null)
+							// @todo: Maybe pull this out into a TestFactory service, then you can keep your smelly service locator bullshit out of here!
+							var x = Type.GetType(definition.Type);
+							if (x != null)
 							{
-								test.Configure(definition);
-								tests.Add(test);
+								var test = _scope.Resolve(x) as ITest;
+								if (test != null)
+								{
+									test.Configure(definition);
+									tests.Add(test);
+								}
 							}
+						}
+						catch (Exception ex)
+						{
+							Log.Error(ex, ex.Message);
 						}
 					}
 					_tests = tests;

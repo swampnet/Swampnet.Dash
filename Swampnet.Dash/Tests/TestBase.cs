@@ -46,6 +46,14 @@ namespace Swampnet.Dash.Tests
 		public void Configure(Element testDefinition)
 		{
 			_testDefinition = testDefinition;
+
+			foreach(var mandatoryParameter in Meta.Parameters.Where(p => string.IsNullOrEmpty(p.Category) || p.Category.EqualsNoCase(Constants.MANDATORY_CATEGORY)))
+			{
+				if (string.IsNullOrEmpty(Definition.Parameters.StringValue(mandatoryParameter.Name)))
+				{
+					throw new ArgumentNullException(mandatoryParameter.Name);
+				}
+			}
 		}
 
 

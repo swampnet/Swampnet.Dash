@@ -23,26 +23,20 @@ namespace Swampnet.Dash.Tests
 
 
 
-        public override TestMeta Meta
+        public override TestMeta Meta => new TestMeta()
 		{
-			get
+			Type = GetType().Name,
+			Description = "Generate a random number between [min] and [max]",
+			Parameters = new []
 			{
-				return new TestMeta()
-				{
-					Type = GetType().Name,
-					Description = "Generate a random number between [min] and [max]",
-					Parameters = new []
-					{
-						new Property("min", "Minimum number"),
-						new Property("max", "Maximum number")
-					},
-					Output = new[]
-					{
-						new Property("value", "Random number between [min] and [max]")
-					}
-				};
+				new Property(Constants.MANDATORY_CATEGORY, "min", "Minimum number"),
+				new Property(Constants.MANDATORY_CATEGORY, "max", "Maximum number")
+			},
+			Output = new[]
+			{
+				new Property("value", "Random number between [min] and [max]")
 			}
-		}
+		};
 
 	}
 }

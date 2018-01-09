@@ -11,25 +11,6 @@ namespace Swampnet.Dash.Tests
 	{
 		private double _value = 0.0;
 
-		public override TestMeta Meta
-		{
-			get
-			{
-				return new TestMeta()
-				{
-					Type = GetType().Name,
-					Description = "output a sinewave",
-					Parameters = new[]
-					{
-						new Property("uri", "Request Uri")
-					},
-					Output = new[]
-					{
-						new Property("value", "value")
-					}
-				};
-			}
-		}
 
 		protected override Task<ElementState> RunAsync()
 		{
@@ -53,5 +34,19 @@ namespace Swampnet.Dash.Tests
 				}
 			);
 		}
+
+		public override TestMeta Meta => new TestMeta()
+		{
+			Type = GetType().Name,
+			Description = "output a sinewave",
+			Parameters = new[]
+			{
+				new Property("uri", "Request Uri")
+			},
+			Output = new[]
+			{
+				new Property("value", "value")
+			}
+		};
 	}
 }

@@ -27,24 +27,18 @@ namespace Swampnet.Dash.Tests
         }
 
 
-		public override TestMeta Meta
+		public override TestMeta Meta => new TestMeta()
 		{
-			get
+			Type = GetType().Name,
+			Description = "",
+			Parameters = new []
 			{
-				return new TestMeta()
-				{
-					Type = GetType().Name,
-					Description = "",
-					Parameters = new []
-					{
-						new Property("host", "Hostname or address")
-					},
-					Output = new []
-					{
-						new	Property("value", "Ping response time (ms)")
-					}
-				};
+				new Property(Constants.MANDATORY_CATEGORY, "host", "Hostname or address")
+			},
+			Output = new []
+			{
+				new	Property("value", "Ping response time (ms)")
 			}
-		}
+		};
 	}
 }

@@ -12,4 +12,10 @@ namespace Swampnet.Dash.Common.Entities
         Alert = 3,
         Error = 4
     }
+
+	public static class Constants
+	{
+		public const string MANDATORY_CATEGORY = "mandatory";
+		public const string OPTIONAL_CATEGORY = "optional";
+	}
 }

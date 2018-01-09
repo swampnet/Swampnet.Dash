@@ -31,8 +31,8 @@ namespace Swampnet.Dash.Tests
 			Description ="",
 			Parameters = new[]
 			{
-				new Property("path", "path to monitor"),
-				new Property("filter", "wildcard filter")
+				new Property(Constants.MANDATORY_CATEGORY, "path", "path to monitor"),
+				new Property(Constants.OPTIONAL_CATEGORY, "filter", "wildcard filter")
 			},
 			Output = new[]
 			{

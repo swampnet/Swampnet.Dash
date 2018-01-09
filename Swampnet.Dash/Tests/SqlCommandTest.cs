@@ -54,9 +54,9 @@ namespace Swampnet.Dash.Tests
 			},
 			Parameters = new[]
 			{
-				new Property("connection-name", "Connection name, as defined in service configuration"),
-				new Property("query", "SQL query"),
-				new Property("timeout", "SQL command timeout (s)")
+				new Property(Constants.MANDATORY_CATEGORY, "connection-name", "Connection name, as defined in service configuration"),
+				new Property(Constants.MANDATORY_CATEGORY, "query", "SQL query"),
+				new Property(Constants.OPTIONAL_CATEGORY, "timeout", "SQL command timeout (s)")
 			}
 		};
 	}

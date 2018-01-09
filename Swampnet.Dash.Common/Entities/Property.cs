@@ -12,10 +12,17 @@ namespace Swampnet.Dash.Common.Entities
         }
 
         public Property(string name, object value)
+			: this()
         {
             Name = name;
             Value = value.ToString();
         }
+
+		public Property(string category, string name, object value)
+			: this(name, value)
+		{
+			Category = category;
+		}
 
 		[XmlAttribute]
 		public string Category { get; set; }
