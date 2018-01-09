@@ -39,10 +39,6 @@ namespace Swampnet.Dash.Tests
 		{
 			Type = GetType().Name,
 			Description = "output a sinewave",
-			Parameters = new[]
-			{
-				new Property("uri", "Request Uri")
-			},
 			Output = new[]
 			{
 				new Property("value", "value")

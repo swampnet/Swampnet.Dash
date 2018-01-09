@@ -47,11 +47,14 @@ namespace Swampnet.Dash.Tests
 		{
 			_testDefinition = testDefinition;
 
-			foreach(var mandatoryParameter in Meta.Parameters.Where(p => string.IsNullOrEmpty(p.Category) || p.Category.EqualsNoCase(Constants.MANDATORY_CATEGORY)))
+			if(Meta.Parameters != null)
 			{
-				if (string.IsNullOrEmpty(Definition.Parameters.StringValue(mandatoryParameter.Name)))
+				foreach (var mandatoryParameter in Meta.Parameters.Where(p => string.IsNullOrEmpty(p.Category) || p.Category.EqualsNoCase(Constants.MANDATORY_CATEGORY)))
 				{
-					throw new ArgumentNullException(mandatoryParameter.Name);
+					if (string.IsNullOrEmpty(Definition.Parameters.StringValue(mandatoryParameter.Name)))
+					{
+						throw new ArgumentNullException(mandatoryParameter.Name);
+					}
 				}
 			}
 		}

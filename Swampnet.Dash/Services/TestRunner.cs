@@ -50,7 +50,7 @@ namespace Swampnet.Dash.Services
 						}
 						catch (Exception ex)
 						{
-							Log.Error(ex, ex.Message);
+							Log.Error(ex, "Failed to create test '{test}'", definition.Id);
 						}
 					}
 					_tests = tests;
