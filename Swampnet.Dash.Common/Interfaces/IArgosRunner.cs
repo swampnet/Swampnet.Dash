@@ -8,7 +8,8 @@ namespace Swampnet.Dash.Common.Interfaces
 {
 	public interface IArgosRunner
 	{
-		Task<IEnumerable<ArgosResult>> RunAsync();
+		void RunDue();
+		//Task<IEnumerable<ArgosResult>> RunAsync();
         Task<ArgosResult> GetState(string id);
 	}
 }

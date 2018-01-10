@@ -1,4 +1,5 @@
 ﻿using Serilog;
+using Swampnet.Dash.Common.Entities;
 using Swampnet.Dash.Common.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -20,6 +21,11 @@ namespace Swampnet.Dash.Services
 		}
 
 
+		/// <summary>
+		/// Publish a test result
+		/// </summary>
+		/// <param name="test"></param>
+		/// <returns></returns>
 		public async Task BroadcastState(ITest test)
 		{
 			// @todo: cache this, we don't want to be hitting the db each time
@@ -33,6 +39,32 @@ namespace Swampnet.Dash.Services
 					Log.Debug("Broadcast test {test_id} to dashboard {dash_id}", test.Id, dash.Id);
 
 					_broadcast.Update(dash.Id, new[] { test.State });
+				}
+			}
+		}
+
+
+		public async Task BroadcastState(IEnumerable<ArgosResult> items)
+		{
+			// @todo: cache this, we don't want to be hitting the db each time
+			var dashboards = await _dashRepository.GetDashboardsAsync();
+
+			foreach (var dash in dashboards)
+			{
+				if (dash.Argos != null && dash.Argos.Any())
+				{
+					// We collate *all* the 'argos' stuff into one single per-dash update.
+					var broadcast = new List<ElementState>();
+
+					foreach (var rs in items.Where(a => dash.Argos.Select(b => b.Id).Contains(a.ArgosId)))
+					{
+						broadcast.AddRange(rs.Items);
+					}
+
+					if (broadcast.Any())
+					{
+						_broadcast.Refresh(dash.Id, broadcast);
+					}
 				}
 			}
 		}

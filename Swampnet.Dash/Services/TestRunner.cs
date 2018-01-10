@@ -68,75 +68,82 @@ namespace Swampnet.Dash.Services
 		//				- This means test two will also get delayed by 30 seconds...
 		//		 We probably just want to call this to run any due tests that are not already running
 		//		 Not sure how to handle return values now though?
-        public async Task<IEnumerable<ElementState>> RunAsync()
-        {
-            var results = new List<ElementState>();
+   //     public async Task<IEnumerable<ElementState>> RunAsync()
+   //     {
+   //         var results = new List<ElementState>();
 
-			foreach (var test in Tests.Where(t => t.IsDue && !t.IsActive))
-			{
-				try
-				{
-					var result = await test.ExecuteAsync();
+			//foreach (var test in Tests.Where(t => t.IsDue && !t.IsActive))
+			//{
+			//	try
+			//	{
+			//		var result = await test.ExecuteAsync();
 
-					lock (results)
-					{
-						results.Add(result);
-					}
+			//		lock (results)
+			//		{
+			//			results.Add(result);
+			//		}
 
-					await _ruleProcessor.ProcessTestResultAsync(test.Definition, result);
+			//		await _ruleProcessor.ProcessTestResultAsync(test.Definition, result);
 
-					Log.Debug("Test {type} ({id}) {state}",
-						test.GetType().Name,
-						test.Id,
-						result);
-				}
-				catch (Exception ex)
-				{
-					test.State.Status = Status.Error;
-					Log.Error(ex, ex.Message);
-				}
-			}
+			//		Log.Debug("Test {type} ({id}) {state}",
+			//			test.GetType().Name,
+			//			test.Id,
+			//			result);
+			//	}
+			//	catch (Exception ex)
+			//	{
+			//		test.State.Status = Status.Error;
+			//		Log.Error(ex, ex.Message);
+			//	}
+			//}
 
-			// @TODO: So, if we're actually writing stuff away to the db as part of this, then it might take a while: We might be
-			//        better off queing it up for later, and doing some kind of batch insert.
-			await _valuesRepository.Add(results);
+			//// @TODO: So, if we're actually writing stuff away to the db as part of this, then it might take a while: We might be
+			////        better off queing it up for later, and doing some kind of batch insert.
+			//await _valuesRepository.Add(results);
 
-			return results;
-        }
+			//return results;
+   //     }
 
 
 		public void RunDue()
 		{
-			var due = Tests.Where(t => t.IsDue && !t.IsActive);
-			if (due.Any())
+			try
 			{
-				Log.Debug("Running {count} due tests", due.Count());
-
-				foreach(var test in due)
+				var due = Tests.Where(t => t.IsDue && !t.IsActive);
+				if (due.Any())
 				{
-					Task.Run( async () => {
-						try
-						{
-							Log.Debug("Running test {id}", test.Id);
-							
-							// Run test
-							var state = await test.ExecuteAsync();
+					Log.Debug("Running {count} due tests", due.Count());
 
-							// Run rules
-							await _ruleProcessor.ProcessTestResultAsync(test.Definition, state);
+					foreach (var test in due)
+					{
+						Task.Run(async () => {
+							try
+							{
+								Log.Debug("Running test {id}", test.Id);
 
-							// Broadcast
-							await _dashPublisher.BroadcastState(test);
+								// Run test
+								var state = await test.ExecuteAsync();
 
-							// Save state
-							await _valuesRepository.Add(new[] { test.State });
-						}
-						catch (Exception ex)
-						{
-							Log.Error(ex, "Error running test {id}: '{message}'", test.Id, ex.Message);
-						}
-					});
+								// Run rules
+								await _ruleProcessor.ProcessTestResultAsync(test.Definition, state);
+
+								// Broadcast
+								await _dashPublisher.BroadcastState(test);
+
+								// Save state
+								await _valuesRepository.Add(new[] { test.State });
+							}
+							catch (Exception ex)
+							{
+								Log.Error(ex, "Error running test {id}: '{message}'", test.Id, ex.Message);
+							}
+						});
+					}
 				}
+			}
+			catch (Exception ex)
+			{
+				Log.Error(ex, ex.Message);
 			}
 		}
 

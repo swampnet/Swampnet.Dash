@@ -8,7 +8,7 @@ namespace Swampnet.Dash.Common.Interfaces
 {
     public interface ITestRunner
     {
-        Task<IEnumerable<ElementState>> RunAsync();
+        //Task<IEnumerable<ElementState>> RunAsync();
 		void RunDue();
 
 		IEnumerable<ElementState> GetTestResults(IEnumerable<string> ids);

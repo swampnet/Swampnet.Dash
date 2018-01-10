@@ -54,15 +54,12 @@ namespace Swampnet.Dash
 			{
 				try
 				{
-					_testRunner.RunDue();
+					Task.Run(() => _testRunner.RunDue());
+					Task.Run(() => _argosRunner.RunDue());
 				}
 				catch (ThreadAbortException)
 				{
 					break;
-				}
-				catch (Exception ex)
-				{
-					Log.Error(ex, ex.Message);
 				}
 				finally
 				{
@@ -71,74 +68,74 @@ namespace Swampnet.Dash
 			}
 		}
 
-        private async void RuntimeThread_old()
-        {
-            while (true)
-            {
-                try
-                {
-					// Run all the due tests
-                    var testResults = await _testRunner.RunAsync();
+    //    private async void RuntimeThread_old()
+    //    {
+    //        while (true)
+    //        {
+    //            try
+    //            {
+				//	// Run all the due tests
+    //                var testResults = await _testRunner.RunAsync();
 
-                    // Get latest Argos results. Note, this will probably be *all* the dashItems from *all* the argos style dashes
-					var argosResults = await _argosRunner.RunAsync();
+    //                // Get latest Argos results. Note, this will probably be *all* the dashItems from *all* the argos style dashes
+				//	var argosResults = await _argosRunner.RunAsync();
 
-					// Update dashboards
-                    var dashboards = await _dashboardRepository.GetDashboardsAsync();
+				//	// Update dashboards
+    //                var dashboards = await _dashboardRepository.GetDashboardsAsync();
 
-                    foreach (var dash in dashboards)
-                    {
-                        // Handle any tests if there are any
-						if(dash.Tests != null && dash.Tests.Any())
-						{
-							// Get all the tests results referenced by tests in this dash:
-							var dashTestUpdates = testResults.Where(r => dash.Tests.Select(t => t.Id).Contains(r.Id));
-							if (dashTestUpdates.Any())
-							{
-								var dashItems = dashTestUpdates.Select(tr => new ElementState()
-								{
-									Id = tr.Id,
-									ElementId = tr.Id, // Tests item definition id always == the test id. @TODO: Yeah, this is messy.
-									Status = tr.Status,
-									TimestampUtc = tr.TimestampUtc,
-									Output = tr.Output
-								});
+    //                foreach (var dash in dashboards)
+    //                {
+    //                    // Handle any tests if there are any
+				//		if(dash.Tests != null && dash.Tests.Any())
+				//		{
+				//			// Get all the tests results referenced by tests in this dash:
+				//			var dashTestUpdates = testResults.Where(r => dash.Tests.Select(t => t.Id).Contains(r.Id));
+				//			if (dashTestUpdates.Any())
+				//			{
+				//				var dashItems = dashTestUpdates.Select(tr => new ElementState()
+				//				{
+				//					Id = tr.Id,
+				//					ElementId = tr.Id, // Tests item definition id always == the test id. @TODO: Yeah, this is messy.
+				//					Status = tr.Status,
+				//					TimestampUtc = tr.TimestampUtc,
+				//					Output = tr.Output
+				//				});
 
-								_broadcast.Update(dash.Id, dashItems);
-							}
-						}
+				//				_broadcast.Update(dash.Id, dashItems);
+				//			}
+				//		}
 
-                        // Handle Argos stuff
-                        if(dash.Argos != null && dash.Argos.Any())
-                        {
-                            // We collate *all* the 'argos' stuff into one single per-dash update.
-                            var broadcast = new List<ElementState>();
+    //                    // Handle Argos stuff
+    //                    if(dash.Argos != null && dash.Argos.Any())
+    //                    {
+    //                        // We collate *all* the 'argos' stuff into one single per-dash update.
+    //                        var broadcast = new List<ElementState>();
                             
-                            foreach(var rs in argosResults.Where(a => dash.Argos.Select(b => b.Id).Contains(a.ArgosId)))
-                            {
-                                broadcast.AddRange(rs.Items);
-                            }
+    //                        foreach(var rs in argosResults.Where(a => dash.Argos.Select(b => b.Id).Contains(a.ArgosId)))
+    //                        {
+    //                            broadcast.AddRange(rs.Items);
+    //                        }
 
-                            if (broadcast.Any())
-                            {
-                                _broadcast.Refresh(dash.Id, broadcast);
-                            }
-                        }
-                    }
-                }
-				catch (ThreadAbortException)
-				{
-					break;
-				}
-                catch (Exception ex)
-                {
-                    Log.Error(ex, ex.Message);
-                }
-                finally
-                {
-                    Thread.Sleep(HEARTBEAT);
-                }
-            }
-        }
+    //                        if (broadcast.Any())
+    //                        {
+    //                            _broadcast.Refresh(dash.Id, broadcast);
+    //                        }
+    //                    }
+    //                }
+    //            }
+				//catch (ThreadAbortException)
+				//{
+				//	break;
+				//}
+    //            catch (Exception ex)
+    //            {
+    //                Log.Error(ex, ex.Message);
+    //            }
+    //            finally
+    //            {
+    //                Thread.Sleep(HEARTBEAT);
+    //            }
+    //        }
+        //}
     }
 }

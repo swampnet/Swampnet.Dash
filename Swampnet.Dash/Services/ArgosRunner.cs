@@ -16,66 +16,124 @@ namespace Swampnet.Dash.Services
         private readonly IArgosRepository _argosRepository;
         private readonly Dictionary<string, ArgosResult> _state = new Dictionary<string, ArgosResult>();
 		private readonly IRuleProcessor _ruleProcessor;
+		private readonly IDashboardStatePublishThing _dashPublish;
 
-		public ArgosRunner(IArgosRepository argosRepo, IEnumerable<IArgos> argos, IRuleProcessor ruleProcessor)
+		public ArgosRunner(IArgosRepository argosRepo, IEnumerable<IArgos> argos, IRuleProcessor ruleProcessor, IDashboardStatePublishThing dashPublish)
         {
             _argos = argos;
             _argosRepository = argosRepo;
 			_ruleProcessor = ruleProcessor;
+			_dashPublish = dashPublish;
 		}
 
 
-        public async Task<IEnumerable<ArgosResult>> RunAsync()
-        {
-            var items = new List<ArgosResult>();
+		public async void RunDue()
+		{
+			try
+			{
+				var items = new List<ArgosResult>();
 
-            // Get any argos definitions who's heartbeat is due
-            foreach (var definition in GetDue())
-            {
-				try
+				// Get any argos definitions who's heartbeat is due
+				foreach (var definition in GetDue())
 				{
-                    ArgosResult lastRun;
-                    if (_state.ContainsKey(definition.Id))
-                    {
-                        lastRun = _state[definition.Id];
-                    }
-                    else
-                    {
-                        lastRun = new ArgosResult();
-                        _state.Add(definition.Id, lastRun);
-                    }
-
-                    var argos = _argos.Single(t => t.GetType().Name == definition.Type);
-
-					//Validate(testdefinition, test.Meta);
-					Log.Debug("Running {type} - {name}", argos.GetType().Name, definition.Id);
-
-					var rs = await argos.RunAsync(definition);
-                    
-					foreach(var item in rs.Items)
+					try
 					{
-						await _ruleProcessor.ProcessTestResultAsync(definition, item);
+						ArgosResult lastRun;
+						if (_state.ContainsKey(definition.Id))
+						{
+							lastRun = _state[definition.Id];
+						}
+						else
+						{
+							lastRun = new ArgosResult();
+							_state.Add(definition.Id, lastRun);
+						}
+
+						var argos = _argos.Single(t => t.GetType().Name == definition.Type);
+
+						//Validate(testdefinition, test.Meta);
+						Log.Debug("Running {type} - {name}", argos.GetType().Name, definition.Id);
+
+						var rs = await argos.RunAsync(definition);
+
+						foreach (var item in rs.Items)
+						{
+							await _ruleProcessor.ProcessTestResultAsync(definition, item);
+						}
+
+						if (!Compare.ArgosResults(rs, lastRun))
+						{
+							items.Add(rs);
+						}
+
+						_state[definition.Id] = rs;
 					}
+					catch (Exception ex)
+					{
+						Log.Error(ex, ex.Message);
+					}
+				}
 
-                    if (!Compare.ArgosResults(rs, lastRun))
-                    {
-                        //Log.Information("{argos} '{id}' Has changed: " + rs,
-                        //    argos.GetType().Name,
-                        //    definition.Id);
+				await _dashPublish.BroadcastState(items);
+			}
+			catch (Exception ex)
+			{
+				Log.Error(ex, ex.Message);
+			}
+		}
 
-                        items.Add(rs);
-                    }
 
-                    _state[definition.Id] = rs;
-                }
-                catch (Exception ex)
-                {
-                    Log.Error(ex, ex.Message);
-                }
-            }
+		//public async Task<IEnumerable<ArgosResult>> RunAsync()
+  //      {
+  //          var items = new List<ArgosResult>();
 
-            return items;
-        }
+  //          // Get any argos definitions who's heartbeat is due
+  //          foreach (var definition in GetDue())
+  //          {
+		//		try
+		//		{
+  //                  ArgosResult lastRun;
+  //                  if (_state.ContainsKey(definition.Id))
+  //                  {
+  //                      lastRun = _state[definition.Id];
+  //                  }
+  //                  else
+  //                  {
+  //                      lastRun = new ArgosResult();
+  //                      _state.Add(definition.Id, lastRun);
+  //                  }
+
+  //                  var argos = _argos.Single(t => t.GetType().Name == definition.Type);
+
+		//			//Validate(testdefinition, test.Meta);
+		//			Log.Debug("Running {type} - {name}", argos.GetType().Name, definition.Id);
+
+		//			var rs = await argos.RunAsync(definition);
+                    
+		//			foreach(var item in rs.Items)
+		//			{
+		//				await _ruleProcessor.ProcessTestResultAsync(definition, item);
+		//			}
+
+  //                  if (!Compare.ArgosResults(rs, lastRun))
+  //                  {
+  //                      //Log.Information("{argos} '{id}' Has changed: " + rs,
+  //                      //    argos.GetType().Name,
+  //                      //    definition.Id);
+
+  //                      items.Add(rs);
+  //                  }
+
+  //                  _state[definition.Id] = rs;
+  //              }
+  //              catch (Exception ex)
+  //              {
+  //                  Log.Error(ex, ex.Message);
+  //              }
+  //          }
+
+  //          return items;
+  //      }
 
 
         public IEnumerable<Element> GetDue()
