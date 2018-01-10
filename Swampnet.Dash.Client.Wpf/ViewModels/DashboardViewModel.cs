@@ -112,10 +112,10 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
 				itemDefinition = _dashboard.Argos.SingleOrDefault(t => t.Id == id);
 			}
 
-			if(itemDefinition == null)
-			{
-				System.Diagnostics.Debugger.Break();
-			}
+			//if(itemDefinition == null)
+			//{
+			//	System.Diagnostics.Debugger.Break();
+			//}
 
 			return itemDefinition;
 		}

@@ -48,7 +48,30 @@ namespace Swampnet.Dash
             _runtimeThread.Abort();
         }
 
-        private async void RuntimeThread()
+		private void RuntimeThread()
+		{
+			while (true)
+			{
+				try
+				{
+					_testRunner.RunDue();
+				}
+				catch (ThreadAbortException)
+				{
+					break;
+				}
+				catch (Exception ex)
+				{
+					Log.Error(ex, ex.Message);
+				}
+				finally
+				{
+					Thread.Sleep(HEARTBEAT);
+				}
+			}
+		}
+
+        private async void RuntimeThread_old()
         {
             while (true)
             {
