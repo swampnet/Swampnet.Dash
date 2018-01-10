@@ -36,7 +36,7 @@ namespace Swampnet.Dash.Services
 				// If the dash references this test, broadcast an update
 				if(dash.Tests.Any(t => t.Id == test.Id))
 				{
-					Log.Debug("Broadcast test {test_id} to dashboard {dash_id}", test.Id, dash.Id);
+					Log.Debug("Broadcast test {test_id} to dashboard {dash_id} => {status}", test.Id, dash.Id, test.State.Status);
 
 					_broadcast.Update(dash.Id, new[] { test.State });
 				}

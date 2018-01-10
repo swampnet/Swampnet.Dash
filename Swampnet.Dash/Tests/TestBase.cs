@@ -34,7 +34,7 @@ namespace Swampnet.Dash.Tests
 		/// <returns></returns>
 		public async Task<ElementState> ExecuteAsync()
 		{
-			ElementState rs;
+			ElementState rs = null;
 
 			try
 			{
@@ -43,7 +43,6 @@ namespace Swampnet.Dash.Tests
 				rs = await RunAsync();
 
 				rs.Id = Definition.Id;
-				_lastRunUtc = DateTime.UtcNow;
 			}
 			catch (Exception ex)
 			{
@@ -52,13 +51,14 @@ namespace Swampnet.Dash.Tests
 					Status = Status.Error,
 					Id = Definition.Id
 				};
+				rs.Output.Add(new Property("error", ex.Message));
 			}
 			finally
 			{
+				State = rs;
+				_lastRunUtc = DateTime.UtcNow;
 				IsActive = false;
 			}
-
-			State = rs;
 
 			return rs;
 		}

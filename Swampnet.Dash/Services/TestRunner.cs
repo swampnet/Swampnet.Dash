@@ -119,8 +119,6 @@ namespace Swampnet.Dash.Services
 						Task.Run(async () => {
 							try
 							{
-								Log.Debug("Running test {id}", test.Id);
-
 								// Run test
 								var state = await test.ExecuteAsync();
 
@@ -132,6 +130,8 @@ namespace Swampnet.Dash.Services
 
 								// Save state
 								await _valuesRepository.Add(new[] { test.State });
+
+								Log.Debug("Test complete: {id} ({state})", test.Id, test.State);
 							}
 							catch (Exception ex)
 							{
