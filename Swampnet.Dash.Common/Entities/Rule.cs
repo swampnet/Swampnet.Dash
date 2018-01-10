@@ -32,29 +32,24 @@ namespace Swampnet.Dash.Common.Entities
             Operator = RuleOperatorType.MATCH_ALL;
         }
 
-        public Expression(RuleOperatorType op, RuleOperandType operand, string arg, object value)
+        public Expression(RuleOperatorType op, RuleOperandType operand, object value)
             : this()
         {
             Operator = op;
             Operand = operand;
-            Argument = arg;
             Value = value?.ToString();
         }
 
 
-        public Expression(RuleOperatorType op, RuleOperandType operand, object value)
-            : this(op, operand, null, value)
-        {
-        }
 
         public Expression(RuleOperatorType op, object value)
-            : this(op, RuleOperandType.Null, null, value)
+            : this(op, RuleOperandType.Null, value)
         {
         }
 
 
         public Expression(RuleOperatorType op)
-            : this(op, RuleOperandType.Null, null, null)
+            : this(op, RuleOperandType.Null, null)
         {
         }
 
@@ -66,10 +61,12 @@ namespace Swampnet.Dash.Common.Entities
         [JsonConverter(typeof(StringEnumConverter))]
         public RuleOperandType Operand { get; set; }
 
-        [XmlAttribute]
-        public string Argument { get; set; }     // eg, property name
+        //[XmlAttribute]
+        //public string Argument { get; set; }     // eg, property name
 
-        [XmlAttribute]
+		public Property[] Arguments { get; set; }
+
+		[XmlAttribute]
         public string Value { get; set; }
 
         public Expression[] Children { get; set; }
@@ -84,7 +81,7 @@ namespace Swampnet.Dash.Common.Entities
         {
             return IsContainer
                 ? $"{Operator} ({Children.Length} children)"
-                : $"{Operand} {Operator} {Argument} '{Value}'";
+                : $"{Operand} {Operator} '{Value}'";
         }
 
 

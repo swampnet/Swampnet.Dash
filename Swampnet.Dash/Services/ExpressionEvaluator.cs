@@ -71,7 +71,7 @@ namespace Swampnet.Dash.Services
             {
                 // Just Output then?
                 case RuleOperandType.Property:
-                    op = evt.Output.StringValue(expression.Argument);
+                    op = evt.Output.StringValue(expression.Arguments.StringValue("property-name"));
                     break;
             }
 
