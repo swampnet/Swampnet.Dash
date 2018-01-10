@@ -17,6 +17,7 @@ namespace Swampnet.Dash.Common.Interfaces
         string Id { get; }
 
         bool IsDue { get; }
+		bool IsActive { get; }
 
 		Element Definition { get; }
 

@@ -13,12 +13,18 @@ namespace Swampnet.Dash.Tests
         private Element _testDefinition;
         private DateTime _lastRunUtc = DateTime.MinValue;
 
+		public TestBase()
+		{
+			State = new ElementState();
+		}
+
 		#region ITest
 		public Element Definition => _testDefinition;
 
 		public string Id => _testDefinition.Id;
 
 		public ElementState State { get; private set; }
+		public bool IsActive { get; private set; }
 
 		abstract public TestMeta Meta { get; }
 
@@ -28,10 +34,29 @@ namespace Swampnet.Dash.Tests
 		/// <returns></returns>
 		public async Task<ElementState> ExecuteAsync()
 		{
-			var rs = await RunAsync();
+			ElementState rs;
 
-			rs.Id = Definition.Id;
-			_lastRunUtc = DateTime.UtcNow;
+			try
+			{
+				IsActive = true;
+
+				rs = await RunAsync();
+
+				rs.Id = Definition.Id;
+				_lastRunUtc = DateTime.UtcNow;
+			}
+			catch (Exception ex)
+			{
+				rs = new ElementState()
+				{
+					Status = Status.Error,
+					Id = Definition.Id
+				};
+			}
+			finally
+			{
+				IsActive = false;
+			}
 
 			State = rs;
 

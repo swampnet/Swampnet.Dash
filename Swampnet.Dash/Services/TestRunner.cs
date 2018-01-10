@@ -16,13 +16,15 @@ namespace Swampnet.Dash.Services
         private readonly IRuleProcessor _ruleProcessor;
 		private readonly IValuesRepository _valuesRepository;
 		private readonly ILifetimeScope _scope;
+		private readonly IDashboardStatePublishThing _dashPublisher;
 
-		public TestRunner(ITestRepository testRepo, IRuleProcessor ruleProcessor, IValuesRepository valuesRepository, ILifetimeScope scope)
+		public TestRunner(ITestRepository testRepo, IRuleProcessor ruleProcessor, IValuesRepository valuesRepository, ILifetimeScope scope, IDashboardStatePublishThing dashPublisher)
         {
             _testRepository = testRepo;
             _ruleProcessor = ruleProcessor;
 			_valuesRepository = valuesRepository;
 			_scope = scope;
+			_dashPublisher = dashPublisher;
 		}
 
         private IEnumerable<ITest> Tests
@@ -59,12 +61,18 @@ namespace Swampnet.Dash.Services
             }
         }
 
+		// @todo: We probably don't need / want to wait for tests to complete here.
+		//		  Consider this:
+		//				- Two tests, both with a two second heartbeat
+		//				- Test one takes 30 seconds to complete (timing out or whatever)
+		//				- This means test two will also get delayed by 30 seconds...
+		//		 We probably just want to call this to run any due tests that are not already running
+		//		 Not sure how to handle return values now though?
         public async Task<IEnumerable<ElementState>> RunAsync()
         {
             var results = new List<ElementState>();
 
-			//Parallel.ForEach(_tests.Where(t => t.IsDue), async test => { });
-			foreach (var test in Tests.Where(t => t.IsDue))
+			foreach (var test in Tests.Where(t => t.IsDue && !t.IsActive))
 			{
 				try
 				{
@@ -77,13 +85,14 @@ namespace Swampnet.Dash.Services
 
 					await _ruleProcessor.ProcessTestResultAsync(test.Definition, result);
 
-					Log.Debug("Test {type} ({id}) {state}", 
-						test.GetType().Name, 
-						test.Id, 
+					Log.Debug("Test {type} ({id}) {state}",
+						test.GetType().Name,
+						test.Id,
 						result);
 				}
 				catch (Exception ex)
 				{
+					test.State.Status = Status.Error;
 					Log.Error(ex, ex.Message);
 				}
 			}
@@ -94,6 +103,42 @@ namespace Swampnet.Dash.Services
 
 			return results;
         }
+
+
+		public void RunDue()
+		{
+			var due = Tests.Where(t => t.IsDue && !t.IsActive);
+			if (due.Any())
+			{
+				Log.Debug("Running {count} due tests", due.Count());
+
+				foreach(var test in due)
+				{
+					Task.Run( async () => {
+						try
+						{
+							Log.Debug("Running test {id}", test.Id);
+							
+							// Run test
+							var state = await test.ExecuteAsync();
+
+							// Run rules
+							await _ruleProcessor.ProcessTestResultAsync(test.Definition, state);
+
+							// Broadcast
+							await _dashPublisher.BroadcastState(test);
+
+							// Save state
+							await _valuesRepository.Add(new[] { test.State });
+						}
+						catch (Exception ex)
+						{
+							Log.Error(ex, "Error running test {id}: '{message}'", test.Id, ex.Message);
+						}
+					});
+				}
+			}
+		}
 
 
 		public IEnumerable<ElementState> GetTestResults(IEnumerable<string> ids)
