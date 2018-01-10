@@ -182,7 +182,7 @@ namespace UnitTests
                                 new Expression()
                                 {
                                     IsActive = true,
-                                    Operand = Expression.RuleOperandType.Property,
+                                    Operand = Expression.RuleOperandType.PropertyValue,
                                     Arguments = new []{
 										new Property("property-name", "value")
 									},

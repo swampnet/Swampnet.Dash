@@ -70,7 +70,7 @@ namespace Swampnet.Dash.Services
             switch (expression.Operand)
             {
                 // Just Output then?
-                case RuleOperandType.Property:
+                case RuleOperandType.PropertyValue:
                     op = evt.Output.StringValue(expression.Arguments.StringValue("property-name"));
                     break;
             }

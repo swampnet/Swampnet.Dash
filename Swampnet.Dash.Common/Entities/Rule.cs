@@ -92,7 +92,8 @@ namespace Swampnet.Dash.Common.Entities
             TestType,
             Category,
             Summary,
-            Property
+            PropertyValue,
+			PropertyAverageValue
         }
 
         public enum RuleOperatorType
