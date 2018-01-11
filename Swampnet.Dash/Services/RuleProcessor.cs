@@ -18,11 +18,13 @@ namespace Swampnet.Dash.Services
     class RuleProcessor : IRuleProcessor
     {
         private readonly IDashboardItemHistory _testHistory;
+		private readonly IExpressionEvaluator _expressionEvaluator;
 
-        public RuleProcessor(IDashboardItemHistory testHistory)
+		public RuleProcessor(IDashboardItemHistory testHistory, IExpressionEvaluator expressionEvaluator)
         {
             _testHistory = testHistory;
-        }
+			_expressionEvaluator = expressionEvaluator;
+		}
 
 		/// <summary>
 		/// @TODO:
@@ -47,15 +49,13 @@ namespace Swampnet.Dash.Services
 
 				foreach (var rule in definition.StateRules.Where(r => r.Expression != null && r.StateModifiers != null && r.StateModifiers.Any()))
 				{
-					var eval = new ExpressionEvaluator();
-
 					// Run expression against all results. Pretty sure we should just be storing this somewhere rather than re-calculate it each time
 					var results = new List<Tuple<DateTime, bool>>();
 					foreach(var r in history)
 					{
 						results.Add(new Tuple<DateTime, bool>(
 							r.TimestampUtc,
-							eval.Evaluate(rule.Expression, r)));
+							_expressionEvaluator.Evaluate(rule.Expression, r)));
 					}
 
 					// Find StateModifier that matches the history

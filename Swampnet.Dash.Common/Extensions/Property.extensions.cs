@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Linq;
+using System.Xml;
 
 namespace Swampnet.Dash
 {
@@ -63,6 +64,30 @@ namespace Swampnet.Dash
 			return v;
 		}
 
+		public static TimeSpan TimeSpanValue(this IEnumerable<Property> properties, string name, TimeSpan? defaultValue = null)
+		{
+			TimeSpan ts;
+
+			var s = properties.StringValue(name);
+			if (string.IsNullOrEmpty(s))
+			{
+				if (defaultValue.HasValue)
+				{
+					ts = defaultValue.Value;
+				}
+				else
+				{
+					throw new ArgumentNullException(name);
+				}
+			}
+			else
+			{
+				ts = XmlConvert.ToTimeSpan(s);
+			}
+
+			return ts;
+		}
+
 		public static Property Get(this IEnumerable<Property> properties, string name)
 		{
 			if (properties != null && properties.Any())
@@ -118,6 +143,15 @@ namespace Swampnet.Dash
 			return v;
 		}
 
+
+		public static bool BoolValue(this IEnumerable<Property> properties, string name, bool defaultValue = false)
+		{
+			bool v = defaultValue;
+
+			bool.TryParse(properties.StringValue(name, defaultValue.ToString()), out v);
+
+			return v;
+		}
 
 		/// <summary>
 		/// Return the value of a property as a DateTime value

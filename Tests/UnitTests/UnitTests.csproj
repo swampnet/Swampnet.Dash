@@ -69,6 +69,7 @@
     <Compile Include="Compare_Tests.cs" />
     <Compile Include="RuleProcessor_Tests.cs" />
     <Compile Include="DashboardGroupViewModel_Tests.cs" />
+    <Compile Include="Property_Tests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

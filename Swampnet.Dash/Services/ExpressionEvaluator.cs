@@ -3,17 +3,26 @@ using System.Text.RegularExpressions;
 using System.Linq;
 using Swampnet.Dash.Common.Entities;
 using static Swampnet.Dash.Common.Entities.Expression;
+using Swampnet.Dash.Common.Interfaces;
 
 namespace Swampnet.Dash.Services
 {
     /// <summary>
     /// Expression Evaluator
     /// </summary>
-    class ExpressionEvaluator
-    {
+    class ExpressionEvaluator : IExpressionEvaluator
+	{
+		private readonly IAnalysis _analysis;
+
+		public ExpressionEvaluator(IAnalysis analysis)
+		{
+			_analysis = analysis;
+		}
+
         public bool Evaluate(Expression expression, ElementState evt)
         {
             bool result = false;
+			var operand = GetOperand(expression, evt);
 
             switch (expression.Operator)
             {
@@ -26,33 +35,33 @@ namespace Swampnet.Dash.Services
                     break;
 
                 case RuleOperatorType.EQ:
-                    result = EQ(GetOperand(expression, evt), expression.Value);
+                    result = EQ(operand, expression.Value);
                     break;
 
                 case RuleOperatorType.NOT_EQ:
-                    result = !EQ(GetOperand(expression, evt), expression.Value);
+                    result = !EQ(operand, expression.Value);
                     break;
 
                 case RuleOperatorType.REGEX:
-                    result = MatchExpression(GetOperand(expression, evt), expression.Value);
+                    result = MatchExpression(operand, expression.Value);
                     break;
 
                 case RuleOperatorType.LT:
-                    result = LT(GetOperand(expression, evt), expression.Value);
+                    result = LT(operand, expression.Value);
                     break;
 
                 case RuleOperatorType.LTE:
-                    result = EQ(GetOperand(expression, evt), expression.Value)
-                          || LT(GetOperand(expression, evt), expression.Value);
+                    result = EQ(operand, expression.Value)
+                          || LT(operand, expression.Value);
                     break;
 
                 case RuleOperatorType.GT:
-                    result = GT(GetOperand(expression, evt), expression.Value);
+                    result = GT(operand, expression.Value);
                     break;
 
                 case RuleOperatorType.GTE:
-                    result = EQ(GetOperand(expression, evt), expression.Value)
-                          || GT(GetOperand(expression, evt), expression.Value);
+                    result = EQ(operand, expression.Value)
+                          || GT(operand, expression.Value);
                     break;
 
                 default:
@@ -63,16 +72,24 @@ namespace Swampnet.Dash.Services
         }
 
 
-        private string GetOperand(Expression expression, ElementState evt)
+		// operand? is that the right term for this? What we're gettign is the value we're going to be comparing against 'expression.Value'
+		// so possibly 'comparitor' or something?
+		private string GetOperand(Expression expression, ElementState evt)
         {
             string op = "";
 
             switch (expression.Operand)
             {
-                // Just Output then?
                 case RuleOperandType.PropertyValue:
                     op = evt.Output.StringValue(expression.Arguments.StringValue("property-name"));
                     break;
+
+				case RuleOperandType.PropertyAverageValue:
+					var p = expression.Arguments.StringValue("property-name");
+					var h = expression.Arguments.TimeSpanValue("avg-history-timespan");
+					var r = expression.Arguments.BoolValue("avg-rolling");
+					op = _analysis.Avg(evt, p, h, r).ToString();
+					break;
             }
 
             return op;
