@@ -12,13 +12,6 @@ namespace Swampnet.Dash.Services
     /// </summary>
     class ExpressionEvaluator : IExpressionEvaluator
 	{
-		private readonly IAnalysis _analysis;
-
-		public ExpressionEvaluator(IAnalysis analysis)
-		{
-			_analysis = analysis;
-		}
-
         public bool Evaluate(Expression expression, ElementState evt)
         {
             bool result = false;
@@ -83,13 +76,6 @@ namespace Swampnet.Dash.Services
                 case RuleOperandType.PropertyValue:
                     op = evt.Output.StringValue(expression.Arguments.StringValue("property-name"));
                     break;
-
-				case RuleOperandType.PropertyAverageValue:
-					var p = expression.Arguments.StringValue("property-name");
-					var h = expression.Arguments.TimeSpanValue("avg-history-timespan");
-					var r = expression.Arguments.BoolValue("avg-rolling");
-					op = _analysis.Avg(evt, p, h, r).ToString();
-					break;
             }
 
             return op;
