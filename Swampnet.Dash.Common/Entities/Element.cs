@@ -22,6 +22,7 @@ namespace Swampnet.Dash.Common.Entities
         {
             Parameters = new List<Property>();
             StateRules = new List<Rule>();
+			Outputs = new List<Output>();
         }
 
 		[XmlAttribute]
@@ -64,5 +65,28 @@ namespace Swampnet.Dash.Common.Entities
         /// Test Rules
         /// </summary>
         public List<Rule> StateRules { get; set; }
-    }
+
+		/// <summary>
+		/// Dynamic outputs
+		/// </summary>
+		public List<Output> Outputs { get; set; }
+	}
+
+
+	public enum OutputType
+	{
+		AVG
+	}
+
+	public class Output
+	{
+		[XmlAttribute]
+		public OutputType Type { get; set; }
+
+		[XmlAttribute]
+		public string Name { get; set; }
+
+		public Property[] Parameters { get; set; }
+	}
 }
+

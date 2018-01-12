@@ -14,13 +14,15 @@ namespace Swampnet.Dash.Services
 		private IEnumerable<ITest> _tests;
 		private readonly ITestRepository _testRepository;
         private readonly IRuleProcessor _ruleProcessor;
+		private readonly IStateProcessor _stateProcessor;
 		private readonly IValuesRepository _valuesRepository;
 		private readonly ILifetimeScope _scope;
 
-		public TestRunner(ITestRepository testRepo, IRuleProcessor ruleProcessor, IValuesRepository valuesRepository, ILifetimeScope scope)
+		public TestRunner(ITestRepository testRepo, IRuleProcessor ruleProcessor, IStateProcessor stateProcessor, IValuesRepository valuesRepository, ILifetimeScope scope)
         {
             _testRepository = testRepo;
             _ruleProcessor = ruleProcessor;
+			_stateProcessor = stateProcessor;
 			_valuesRepository = valuesRepository;
 			_scope = scope;
 		}
@@ -75,6 +77,7 @@ namespace Swampnet.Dash.Services
 						results.Add(result);
 					}
 
+					await _stateProcessor.ProcessAsync(test.Definition, result);
 					await _ruleProcessor.ProcessTestResultAsync(test.Definition, result);
 
 					Log.Debug("Test {type} ({id}) {state}", 

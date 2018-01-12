@@ -104,6 +104,23 @@ namespace Swampnet.Dash
 		}
 
 
+		public static void AddOrUpdate(this ICollection<Property> properties, string category, string name, object value)
+		{
+			if (properties.Exists(name))
+			{
+				properties.Get(name).Value = value.ToString();
+			}
+			else
+			{
+				properties.Add(new Property(category, name, value));
+			}
+		}
+
+		public static void AddOrUpdate(this ICollection<Property> properties, string name, object value)
+		{
+			properties.AddOrUpdate(null, name, value);
+		}
+
 		/// <summary>
 		/// Return the value of a property as an integer value
 		/// </summary>
