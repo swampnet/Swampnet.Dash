@@ -57,7 +57,7 @@ namespace Swampnet.Dash.Services
 				if (!mod.ConsecutiveHits.HasValue || history.Count() >= mod.ConsecutiveHits.Value)
 				{
 					var range = history.Take(mod.ConsecutiveHits.HasValue ? Math.Max(mod.ConsecutiveHits.Value, 1) : 1); // Consecutive hits of 'zero' then. What does that mean?
-					//Log.Debug(mod.ConsecutiveHits + " - " + string.Join(",", range.Select(x => x.Item2)));
+					Log.Debug($"Rule: [{rule.Id}] {mod.ConsecutiveHits} - " + string.Join(",", range.Select(x => x.Item2)));
 					// All true. Use this modifier
 					if (range.All(x => x.Item2))
 					{
