@@ -183,9 +183,7 @@ namespace UnitTests
                                 {
                                     IsActive = true,
                                     Operand = Expression.RuleOperandType.PropertyValue,
-                                    Arguments = new []{
-										new Property("property-name", "value")
-									},
+                                    Argument = "value",
                                     Operator = Expression.RuleOperatorType.GT,
                                     Value = "100.0"
                                 }
