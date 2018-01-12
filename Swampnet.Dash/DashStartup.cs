@@ -21,6 +21,7 @@ namespace Swampnet.Dash
             builder.RegisterType<TestRunner>().As<ITestRunner>().SingleInstance();
 			builder.RegisterType<ArgosRunner>().As<IArgosRunner>().SingleInstance();
             builder.RegisterType<RuleProcessor>().As<IRuleProcessor>().SingleInstance();
+			builder.RegisterType<StateProcessor>().As<IStateProcessor>().SingleInstance();			
 			builder.RegisterType<ExpressionEvaluator>().As<IExpressionEvaluator>().SingleInstance();
 			builder.RegisterType<Analysis>().As<IAnalysis>().SingleInstance();
         }

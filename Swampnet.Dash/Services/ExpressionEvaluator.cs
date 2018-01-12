@@ -12,13 +12,6 @@ namespace Swampnet.Dash.Services
     /// </summary>
     class ExpressionEvaluator : IExpressionEvaluator
 	{
-		private readonly IAnalysis _analysis;
-
-		public ExpressionEvaluator(IAnalysis analysis)
-		{
-			_analysis = analysis;
-		}
-
         public bool Evaluate(Expression expression, ElementState evt)
         {
             bool result = false;
@@ -81,25 +74,8 @@ namespace Swampnet.Dash.Services
             switch (expression.Operand)
             {
                 case RuleOperandType.PropertyValue:
-                    op = evt.Output.StringValue(expression.Arguments.StringValue("property-name"));
+                    op = evt.Output.StringValue(expression.Argument);
                     break;
-
-				/*
-				 * Haha, ok, problem with the way this is implemented: If we doing an 'x consecutive hits' kind of test, then
-				 * we will re-evaluate the last x results.
-				 * If we're also running an average, we'll end up adding values to our sample each time from previous results.
-				 * 
-				 * Does that make sense?
-				 * 
-				 * Basically, we have to either keep track of previous results (ie, not re-evaluate results x times) or fihure out
-				 * how to calculate the average *once*!
-				*/
-				case RuleOperandType.PropertyAverageValue:
-					var p = expression.Arguments.StringValue("property-name");
-					var h = expression.Arguments.TimeSpanValue("avg-history-timespan");
-					var r = expression.Arguments.BoolValue("avg-rolling");
-					op = _analysis.Avg(evt, p, h, r).ToString();
-					break;
             }
 
             return op;

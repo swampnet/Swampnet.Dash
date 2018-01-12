@@ -60,6 +60,7 @@
     <Compile Include="Services\ArgosRunner.cs" />
     <Compile Include="Services\ExpressionEvaluator.cs" />
     <Compile Include="Services\RuleProcessor.cs" />
+    <Compile Include="Services\StateProcessor.cs" />
     <Compile Include="Services\TestRunner.cs" />
     <Compile Include="Tests\CurlTest.cs" />
     <Compile Include="Tests\FileCountTest.cs" />
