@@ -26,6 +26,81 @@ namespace Swampnet.Dash.Services
 			_expressionEvaluator = expressionEvaluator;
 		}
 
+
+		public Task ProcessTestResultAsync(Element definition, ElementState state)
+		{
+			// run all valid rules
+			foreach(var rule in definition.StateRules.Where(r => r.Expression != null && r.StateModifiers != null && r.StateModifiers.Any()))
+			{
+				var result = _expressionEvaluator.Evaluate(rule.Expression, state);
+
+				AddResult(rule, result);
+
+				state.Status = GetStatus(rule);
+			}
+
+			return Task.CompletedTask;
+		}
+
+		private Status GetStatus(Rule rule)
+		{
+			var status = Status.Ok; // default to OK
+			var history = GetRuleHistory(rule.Id).OrderByDescending(h => h.Item1);
+
+			foreach (var mod in rule.StateModifiers.OrderByDescending(m => m.ConsecutiveHits.HasValue ? m.ConsecutiveHits.Value : 0))
+			{
+				// Hit based
+				if (!mod.ConsecutiveHits.HasValue || history.Count() >= mod.ConsecutiveHits.Value)
+				{
+					var range = history.Take(mod.ConsecutiveHits.HasValue ? Math.Max(mod.ConsecutiveHits.Value, 1) : 1); // Consecutive hits of 'zero' then. What does that mean?
+					//Log.Debug(mod.ConsecutiveHits + " - " + string.Join(",", range.Select(x => x.Item2)));
+					// All true. Use this modifier
+					if (range.All(x => x.Item2))
+					{
+						status = mod.Value;
+						break;
+					}
+				}
+			}
+
+			return status;
+		}
+
+		private void AddResult(Rule rule, bool result)
+		{
+			var ruleHistory = GetRuleHistory(rule.Id);
+			ruleHistory.Add(new Tuple<DateTime, bool>(DateTime.UtcNow, result));
+
+			// trunc history
+			var maxConsecutiveHist = rule.StateModifiers.Max(m => m.ConsecutiveHits);
+			while(ruleHistory.Count > maxConsecutiveHist)
+			{
+				ruleHistory.RemoveAt(0);
+			}
+		}
+
+
+		// rule-id -> List ( timestamp, result )
+		private readonly Dictionary<long, List<Tuple<DateTime, bool>>> _results = new Dictionary<long, List<Tuple<DateTime, bool>>>();
+
+		private List<Tuple<DateTime, bool>> GetRuleHistory(long id)
+		{
+			List<Tuple<DateTime, bool>> history;
+
+			if (_results.ContainsKey(id))
+			{
+				history = _results[id];
+			}
+			else
+			{
+				history = new List<Tuple<DateTime, bool>>();
+				_results.Add(id, history);
+			}
+
+			return history;
+		}
+
+
 		/// <summary>
 		/// @TODO:
 		/// 
@@ -38,7 +113,7 @@ namespace Swampnet.Dash.Services
 		/// <param name="definition"></param>
 		/// <param name="result"></param>
 		/// <returns></returns>
-		public Task ProcessTestResultAsync(Element definition, ElementState result)
+		public Task ProcessTestResultAsync_old(Element definition, ElementState result)
 		{
 			// Save result
 			_testHistory.AddTestResult(definition, result);

@@ -11,13 +11,17 @@ namespace Swampnet.Dash.Common.Entities
     // into some kind of generic rule / expression parsing service.
     public class Rule
     {
+		private static long _id = 0;
+
         public Rule()
         {
+			Id = ++_id;
             StateModifiers = new List<StateModifier>();
         }
 
-
-        public Expression Expression { get; set; }
+		[XmlIgnore]
+		public long Id { get; private set; }
+		public Expression Expression { get; set; }
         public List<StateModifier> StateModifiers { get; set; }
     }
 
