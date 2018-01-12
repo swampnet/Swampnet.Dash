@@ -23,6 +23,7 @@ namespace Swampnet.Dash.Services
 			if(definition.Outputs != null)
 			{
 				ProcessAvg(state, definition.Outputs.Where(o => o.Type == OutputType.AVG));
+				ProcessLast(state, definition.Outputs.Where(o => o.Type == OutputType.LAST));
 			}
 
 			return Task.CompletedTask;
@@ -41,5 +42,22 @@ namespace Swampnet.Dash.Services
 				state.Output.AddOrUpdate(output.Name, result);
 			}
 		}
+
+		/// <summary>
+		/// 'Last value' stuff
+		/// </summary>
+		/// <param name="state"></param>
+		/// <param name="outputs"></param>
+		private void ProcessLast(ElementState state, IEnumerable<Output> outputs)
+		{
+			foreach (var output in outputs)
+			{
+				var source = output.Parameters.StringValue("source-property");
+				var result = _analysis.Last(state, source);
+
+				state.Output.AddOrUpdate(output.Name, result);
+			}
+		}
+
 	}
 }

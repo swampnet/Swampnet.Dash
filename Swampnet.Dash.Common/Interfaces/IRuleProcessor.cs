@@ -8,6 +8,6 @@ namespace Swampnet.Dash.Common.Interfaces
 {
     public interface IRuleProcessor
     {
-        Task ProcessTestResultAsync(Element definition, ElementState result);
+        Task ProcessAsync(Element definition, ElementState result);
     }
 }

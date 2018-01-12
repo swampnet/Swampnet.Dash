@@ -78,7 +78,7 @@ namespace Swampnet.Dash.Services
 					}
 
 					await _stateProcessor.ProcessAsync(test.Definition, result);
-					await _ruleProcessor.ProcessTestResultAsync(test.Definition, result);
+					await _ruleProcessor.ProcessAsync(test.Definition, result);
 
 					Log.Debug("Test {type} ({id}) {state}", 
 						test.GetType().Name, 

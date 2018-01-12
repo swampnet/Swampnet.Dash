@@ -20,6 +20,21 @@ namespace Swampnet.Dash
 			return properties.Where(p => p.Name.EqualsNoCase(name));
 		}
 
+		public static object Value(this IEnumerable<Property> properties, string name)
+		{
+			object v = null;
+			if (properties != null && properties.Any())
+			{
+				var p = properties.SingleOrDefault(x => x.Name.EqualsNoCase(name));
+				if (p != null && p.Value != null)
+				{
+					v = p.Value;
+				}
+			}
+
+			return v;
+		}
+
 
 		/// <summary>
 		/// Return property values of all those properties of name 'name'
@@ -51,18 +66,14 @@ namespace Swampnet.Dash
 		/// <returns></returns>
 		public static string StringValue(this IEnumerable<Property> properties, string name, string defaultValue = "")
 		{
-			string v = defaultValue;
-			if (properties != null && properties.Any())
+			var x = properties.Value(name);
+			if(x == null)
 			{
-				var p = properties.SingleOrDefault(x => x.Name.EqualsNoCase(name));
-				if (p != null && p.Value != null)
-				{
-					v = p.Value.ToString();
-				}
+				x = defaultValue;
 			}
-
-			return v;
+			return x.ToString();
 		}
+
 
 		public static TimeSpan TimeSpanValue(this IEnumerable<Property> properties, string name, TimeSpan? defaultValue = null)
 		{

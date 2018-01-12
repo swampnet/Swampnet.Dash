@@ -30,7 +30,7 @@ namespace Swampnet.Dash.Services
 		}
 
 
-		public Task ProcessTestResultAsync(Element definition, ElementState state)
+		public Task ProcessAsync(Element definition, ElementState state)
 		{
 			// run all valid rules
 			foreach(var rule in definition.StateRules.Where(r => r.Expression != null && r.StateModifiers != null && r.StateModifiers.Any()))

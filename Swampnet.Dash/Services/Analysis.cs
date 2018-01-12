@@ -9,14 +9,16 @@ using System.Threading.Tasks;
 
 namespace Swampnet.Dash.Services
 {
+	/// <summary>
+	/// Pretty sure we can move all this into StateProcessor, although I guess it does make sense for this to be it's own thing...
+	/// </summary>
 	class Analysis : IAnalysis
 	{
 		private class ElementStateAnalysis
 		{
+			public string Id { get; private set; }
 			private TimeSpan _maxHistory = TimeSpan.MaxValue;
 			private readonly List<ElementState> _values = new List<ElementState>();
-
-			public string Id { get; private set; }
 
 			public ElementStateAnalysis(string id)
 			{
@@ -80,9 +82,30 @@ namespace Swampnet.Dash.Services
 			var doubles = values.GetValues(propertyName, history);
 			var avg = doubles.Any() ? doubles.Average() : 0.0;
 
-			Log.Debug("{id} avg: {avg} / {count}", state.Id, avg, doubles.Count());
-
 			return avg;
+		}
+
+		private readonly Dictionary<string, ElementState> _lastState = new Dictionary<string, ElementState>();
+
+		/// <summary>
+		/// Get last value
+		/// </summary>
+		/// <param name="state"></param>
+		/// <param name="propertyName"></param>
+		/// <returns></returns>
+		public object Last(ElementState state, string propertyName)
+		{
+			object value = null;
+
+			if (_lastState.ContainsKey(state.Id))
+			{
+				var last = _lastState[state.Id];
+				value = last.Output.Value(propertyName);
+			}
+
+			_lastState[state.Id] = state.Copy();
+
+			return value;
 		}
 
 		private ElementStateAnalysis GetElementStateAnalysis(string id)
