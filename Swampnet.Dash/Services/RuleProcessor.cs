@@ -39,7 +39,13 @@ namespace Swampnet.Dash.Services
 
 				AddResult(rule, result);
 
-				state.Status = GetStatus(rule);
+				var status = GetStatus(rule);
+
+				// Only upgrade status
+				if(status > state.Status)
+				{
+					state.Status = status;
+				}
 			}
 
 			return Task.CompletedTask;

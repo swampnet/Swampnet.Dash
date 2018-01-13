@@ -33,13 +33,13 @@ namespace Swampnet.Dash.Argos
             {
                 CreateNewbie(argosDefinition);
             }
-            else
-            {
-                if(_rnd.NextDouble() < 0.3)
-                {
-                    CreateNewbie(argosDefinition);
-                }
-            }
+            //else
+            //{
+            //    if(_rnd.NextDouble() < 0.3)
+            //    {
+            //        CreateNewbie(argosDefinition);
+            //    }
+            //}
 
 
 			// Return a copy not our actual items...
@@ -72,19 +72,18 @@ namespace Swampnet.Dash.Argos
 
 		private void Update(ElementState item)
         {
-			// Update stage
-			var stage = item.Output.IntValue("stage");
+			//// Update stage
+			//var stage = item.Output.IntValue("stage");
 
-			if(stage == 0 || _rnd.NextDouble() < 0.2)
-			{
-				stage++;
-				item.Output.Get("stage").Value = stage.ToString();
-				item.Output.Get("updated-on").Value = DateTime.UtcNow.ToString("s");
-			}
+			//if(stage == 0 || _rnd.NextDouble() < 0.2)
+			//{
+			//	stage++;
+			//	item.Output.Get("stage").Value = stage.ToString();
+			//	item.Output.Get("updated-on").Value = DateTime.UtcNow.ToString("s");
+			//}
 
-			// Update status
 			var timeInGroup = DateTime.UtcNow - item.Output.DateTimeValue("updated-on");
-			item.Output.Get("time-in-group").Value = timeInGroup.TotalSeconds.ToString("0.0");
+			item.Output.AddOrUpdate("time-in-group", timeInGroup.TotalSeconds.ToString("0.0"));
 		}
 	}
 }

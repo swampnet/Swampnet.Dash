@@ -70,7 +70,7 @@ namespace Swampnet.Dash.Services
 
 		private string GetValue(string source, ElementState state)
 		{
-			string result = source;
+			string result = source; // default to literal value
 
 			if (!string.IsNullOrEmpty(source))
 			{
