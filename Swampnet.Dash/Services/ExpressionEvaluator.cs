@@ -12,11 +12,13 @@ namespace Swampnet.Dash.Services
     /// </summary>
     class ExpressionEvaluator : IExpressionEvaluator
 	{
-        public bool Evaluate(Expression expression, ElementState state)
+		private static readonly Regex _match = new Regex(@"{(?<name>.*)}", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+
+		public bool Evaluate(Expression expression, ElementState state)
         {
             bool result = false;
-			string lhs = GetLhs(expression.Operand, state);
-			string rhs = GetRhs(expression.Value, state);
+			string lhs = GetValue(expression.Operand, state);
+			string rhs = GetValue(expression.Value, state);
 
             switch (expression.Operator)
             {
@@ -66,47 +68,36 @@ namespace Swampnet.Dash.Services
         }
 
 
-		private string GetLhs(string operand, ElementState state)
+		private string GetValue(string source, ElementState state)
 		{
-			string lhs = "";
+			string result = source;
 
-			switch (operand)
+			if (!string.IsNullOrEmpty(source))
 			{
-				case "TimestampUtc":
-					lhs = state.TimestampUtc.ToString("s");
-					break;
+				var m = _match.Match(source);
 
-				// Not a known property - Look at state output
-				default:
-					lhs = state.Output.StringValue(operand);
-					break;
-			}
-
-			return lhs;
-		}
-
-		/// <summary>
-		/// Either a literal value, or an output.
-		/// </summary>
-		/// <param name="value"></param>
-		/// <param name="state"></param>
-		/// <returns></returns>
-		private string GetRhs(string value, ElementState state)
-		{
-			string result = value;
-			if (!string.IsNullOrEmpty(value))
-			{
-				var m = _match.Match(value);
+				// It's a {lookup}
 				if (m.Success)
 				{
-					result = GetLhs(m.Groups["name"].Value, state);
+					string lookup = m.Groups["name"].Value;
+					switch (lookup)
+					{
+						case "TimestampUtc":
+							result = state.TimestampUtc.ToString("s");
+							break;
+
+						// Not a known property - Look at state output
+						default:
+							result = state.Output.StringValue(lookup);
+							break;
+					}
 				}
 			}
+
 			return result;
 		}
 
-		private static readonly Regex _match = new Regex(@"{(?<name>.*)}", RegexOptions.IgnoreCase | RegexOptions.Compiled);
-		//private static readonly Regex _match = new Regex(@"{.*}", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+
 
 		private bool EQ(string operand, string value)
         {

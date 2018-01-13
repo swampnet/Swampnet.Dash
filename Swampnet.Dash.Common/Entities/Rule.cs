@@ -23,7 +23,8 @@ namespace Swampnet.Dash.Common.Entities
 		public long Id { get; private set; }
 		public Expression Expression { get; set; }
         public List<StateModifier> StateModifiers { get; set; }
-    }
+		public string Description { get; set; }
+	}
 
 
 
