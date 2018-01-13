@@ -52,7 +52,7 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
 		{
 			_element = element;
 
-			var variant = new Variant(element.TimestampUtc, element.Output.DoubleValue("value", 0.0));
+			var variant = new Variant(element.TimestampUtc, element.Output.DoubleValue("value", 0.0)); //@todo: Nope, not always 'value' here!
 
 			// If we're currently loading the history, ignore the update for now (but keep track of the incoming data so we can merge it later)
 			if (_loadingHistory)

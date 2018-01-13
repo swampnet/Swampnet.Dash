@@ -17,7 +17,7 @@ namespace Swampnet.Dash.Common.Entities
 			Operator = RuleOperatorType.MATCH_ALL;
 		}
 
-		public Expression(RuleOperatorType op, RuleOperandType operand, object value)
+		public Expression(RuleOperatorType op, string operand, object value)
 			: this()
 		{
 			Operator = op;
@@ -28,13 +28,13 @@ namespace Swampnet.Dash.Common.Entities
 
 
 		public Expression(RuleOperatorType op, object value)
-			: this(op, RuleOperandType.Null, value)
+			: this(op, null, value)
 		{
 		}
 
 
 		public Expression(RuleOperatorType op)
-			: this(op, RuleOperandType.Null, null)
+			: this(op, null)
 		{
 		}
 
@@ -43,8 +43,7 @@ namespace Swampnet.Dash.Common.Entities
 		public RuleOperatorType Operator { get; set; }
 
 		[XmlAttribute]
-		[JsonConverter(typeof(StringEnumConverter))]
-		public RuleOperandType Operand { get; set; }
+		public string Operand { get; set; }
 
 		[XmlAttribute]
 		public string Argument { get; set; }
@@ -69,15 +68,15 @@ namespace Swampnet.Dash.Common.Entities
 
 
 
-		public enum RuleOperandType
-		{
-			Null,
-			TestType,
-			Category,
-			Summary,
-			PropertyValue,
-			PropertyAverageValue
-		}
+		//public enum RuleOperandType
+		//{
+		//	Null,
+		//	TestType,
+		//	Category,
+		//	Summary,
+		//	PropertyValue,
+		//	PropertyAverageValue
+		//}
 
 		public enum RuleOperatorType
 		{
