@@ -46,9 +46,6 @@ namespace Swampnet.Dash.Common.Entities
 		public string Operand { get; set; }
 
 		[XmlAttribute]
-		public string Argument { get; set; }
-
-		[XmlAttribute]
 		public string Value { get; set; }
 
 		public Expression[] Children { get; set; }

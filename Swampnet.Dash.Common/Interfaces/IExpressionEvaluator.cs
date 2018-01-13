@@ -7,6 +7,6 @@ namespace Swampnet.Dash.Common.Interfaces
 {
     public interface IExpressionEvaluator
     {
-		bool Evaluate(Expression expression, ElementState evt);
+		bool Evaluate(Expression expression, ElementState state);
 	}
 }

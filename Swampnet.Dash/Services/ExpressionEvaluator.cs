@@ -12,49 +12,49 @@ namespace Swampnet.Dash.Services
     /// </summary>
     class ExpressionEvaluator : IExpressionEvaluator
 	{
-        public bool Evaluate(Expression expression, ElementState evt)
+        public bool Evaluate(Expression expression, ElementState state)
         {
             bool result = false;
-			var operand = GetOperand(expression, evt);
+			string lhs = GetLhs(expression.Operand, state);
 
             switch (expression.Operator)
             {
                 case RuleOperatorType.MATCH_ALL:
-                    result = MatchAll(expression, evt);
+                    result = MatchAll(expression, state);
                     break;
 
                 case RuleOperatorType.MATCH_ANY:
-                    result = MatchAny(expression, evt);
+                    result = MatchAny(expression, state);
                     break;
 
                 case RuleOperatorType.EQ:
-                    result = EQ(operand, expression.Value);
+                    result = EQ(lhs, expression.Value);
                     break;
 
                 case RuleOperatorType.NOT_EQ:
-                    result = !EQ(operand, expression.Value);
+                    result = !EQ(lhs, expression.Value);
                     break;
 
                 case RuleOperatorType.REGEX:
-                    result = MatchExpression(operand, expression.Value);
+                    result = MatchExpression(lhs, expression.Value);
                     break;
 
                 case RuleOperatorType.LT:
-                    result = LT(operand, expression.Value);
+                    result = LT(lhs, expression.Value);
                     break;
 
                 case RuleOperatorType.LTE:
-                    result = EQ(operand, expression.Value)
-                          || LT(operand, expression.Value);
+                    result = EQ(lhs, expression.Value)
+                          || LT(lhs, expression.Value);
                     break;
 
                 case RuleOperatorType.GT:
-                    result = GT(operand, expression.Value);
+                    result = GT(lhs, expression.Value);
                     break;
 
                 case RuleOperatorType.GTE:
-                    result = EQ(operand, expression.Value)
-                          || GT(operand, expression.Value);
+                    result = EQ(lhs, expression.Value)
+                          || GT(lhs, expression.Value);
                     break;
 
                 default:
@@ -64,22 +64,24 @@ namespace Swampnet.Dash.Services
             return result;
         }
 
+		private string GetLhs(string operand, ElementState state)
+		{
+			string lhs = "";
 
-		// operand? is that the right term for this? What we're gettign is the value we're going to be comparing against 'expression.Value'
-		// so possibly 'comparitor' or something?
-		private string GetOperand(Expression expression, ElementState evt)
-        {
-            string op = "";
+			switch (operand)
+			{
+				case "TimestampUtc":
+					lhs = state.TimestampUtc.ToString("s");
+					break;
 
-            switch (expression.Operand)
-            {
-                case "PropertyValue":
-                    op = evt.Output.StringValue(expression.Argument);
-                    break;
-            }
+				// Not a known property - Look at state output
+				default:
+					lhs = state.Output.StringValue(operand);
+					break;
+			}
 
-            return op;
-        }
+			return lhs;
+		}
 
 
         private bool EQ(string operand, string value)
