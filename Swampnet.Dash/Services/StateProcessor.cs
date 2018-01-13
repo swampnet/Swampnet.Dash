@@ -55,7 +55,10 @@ namespace Swampnet.Dash.Services
 				var source = output.Parameters.StringValue("source-property");
 				var result = _analysis.Last(state, source);
 
-				state.Output.AddOrUpdate(output.Name, result);
+				if(result != null)
+				{
+					state.Output.AddOrUpdate(output.Name, result);
+				}
 			}
 		}
 

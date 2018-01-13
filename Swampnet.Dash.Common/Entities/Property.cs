@@ -15,7 +15,7 @@ namespace Swampnet.Dash.Common.Entities
 			: this()
         {
             Name = name;
-            Value = value.ToString();
+            Value = value?.ToString();
         }
 
 		public Property(string category, string name, object value)

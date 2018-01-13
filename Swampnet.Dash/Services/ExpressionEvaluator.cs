@@ -16,6 +16,7 @@ namespace Swampnet.Dash.Services
         {
             bool result = false;
 			string lhs = GetLhs(expression.Operand, state);
+			string rhs = GetRhs(expression.Value, state);
 
             switch (expression.Operator)
             {
@@ -28,33 +29,33 @@ namespace Swampnet.Dash.Services
                     break;
 
                 case RuleOperatorType.EQ:
-                    result = EQ(lhs, expression.Value);
+                    result = EQ(lhs, rhs);
                     break;
 
                 case RuleOperatorType.NOT_EQ:
-                    result = !EQ(lhs, expression.Value);
+                    result = !EQ(lhs, rhs);
                     break;
 
                 case RuleOperatorType.REGEX:
-                    result = MatchExpression(lhs, expression.Value);
+                    result = MatchExpression(lhs, rhs);
                     break;
 
                 case RuleOperatorType.LT:
-                    result = LT(lhs, expression.Value);
+                    result = LT(lhs, rhs);
                     break;
 
                 case RuleOperatorType.LTE:
-                    result = EQ(lhs, expression.Value)
-                          || LT(lhs, expression.Value);
+                    result = EQ(lhs, rhs)
+                          || LT(lhs, rhs);
                     break;
 
                 case RuleOperatorType.GT:
-                    result = GT(lhs, expression.Value);
+                    result = GT(lhs, rhs);
                     break;
 
                 case RuleOperatorType.GTE:
-                    result = EQ(lhs, expression.Value)
-                          || GT(lhs, expression.Value);
+                    result = EQ(lhs, rhs)
+                          || GT(lhs, rhs);
                     break;
 
                 default:
@@ -63,6 +64,7 @@ namespace Swampnet.Dash.Services
 
             return result;
         }
+
 
 		private string GetLhs(string operand, ElementState state)
 		{
@@ -83,8 +85,30 @@ namespace Swampnet.Dash.Services
 			return lhs;
 		}
 
+		/// <summary>
+		/// Either a literal value, or an output.
+		/// </summary>
+		/// <param name="value"></param>
+		/// <param name="state"></param>
+		/// <returns></returns>
+		private string GetRhs(string value, ElementState state)
+		{
+			string result = value;
+			if (!string.IsNullOrEmpty(value))
+			{
+				var m = _match.Match(value);
+				if (m.Success)
+				{
+					result = GetLhs(m.Groups["name"].Value, state);
+				}
+			}
+			return result;
+		}
 
-        private bool EQ(string operand, string value)
+		private static readonly Regex _match = new Regex(@"{(?<name>.*)}", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+		//private static readonly Regex _match = new Regex(@"{.*}", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+
+		private bool EQ(string operand, string value)
         {
             return operand.EqualsNoCase(value);
         }

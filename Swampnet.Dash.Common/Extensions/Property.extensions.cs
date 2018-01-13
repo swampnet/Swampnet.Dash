@@ -119,7 +119,7 @@ namespace Swampnet.Dash
 		{
 			if (properties.Exists(name))
 			{
-				properties.Get(name).Value = value.ToString();
+				properties.Get(name).Value = value?.ToString();
 			}
 			else
 			{
