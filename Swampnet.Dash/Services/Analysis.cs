@@ -75,7 +75,7 @@ namespace Swampnet.Dash.Services
 		/// </summary>
 		public double Avg(ElementState state, string propertyName, TimeSpan history, bool isRolling)
 		{
-			var values = GetElementStateAnalysis(state.Id); // think this should be ElementId rather than id...
+			var values = GetElementStateAnalysis(state.Id);
 
 			values.Add(state);
 
