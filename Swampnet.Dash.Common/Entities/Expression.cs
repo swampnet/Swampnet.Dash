@@ -21,8 +21,8 @@ namespace Swampnet.Dash.Common.Entities
 			: this()
 		{
 			Operator = op;
-			Operand = operand;
-			Value = value?.ToString();
+			LHS = operand;
+			RHS = value?.ToString();
 		}
 
 
@@ -43,10 +43,10 @@ namespace Swampnet.Dash.Common.Entities
 		public RuleOperatorType Operator { get; set; }
 
 		[XmlAttribute]
-		public string Operand { get; set; }
+		public string LHS { get; set; }
 
 		[XmlAttribute]
-		public string Value { get; set; }
+		public string RHS { get; set; }
 
 		public Expression[] Children { get; set; }
 
@@ -60,20 +60,9 @@ namespace Swampnet.Dash.Common.Entities
 		{
 			return IsContainer
 				? $"{Operator} ({Children.Length} children)"
-				: $"{Operand} {Operator} '{Value}'";
+				: $"{LHS} {Operator} {RHS}";
 		}
 
-
-
-		//public enum RuleOperandType
-		//{
-		//	Null,
-		//	TestType,
-		//	Category,
-		//	Summary,
-		//	PropertyValue,
-		//	PropertyAverageValue
-		//}
 
 		public enum RuleOperatorType
 		{

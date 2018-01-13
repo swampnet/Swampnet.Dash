@@ -182,9 +182,9 @@ namespace UnitTests
                                 new Expression()
                                 {
                                     IsActive = true,
-                                    Operand = "PropertyValue",
+                                    LHS = "PropertyValue",
                                     Operator = Expression.RuleOperatorType.GT,
-                                    Value = "100.0"
+                                    RHS = "100.0"
                                 }
                             }
                         },

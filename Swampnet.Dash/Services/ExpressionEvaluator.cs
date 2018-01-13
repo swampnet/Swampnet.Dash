@@ -17,8 +17,8 @@ namespace Swampnet.Dash.Services
 		public bool Evaluate(Expression expression, ElementState state)
         {
             bool result = false;
-			string lhs = GetValue(expression.Operand, state);
-			string rhs = GetValue(expression.Value, state);
+			string lhs = GetValue(expression.LHS, state);
+			string rhs = GetValue(expression.RHS, state);
 
             switch (expression.Operator)
             {
