@@ -9,8 +9,9 @@ namespace Swampnet.Dash.Common.Interfaces
 	/// <summary>
 	/// Post processing for a State
 	/// </summary>
-    public interface IStateProcessor
-    {
+	public interface IStateProcessor
+	{
 		Task ProcessAsync(Element definition, ElementState state);
-    }
+		Task ProcessAsync(Element definition, IEnumerable<ElementState> states);
+	}
 }

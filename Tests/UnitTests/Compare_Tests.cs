@@ -38,7 +38,7 @@ namespace UnitTests
 				}
 			};
 
-			Assert.IsTrue(Compare.DashboardItems(lhs, rhs));
+			Assert.IsTrue(Compare.IsEqual(lhs, rhs));
 		}
 
 
@@ -72,7 +72,7 @@ namespace UnitTests
 				}
 			};
 
-            Assert.IsTrue(Compare.DashboardItems(lhs, rhs));
+            Assert.IsTrue(Compare.IsEqual(lhs, rhs));
         }
 
 
@@ -106,7 +106,7 @@ namespace UnitTests
 				}
 			};
 
-            Assert.IsFalse(Compare.DashboardItems(lhs, rhs));
+            Assert.IsFalse(Compare.IsEqual(lhs, rhs));
         }
 
 

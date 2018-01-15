@@ -17,7 +17,7 @@ namespace Swampnet.Dash
         {
             builder.RegisterType<Runtime>().As<IRuntime>();
 			builder.RegisterAssemblyTypes(typeof(DashStartup).Assembly).AssignableTo<ITest>();
-			builder.RegisterAssemblyTypes(typeof(DashStartup).Assembly).As<IArgos>().SingleInstance();
+			builder.RegisterAssemblyTypes(typeof(DashStartup).Assembly).AssignableTo<IArgos>();
             builder.RegisterType<TestRunner>().As<ITestRunner>().SingleInstance();
 			builder.RegisterType<ArgosRunner>().As<IArgosRunner>().SingleInstance();
             builder.RegisterType<RuleProcessor>().As<IRuleProcessor>().SingleInstance();

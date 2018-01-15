@@ -17,6 +17,14 @@ namespace Swampnet.Dash.Services
 			_analysis = analysis;
 		}
 
+		public async Task ProcessAsync(Element definition, IEnumerable<ElementState> states)
+		{
+			foreach(var state in states)
+			{
+				await ProcessAsync(definition, state);
+			}
+		}
+
 
 		public Task ProcessAsync(Element definition, ElementState state)
 		{

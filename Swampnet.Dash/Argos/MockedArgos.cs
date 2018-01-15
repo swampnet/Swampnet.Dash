@@ -14,36 +14,53 @@ namespace Swampnet.Dash.Argos
         private readonly List<ElementState> _items = new List<ElementState>();
         private int _id = 0;
 		private Random _rnd = new Random();
+		private Element _definition;
+		private DateTime _lastRunUtc = DateTime.MinValue;
 
-        public Task<ArgosResult> RunAsync(Element argosDefinition)
+		public string Id => _definition == null ? "" : _definition.Id;
+		public bool IsDue => _definition != null && ((DateTime.UtcNow - _lastRunUtc) > _definition.Heartbeat);
+		public IEnumerable<ElementState> State => _items;
+		public Element Definition => _definition;
+
+		public void Configure(Element definition)
+		{
+			_definition = definition;
+		}
+
+		public Task<ArgosResult> RunAsync()
         {
-            var result = new ArgosResult();
-            result.ArgosId = argosDefinition.Id;
-
-            // Clean up finished items
-            _items.RemoveAll(x => x.Output.IntValue("stage") == 5);
-
-			foreach (var item in _items)
+			try
 			{
-				Update(item);
-			}
+				// Clean up finished items
+				_items.RemoveAll(x => x.Output.IntValue("stage") == 5);
 
-			// Generate new items
-			if (!_items.Any())
-            {
-                CreateNewbie(argosDefinition);
-            }
-			else
-			{
-				if (_rnd.NextDouble() < 0.3)
+				// Update all items
+				foreach (var item in State)
 				{
-					CreateNewbie(argosDefinition);
+					Update(item);
+				}
+
+				// Generate new items
+				if (!_items.Any() /*|| _rnd.NextDouble() < 0.3*/)
+				{
+					CreateNewbie(_definition);
 				}
 			}
+			catch (Exception ex)
+			{
 
+			}
+			finally
+			{
+				_lastRunUtc = DateTime.UtcNow;
+			}
+
+            var result = new ArgosResult();
+			result.ArgosId = Id;
 
 			// Return a copy not our actual items...
-			result.Items = _items.Select(i => i.Copy()).ToList();
+			//result.Items = State.Select(i => i.Copy()).ToList();
+			result.Items = State.ToList();
 
 			return Task.FromResult(result);
         }
@@ -52,8 +69,8 @@ namespace Swampnet.Dash.Argos
         private void CreateNewbie(Element argosDefinition)
         {
             var item = new ElementState(argosDefinition.Id, argosDefinition.Parameters.StringValue("pre") +_id);
-            item.Output.Add(new Property("updated-on", DateTime.Now.ToString("s")));
-			item.Output.Add(new Property("time-in-group", 0));
+            item.Output.Add(new Property("private", "updated-on", DateTime.Now.ToString("s")));
+			item.Output.Add(new Property("private", "time-in-group", 0));
 			item.Output.Add(new Property("stage", "0"));
             _items.Add(item);
 			_id++;
@@ -71,19 +88,25 @@ namespace Swampnet.Dash.Argos
 		//};
 
 		private void Update(ElementState item)
-        {
+		{
 			// Update stage
-			//var stage = item.Output.IntValue("stage");
-
-			//if (stage == 0 || _rnd.NextDouble() < 0.2)
-			//{
-			//	stage++;
-			//	item.Output.Get("stage").Value = stage.ToString();
-			//	item.Output.Get("updated-on").Value = DateTime.UtcNow.ToString("s");
-			//}
+			//Move(item);
 
 			var timeInGroup = DateTime.UtcNow - item.Output.DateTimeValue("updated-on");
 			item.Output.AddOrUpdate("time-in-group", timeInGroup.TotalSeconds.ToString("0.0"));
+		}
+
+
+		private void Move(ElementState item)
+		{
+			var stage = item.Output.IntValue("stage");
+
+			if (stage == 0 || _rnd.NextDouble() < 0.2)
+			{
+				stage++;
+				item.Output.Get("stage").Value = stage.ToString();
+				item.Output.Get("updated-on").Value = DateTime.UtcNow.ToString("s");
+			}
 		}
 	}
 }

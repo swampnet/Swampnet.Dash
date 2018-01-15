@@ -18,7 +18,24 @@ namespace Swampnet.Dash.Common.Entities
 
         public override string ToString()
         {
-            return $"[{ArgosId}] " + string.Join(", ", Items.Select(i => $"{i.Id}: {i.Status}"));
+			var summary = new StringBuilder($"[{ArgosId}] ");
+			foreach(var item in Items)
+			{
+				summary.Append($"[id:{item.Id} s:{item.Status} ");
+				summary.Append(string.Join(", ", item.Output.OrderBy(o => o.Name).Select(o => $"{o.Name}={o.Value}")));
+				summary.Append("] ");
+			}
+			return summary.ToString().Trim();
         }
+
+		public ArgosResult Copy()
+		{
+			return new ArgosResult()
+			{
+				ArgosId = this.ArgosId,
+				TimestampUtc = this.TimestampUtc,
+				Items = this.Items.Select(s => s.Copy()).ToArray()
+			};
+		}
     }
 }
