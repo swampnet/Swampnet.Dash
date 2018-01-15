@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Swampnet.Dash.Common.Entities;
 using Serilog;
 using Swampnet.Dash.Common;
+using Autofac;
 
 namespace Swampnet.Dash.Services
 {
@@ -17,93 +18,145 @@ namespace Swampnet.Dash.Services
         private readonly Dictionary<string, ArgosResult> _state = new Dictionary<string, ArgosResult>();
 		private readonly IRuleProcessor _ruleProcessor;
 		private readonly IStateProcessor _stateProcessor;
+		private readonly ILifetimeScope _scope;
 
-		public ArgosRunner(IArgosRepository argosRepo, IEnumerable<IArgos> argos, IRuleProcessor ruleProcessor, IStateProcessor stateProcessor)
+		public ArgosRunner(IArgosRepository argosRepo, IEnumerable<IArgos> argos, IRuleProcessor ruleProcessor, IStateProcessor stateProcessor, ILifetimeScope scope)
         {
             _argos = argos;
             _argosRepository = argosRepo;
 			_ruleProcessor = ruleProcessor;
 			_stateProcessor = stateProcessor;
+			_scope = scope;
 		}
 
-
+		/// <summary>
+		/// Return results of Argos instances have been updated
+		/// </summary>
+		/// <returns></returns>
         public async Task<IEnumerable<ArgosResult>> RunAsync()
         {
-            var items = new List<ArgosResult>();
+			var items = new List<ArgosResult>();
 
-            // Get any argos definitions who's heartbeat is due
-            foreach (var definition in GetDue())
-            {
+			foreach (var instance in Instances.Where(a => a.IsDue))
+			{
 				try
 				{
-                    ArgosResult lastRun;
-                    if (_state.ContainsKey(definition.Id))
-                    {
-                        lastRun = _state[definition.Id];
-                    }
-                    else
-                    {
-                        lastRun = new ArgosResult();
-                        _state.Add(definition.Id, lastRun);
-                    }
+					//Log.Debug("Running {type} - {name}", instance.GetType().Name, instance.Id);
 
-                    var argos = _argos.Single(t => t.GetType().Name == definition.Type);
+					// Update instance
+					var result = await instance.RunAsync();
 
-					//Validate(testdefinition, test.Meta);
-					Log.Debug("Running {type} - {name}", argos.GetType().Name, definition.Id);
-
-					var rs = await argos.RunAsync(definition);
-                    
-					foreach(var item in rs.Items)
+					foreach (var state in instance.State)
 					{
-						await _stateProcessor.ProcessAsync(definition, item);
-						await _ruleProcessor.ProcessAsync(definition, item);
+						await _stateProcessor.ProcessAsync(instance.Definition, state);
 					}
 
-                    if (!Compare.ArgosResults(rs, lastRun))
-                    {
-                        //Log.Information("{argos} '{id}' Has changed: " + rs,
-                        //    argos.GetType().Name,
-                        //    definition.Id);
+					await _ruleProcessor.ProcessAsync(instance.Definition, instance.State);
 
-                        items.Add(rs);
-                    }
+					// #hack: dump result
+					Log.Debug(result.ToString());
 
-                    _state[definition.Id] = rs;
-                }
-                catch (Exception ex)
-                {
-                    Log.Error(ex, ex.Message);
-                }
-            }
+					// #hack: always return, even if nothing has changed
+					items.Add(result);
+					//if (!Compare.ArgosResultsAreEqual(result, lastRun))
+					//{
+					//	items.Add(result);
+					//}
 
-            return items;
+
+				}
+				catch (Exception ex)
+				{
+					Log.Error(ex, ex.Message);
+				}
+			}
+
+			#region original
+			//// Get any argos definitions who's heartbeat is due
+			//foreach (var definition in GetDue())
+			//         {
+			//	try
+			//	{
+			//                 ArgosResult lastRun;
+			//                 if (_state.ContainsKey(definition.Id))
+			//                 {
+			//                     lastRun = _state[definition.Id];
+			//                 }
+			//                 else
+			//                 {
+			//                     lastRun = new ArgosResult();
+			//                     _state.Add(definition.Id, lastRun);
+			//                 }
+
+			//                 var argos = _argos.Single(t => t.GetType().Name == definition.Type);
+
+			//		//Validate(testdefinition, test.Meta);
+			//		Log.Debug("Running {type} - {name}", argos.GetType().Name, definition.Id);
+
+			//		var rs = await argos.RunAsync(definition);
+
+			//		foreach(var item in rs.Items)
+			//		{
+			//			await _stateProcessor.ProcessAsync(definition, item);
+			//			await _ruleProcessor.ProcessAsync(definition, item);
+			//		}
+
+			//                 if (!Compare.ArgosResultsAreEqual(rs, lastRun))
+			//                 {
+			//                     //Log.Information("{argos} '{id}' Has changed: " + rs,
+			//                     //    argos.GetType().Name,
+			//                     //    definition.Id);
+
+			//                     items.Add(rs);
+			//                 }
+
+			//                 _state[definition.Id] = rs;
+			//             }
+			//             catch (Exception ex)
+			//             {
+			//                 Log.Error(ex, ex.Message);
+			//             }
+			//         }
+			#endregion
+
+			return items;
         }
 
+		private IEnumerable<IArgos> _instances;
 
-        public IEnumerable<Element> GetDue()
-        {
-            var definitions = new List<Element>();
-
-            foreach (var definition in _argosRepository.GetDefinitions())
-            {
-                // Never been run
-                if (!_state.ContainsKey(definition.Id))
-                {
-                    definitions.Add(definition);
-                }
-                else
-                {
-                    var lastResult = _state[definition.Id];
-                    if (lastResult.TimestampUtc.Add(definition.Heartbeat) < DateTime.UtcNow)
-                    {
-                        definitions.Add(definition);
-                    }
-                }
-            }
-
-            return definitions;
-        }
+		public IEnumerable<IArgos> Instances
+		{
+			get
+			{
+				if(_instances == null)
+				{
+					var instances = new List<IArgos>();
+					foreach(var definition in _argosRepository.GetDefinitions())
+					{
+						try
+						{
+							// @todo: Maybe pull this out into a TestFactory service, then you can keep your smelly service locator bullshit out of here!
+							var x = Type.GetType(definition.Type);
+							if (x != null)
+							{
+								var instance = _scope.Resolve(x) as IArgos;
+								if (instance != null)
+								{
+									instance.Configure(definition);
+									instances.Add(instance);
+								}
+							}
+						}
+						catch (Exception ex)
+						{
+							Log.Error(ex, "Failed to create argos '{argos}'", definition.Id);
+						}
+					}
+					_instances = instances;
+				}
+				return _instances;
+			}
+		}
 
 
         // @TODO: Does this really belong in here?

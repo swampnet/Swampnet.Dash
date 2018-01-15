@@ -18,7 +18,7 @@ namespace Swampnet.Dash.Common.Entities
 
         public override string ToString()
         {
-            return $"[{ArgosId}] " + string.Join(", ", Items.Select(i => $"{i.Id}: {i.Status}"));
+            return $"[{ArgosId}] --> " + string.Join(" ", Items.Select(i => $"[{i.Id}: ({i.Status})]"));
         }
     }
 }

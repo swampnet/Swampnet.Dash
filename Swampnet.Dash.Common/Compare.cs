@@ -22,7 +22,7 @@ namespace Swampnet.Dash.Common
         /// <param name="lhs"></param>
         /// <param name="rhs"></param>
         /// <returns>true if lhs and rhs are equal</returns>
-        public static bool ArgosResults(ArgosResult lhs, ArgosResult rhs)
+        public static bool ArgosResultsAreEqual(ArgosResult lhs, ArgosResult rhs)
         {
             return lhs.ArgosId == rhs.ArgosId
                 && IsEqual(lhs.Items, rhs.Items);

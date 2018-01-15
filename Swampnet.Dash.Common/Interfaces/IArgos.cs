@@ -8,7 +8,12 @@ namespace Swampnet.Dash.Common.Interfaces
 {
     public interface IArgos
     {
-        Task<ArgosResult> RunAsync(Element argosDefinition);
-        //TestMeta Meta { get; }
-    }
+		string Id { get; }
+		Task<ArgosResult> RunAsync();
+		void Configure(Element definition);
+		bool IsDue { get; }
+		IEnumerable<ElementState> State { get; }
+		Element Definition { get; }
+		//TestMeta Meta { get; }
+	}
 }

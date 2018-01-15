@@ -42,11 +42,11 @@ namespace Swampnet.Dash.Services
 							var x = Type.GetType(definition.Type);
 							if (x != null)
 							{
-								var test = _scope.Resolve(x) as ITest;
-								if (test != null)
+								var instance = _scope.Resolve(x) as ITest;
+								if (instance != null)
 								{
-									test.Configure(definition);
-									tests.Add(test);
+									instance.Configure(definition);
+									tests.Add(instance);
 								}
 							}
 						}

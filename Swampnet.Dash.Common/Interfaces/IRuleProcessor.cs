@@ -9,5 +9,6 @@ namespace Swampnet.Dash.Common.Interfaces
     public interface IRuleProcessor
     {
         Task ProcessAsync(Element definition, ElementState result);
-    }
+		Task ProcessAsync(Element definition, IEnumerable<ElementState> states);
+	}
 }
