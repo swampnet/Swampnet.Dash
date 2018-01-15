@@ -39,6 +39,8 @@ namespace Swampnet.Dash.Services
 		{
 			foreach (var state in states)
 			{
+				state.Status = Status.Unknown;
+
 				foreach (var rule in definition.StateRules.Where(r => r.Expression != null && r.StateModifiers != null && r.StateModifiers.Any()))
 				{
 					var result = _expressionEvaluator.Evaluate(rule.Expression, state);
