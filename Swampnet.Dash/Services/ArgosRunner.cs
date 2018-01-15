@@ -43,27 +43,28 @@ namespace Swampnet.Dash.Services
 				{
 					//Log.Debug("Running {type} - {name}", instance.GetType().Name, instance.Id);
 
-					// Update instance
+					// Run instance
 					var result = await instance.RunAsync();
 
-					foreach (var state in instance.State)
-					{
-						await _stateProcessor.ProcessAsync(instance.Definition, state);
-					}
-
+					await _stateProcessor.ProcessAsync(instance.Definition, instance.State);
 					await _ruleProcessor.ProcessAsync(instance.Definition, instance.State);
 
-					// #hack: dump result
-					Log.Debug(result.ToString());
+					// Check if state has changed since last time
+					ArgosResult previous = null;
+					if (_state.ContainsKey(instance.Id))
+					{
+						previous = _state[instance.Id];
+					}
 
-					// #hack: always return, even if nothing has changed
-					items.Add(result);
-					//if (!Compare.ArgosResultsAreEqual(result, lastRun))
-					//{
-					//	items.Add(result);
-					//}
+					if (!Compare.IsEqual(result, previous))
+					{
+						items.Add(result);
 
+						// #hack: dump result
+						Log.Debug(result.ToString());
+					}
 
+					_state[instance.Id] = result.Copy();
 				}
 				catch (Exception ex)
 				{

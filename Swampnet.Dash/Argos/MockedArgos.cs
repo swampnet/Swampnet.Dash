@@ -41,7 +41,7 @@ namespace Swampnet.Dash.Argos
 				}
 
 				// Generate new items
-				if (!_items.Any() || _rnd.NextDouble() < 0.3)
+				if (!_items.Any() /*|| _rnd.NextDouble() < 0.3*/)
 				{
 					CreateNewbie(_definition);
 				}
@@ -69,8 +69,8 @@ namespace Swampnet.Dash.Argos
         private void CreateNewbie(Element argosDefinition)
         {
             var item = new ElementState(argosDefinition.Id, argosDefinition.Parameters.StringValue("pre") +_id);
-            item.Output.Add(new Property("updated-on", DateTime.Now.ToString("s")));
-			item.Output.Add(new Property("time-in-group", 0));
+            item.Output.Add(new Property("private", "updated-on", DateTime.Now.ToString("s")));
+			item.Output.Add(new Property("private", "time-in-group", 0));
 			item.Output.Add(new Property("stage", "0"));
             _items.Add(item);
 			_id++;
@@ -90,7 +90,7 @@ namespace Swampnet.Dash.Argos
 		private void Update(ElementState item)
 		{
 			// Update stage
-			Move(item);
+			//Move(item);
 
 			var timeInGroup = DateTime.UtcNow - item.Output.DateTimeValue("updated-on");
 			item.Output.AddOrUpdate("time-in-group", timeInGroup.TotalSeconds.ToString("0.0"));

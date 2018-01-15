@@ -22,8 +22,13 @@ namespace Swampnet.Dash.Common
         /// <param name="lhs"></param>
         /// <param name="rhs"></param>
         /// <returns>true if lhs and rhs are equal</returns>
-        public static bool ArgosResultsAreEqual(ArgosResult lhs, ArgosResult rhs)
+        public static bool IsEqual(ArgosResult lhs, ArgosResult rhs)
         {
+			if(lhs == null || rhs == null)
+			{
+				return false;
+			}
+
             return lhs.ArgosId == rhs.ArgosId
                 && IsEqual(lhs.Items, rhs.Items);
         }
@@ -45,7 +50,7 @@ namespace Swampnet.Dash.Common
             var y = rhs.OrderBy(d => d.Id).ToArray();
             for (int i = 0; i < x.Length; i++)
             {
-                if (!Compare.DashboardItems(x[i], y[i]))
+                if (!Compare.IsEqual(x[i], y[i]))
                 {
                     return false;
                 }
@@ -55,19 +60,24 @@ namespace Swampnet.Dash.Common
         }
 
 
-        public static bool DashboardItems(ElementState lhs, ElementState rhs)
+        public static bool IsEqual(ElementState lhs, ElementState rhs)
         {
             if (lhs.Id != rhs.Id || lhs.Status != rhs.Status)
             {
                 return false;
             }
 
-            if(!IsEqual(lhs.Output, rhs.Output))
-            {
-                return false;
-            }
+			if(lhs.Status != rhs.Status)
+			{
+				return false;
+			}
 
-            return true;
+			if (!IsEqual(lhs.Output, rhs.Output))
+			{
+				return false;
+			}
+
+			return true;
         }
 
 
@@ -78,7 +88,10 @@ namespace Swampnet.Dash.Common
                 return false;
             }
 
-            if (lhs.Count() != rhs.Count())
+			lhs = lhs.Where(p => p.Category != "private");
+			rhs = rhs.Where(p => p.Category != "private");
+
+			if (lhs.Count() != rhs.Count())
             {
                 return false;
             }

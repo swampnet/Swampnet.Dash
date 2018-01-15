@@ -37,10 +37,9 @@ namespace Swampnet.Dash.Services
 		/// <returns></returns>
 		public Task ProcessAsync(Element definition, IEnumerable<ElementState> states)
 		{
-			// run all valid rules
-			foreach (var rule in definition.StateRules.Where(r => r.Expression != null && r.StateModifiers != null && r.StateModifiers.Any()))
+			foreach (var state in states)
 			{
-				foreach(var state in states)
+				foreach (var rule in definition.StateRules.Where(r => r.Expression != null && r.StateModifiers != null && r.StateModifiers.Any()))
 				{
 					var result = _expressionEvaluator.Evaluate(rule.Expression, state);
 
@@ -48,10 +47,10 @@ namespace Swampnet.Dash.Services
 
 					state.Status = GetStatus(rule, state.Id, state.Status);
 				}
-
-				// Remove any history we don't need any more
-				Cleanup(states);
 			}
+
+			// Remove any history we don't need any more
+			Cleanup(states);
 
 			return Task.CompletedTask;
 		}
@@ -84,7 +83,7 @@ namespace Swampnet.Dash.Services
 				if (!mod.ConsecutiveHits.HasValue || history.Count() >= mod.ConsecutiveHits.Value)
 				{
 					var range = history.Take(mod.ConsecutiveHits.HasValue ? Math.Max(mod.ConsecutiveHits.Value, 1) : 1); // Consecutive hits of 'zero' then. What does that mean?
-					//Log.Debug($"Rule: [{rule.Id}] {mod.ConsecutiveHits} - " + string.Join(",", range.Select(x => x.Item2)));
+
 					// All true. Use this modifier
 					if (range.All(x => x.Item2))
 					{
@@ -94,7 +93,6 @@ namespace Swampnet.Dash.Services
 				}
 			}
 
-			// Only *upgrade* status
 			return status > currentStatus
 				? status
 				: currentStatus;
