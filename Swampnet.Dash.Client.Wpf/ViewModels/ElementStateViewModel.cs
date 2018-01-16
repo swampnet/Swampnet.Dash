@@ -51,17 +51,19 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
 		public void Update(ElementState element)
 		{
 			_element = element;
-			
-			var variant = new Variant(element.TimestampUtc, element.Output.DoubleValue(_itemDefinition.Plot.Output, 0.0));
-
-			// If we're currently loading the history, ignore the update for now (but keep track of the incoming data so we can merge it later)
-			if (_loadingHistory)
+			if(_itemDefinition.Plot != null)
 			{
-				_buffer.Add(variant);
-				return;
+				var variant = new Variant(element.TimestampUtc, element.Output.DoubleValue(_itemDefinition.Plot.Output, 0.0));
+
+				// If we're currently loading the history, ignore the update for now (but keep track of the incoming data so we can merge it later)
+				if (_loadingHistory)
+				{
+					_buffer.Add(variant);
+					return;
+				}
+
+				AddVariant(variant);
 			}
-			
-			AddVariant(variant);
 
 			RaisePropertyChanged("");
 		}

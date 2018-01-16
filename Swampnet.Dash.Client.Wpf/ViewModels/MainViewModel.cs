@@ -19,7 +19,7 @@ namespace Swampnet.Dash.Client.Wpf
 		public MainViewModel()
 		{
 			_dashboards.Add(new DashboardViewModel("dash-01"));
-			//_dashboards.Add(new DashboardViewModel("argos-test"));
+			_dashboards.Add(new DashboardViewModel("argos-test"));
 		}
 
 		public IEnumerable<DashboardViewModel> Dashboards => _dashboards;
