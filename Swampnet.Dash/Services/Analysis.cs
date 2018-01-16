@@ -108,6 +108,40 @@ namespace Swampnet.Dash.Services
 			return value;
 		}
 
+
+
+		public double StdDev(ElementState state, string propertyName, TimeSpan history, bool isSample)
+		{
+			var values = GetElementStateAnalysis(state.Id);
+
+			values.Add(state);
+
+			var doubles = values.GetValues(propertyName, history);
+
+			double mean = 0.0;
+			double sum = 0.0;
+			double stdDev = 0.0;
+			int n = 0;
+
+			foreach (double val in doubles)
+			{
+				n++;
+				double delta = val - mean;
+				mean += delta / n;
+				sum += delta * (val - mean);
+			}
+
+			if (1 < n)
+			{
+				stdDev = isSample
+					? Math.Sqrt(sum / (n - 1))
+					: Math.Sqrt(sum / (n));
+			}
+
+			return stdDev;
+		}
+
+
 		private ElementStateAnalysis GetElementStateAnalysis(string id)
 		{
 			ElementStateAnalysis values = null;

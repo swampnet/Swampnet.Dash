@@ -32,11 +32,24 @@ namespace Swampnet.Dash.Services
 			{
 				ProcessAvg(state, definition.Outputs.Where(o => o.Type == OutputType.AVG));
 				ProcessLast(state, definition.Outputs.Where(o => o.Type == OutputType.LAST));
+				ProcessStdDev(state, definition.Outputs.Where(o => o.Type == OutputType.STD_DEV));
 			}
 
 			return Task.CompletedTask;
 		}
 
+		private void ProcessStdDev(ElementState state, IEnumerable<Output> outputs)
+		{
+			foreach (var output in outputs)
+			{
+				var source = output.Parameters.StringValue("source-property");
+				var ts = output.Parameters.TimeSpanValue("timespan");
+
+				var result = _analysis.StdDev(state, source, ts, true);
+
+				state.Output.AddOrUpdate(output.Name, result);
+			}
+		}
 
 		private void ProcessAvg(ElementState state, IEnumerable<Output> outputs)
 		{

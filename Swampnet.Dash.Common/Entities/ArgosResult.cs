@@ -5,6 +5,7 @@ using System.Text;
 
 namespace Swampnet.Dash.Common.Entities
 {
+	// This is just a collection of States
     public class ArgosResult
     {
         public string ArgosId { get; set; }

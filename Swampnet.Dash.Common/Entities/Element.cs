@@ -76,7 +76,8 @@ namespace Swampnet.Dash.Common.Entities
 	public enum OutputType
 	{
 		AVG,
-		LAST
+		LAST,
+		STD_DEV
 	}
 
 	public class Output

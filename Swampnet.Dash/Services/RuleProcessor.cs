@@ -162,17 +162,8 @@ namespace Swampnet.Dash.Services
 
 
 		/// <summary>
-		/// Remove any history if there are no instances of 'state'
+		/// Remove any history if there are no instances of 'state' for this definition-id
 		/// </summary>
-		/// <remarks>
-		/// @todo: Problem here, 'states' isn't a complete list of all the states currently active (it only contains
-		///		   state for this particular a-type - it doesn't have any info on other a-types or tests that might
-		///		   be running) so what we end up doing is clearing out all the other state historys!
-		///		   
-		///			We probably need to restrict to current elementId or something...
-		/// </remarks>
-		/// <param name="rule"></param>
-		/// <param name="states"></param>
 		private void Cleanup(string definitionId, IEnumerable<ElementState> states)
 		{
 			var stateIds = states.Select(x => x.Id);

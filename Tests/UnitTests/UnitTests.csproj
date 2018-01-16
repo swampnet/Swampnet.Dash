@@ -70,6 +70,7 @@
     <Compile Include="RuleProcessor_Tests.cs" />
     <Compile Include="DashboardGroupViewModel_Tests.cs" />
     <Compile Include="Property_Tests.cs" />
+    <Compile Include="Analysis_Tests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
