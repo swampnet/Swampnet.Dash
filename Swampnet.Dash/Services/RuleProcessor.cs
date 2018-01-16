@@ -20,8 +20,12 @@ namespace Swampnet.Dash.Services
 	/// </remarks>
 	class RuleProcessor : IRuleProcessor
     {
-		// rule-id -> state-id -> history
-		private readonly Dictionary<long, Dictionary<string, List<Tuple<DateTime, bool>>>> _results = new Dictionary<long, Dictionary<string, List<Tuple<DateTime, bool>>>>();
+		// rule-id -> definition-id -> state-id -> history
+		private readonly Dictionary<long,   // rule-id
+			Dictionary<string,              // definition-id
+				Dictionary<string,          // state-id
+					List<Tuple<DateTime, bool>>>>> _results = new Dictionary<long, Dictionary<string, Dictionary<string, List<Tuple<DateTime, bool>>>>>();
+
 		private readonly IExpressionEvaluator _expressionEvaluator;
 
 		public RuleProcessor(IExpressionEvaluator expressionEvaluator)
@@ -45,14 +49,14 @@ namespace Swampnet.Dash.Services
 				{
 					var result = _expressionEvaluator.Evaluate(rule.Expression, state);
 
-					AddResult(rule, state.Id, result);
+					AddResult(rule, definition.Id, state.Id, result);
 
-					state.Status = GetStatus(rule, state.Id, state.Status);
+					state.Status = GetStatus(rule, definition.Id, state.Id, state.Status);
 				}
 			}
 
 			// Remove any history we don't need any more
-			Cleanup(states);
+			Cleanup(definition.Id, states);
 
 			return Task.CompletedTask;
 		}
@@ -65,19 +69,19 @@ namespace Swampnet.Dash.Services
 			{
 				var result = _expressionEvaluator.Evaluate(rule.Expression, state);
 
-				AddResult(rule, state.Id, result);
+				AddResult(rule, definition.Id, state.Id, result);
 
-				state.Status = GetStatus(rule, state.Id, state.Status);
+				state.Status = GetStatus(rule, definition.Id, state.Id, state.Status);
 			}
 
 			return Task.CompletedTask;
 		}
 
 
-		private Status GetStatus(Rule rule, string stateId, Status currentStatus)
+		private Status GetStatus(Rule rule, string definitionId, string stateId, Status currentStatus)
 		{
 			var status = Status.Ok; // default to OK
-			var history = GetRuleHistory(rule.Id, stateId).OrderByDescending(h => h.Item1);
+			var history = GetRuleHistory(rule.Id, definitionId, stateId).OrderByDescending(h => h.Item1);
 
 			foreach (var mod in rule.StateModifiers.OrderByDescending(m => m.ConsecutiveHits.HasValue ? m.ConsecutiveHits.Value : 0))
 			{
@@ -101,9 +105,9 @@ namespace Swampnet.Dash.Services
 		}
 
 
-		private void AddResult(Rule rule, string stateId, bool result)
+		private void AddResult(Rule rule, string definitionId, string stateId, bool result)
 		{
-			var ruleHistory = GetRuleHistory(rule.Id, stateId);
+			var ruleHistory = GetRuleHistory(rule.Id, definitionId, stateId);
 			ruleHistory.Add(new Tuple<DateTime, bool>(DateTime.UtcNow, result));
 
 			// trunc history
@@ -115,30 +119,42 @@ namespace Swampnet.Dash.Services
 		}
 
 
-		private List<Tuple<DateTime, bool>> GetRuleHistory(long id, string stateId)
+		private List<Tuple<DateTime, bool>> GetRuleHistory(long id, string definitionId, string stateId)
 		{
-			Dictionary<string, List<Tuple<DateTime, bool>>> lookup;
+			Dictionary<string, Dictionary<string, List<Tuple<DateTime, bool>>>> definitions;
 
 			if (_results.ContainsKey(id))
 			{
-				lookup = _results[id];
+				definitions = _results[id];
 			}
 			else
 			{
-				lookup = new Dictionary<string, List<Tuple<DateTime, bool>>>();
-				_results.Add(id, lookup);
+				definitions = new Dictionary<string, Dictionary<string, List<Tuple<DateTime, bool>>>>();
+				_results.Add(id, definitions);
+			}
+
+			Dictionary<string, List<Tuple<DateTime, bool>>> states;
+
+			if (definitions.ContainsKey(definitionId))
+			{
+				states = definitions[definitionId];
+			}
+			else
+			{
+				states = new Dictionary<string, List<Tuple<DateTime, bool>>>();
+				definitions.Add(definitionId, states);
 			}
 
 			List<Tuple<DateTime, bool>> history;
 
-			if (lookup.ContainsKey(stateId))
+			if (states.ContainsKey(stateId))
 			{
-				history = lookup[stateId];
+				history = states[stateId];
 			}
 			else
 			{
 				history = new List<Tuple<DateTime, bool>>();
-				lookup.Add(stateId, history);
+				states.Add(stateId, history);
 			}
 
 			return history;
@@ -148,25 +164,41 @@ namespace Swampnet.Dash.Services
 		/// <summary>
 		/// Remove any history if there are no instances of 'state'
 		/// </summary>
+		/// <remarks>
+		/// @todo: Problem here, 'states' isn't a complete list of all the states currently active (it only contains
+		///		   state for this particular a-type - it doesn't have any info on other a-types or tests that might
+		///		   be running) so what we end up doing is clearing out all the other state historys!
+		///		   
+		///			We probably need to restrict to current elementId or something...
+		/// </remarks>
 		/// <param name="rule"></param>
 		/// <param name="states"></param>
-		private void Cleanup(IEnumerable<ElementState> states)
+		private void Cleanup(string definitionId, IEnumerable<ElementState> states)
 		{
 			var stateIds = states.Select(x => x.Id);
-			foreach(var lookup in _results.Values)
-			{
-				var expired = new List<string>();
-				foreach(var stateId in lookup.Keys)
-				{
-					if (!stateIds.Contains(stateId))
-					{
-						expired.Add(stateId);
-					}
-				}
 
-				foreach(var e in expired)
+			// each rule-id
+			foreach(var ruleId in _results.Keys)
+			{
+				// each definition-id
+				foreach(var definition in _results[ruleId].Keys.Where(k => k == definitionId))
 				{
-					lookup.Remove(e);
+					var expired = new List<string>();
+
+					// each state-id
+					foreach (var stateId in _results[ruleId][definition].Keys)
+					{
+						if (!stateIds.Contains(stateId))
+						{
+							expired.Add(stateId);
+						}
+					}
+					
+					foreach(var stateId in expired)
+					{
+						Log.Debug("Expiring: {rule} -> {definition} -> {state}", ruleId, definitionId, stateId);
+						_results[ruleId][definition].Remove(stateId);
+					}
 				}
 			}
 		}

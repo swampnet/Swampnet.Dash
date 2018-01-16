@@ -22,7 +22,7 @@ namespace Swampnet.Dash.Common.Entities
 			foreach(var item in Items)
 			{
 				summary.Append($"[id:{item.Id} s:{item.Status} ");
-				summary.Append(string.Join(", ", item.Output.OrderBy(o => o.Name).Select(o => $"{o.Name}={o.Value}")));
+				//summary.Append(string.Join(", ", item.Output.OrderBy(o => o.Name).Select(o => $"{o.Name}={o.Value}")));
 				summary.Append("] ");
 			}
 			return summary.ToString().Trim();
