@@ -49,7 +49,7 @@ namespace Swampnet.Dash.Services
 				{
 					var result = _expressionEvaluator.Evaluate(rule.Expression, state);
 
-					AddResult(rule, definition.Id, state.Id, result);
+					SaveResult(rule, definition.Id, state.Id, result);
 
 					state.Status = GetStatus(rule, definition.Id, state.Id, state.Status);
 				}
@@ -69,7 +69,7 @@ namespace Swampnet.Dash.Services
 			{
 				var result = _expressionEvaluator.Evaluate(rule.Expression, state);
 
-				AddResult(rule, definition.Id, state.Id, result);
+				SaveResult(rule, definition.Id, state.Id, result);
 
 				state.Status = GetStatus(rule, definition.Id, state.Id, state.Status);
 			}
@@ -105,7 +105,7 @@ namespace Swampnet.Dash.Services
 		}
 
 
-		private void AddResult(Rule rule, string definitionId, string stateId, bool result)
+		private void SaveResult(Rule rule, string definitionId, string stateId, bool result)
 		{
 			var ruleHistory = GetRuleHistory(rule.Id, definitionId, stateId);
 			ruleHistory.Add(new Tuple<DateTime, bool>(DateTime.UtcNow, result));
