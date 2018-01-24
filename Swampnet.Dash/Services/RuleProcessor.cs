@@ -12,6 +12,22 @@ namespace Swampnet.Dash.Services
 {
 	class RuleProcessor : IRuleProcessor
 	{
+		public RuleProcessor()
+		{
+			// @TODO: Set up rules in a sensible way?
+			Rule.ForAction("set-state").Execute((def, ctx) => {
+				var state = ctx as ElementState;
+				if (state != null)
+				{
+					var newState = (Status)Enum.Parse(typeof(Status), def.Parameters.Value("state", "Ok"));
+					if (newState > state.Status)
+					{
+						state.Status = newState;
+					}
+				}
+			});
+		}
+
 		public Task ProcessAsync(Element definition, ElementState result)
 		{
 			result.Status = Status.Ok;

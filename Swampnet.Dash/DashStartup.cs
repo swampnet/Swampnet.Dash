@@ -25,19 +25,6 @@ namespace Swampnet.Dash
             builder.RegisterType<Services.RuleProcessor>().As<IRuleProcessor>().SingleInstance();
 			builder.RegisterType<StateProcessor>().As<IStateProcessor>().SingleInstance();			
 			builder.RegisterType<Analysis>().As<IAnalysis>().SingleInstance();
-
-			// @TODO: Set up rules in a sensible way
-			Rule.For("set-state").Run((def, ctx) => {
-				var state = ctx as ElementState;
-				if(state != null)
-				{
-					var newState = (Status)Enum.Parse(typeof(Status), def.Parameters.Value("state", "Ok"));
-					if(newState > state.Status)
-					{
-						state.Status = newState;
-					}
-				}
-			});
         }
     }
 }

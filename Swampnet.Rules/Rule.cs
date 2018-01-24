@@ -56,32 +56,13 @@ namespace Swampnet.Rules
 				{
 					_actionDefinitions[action.ActionName].Execute(action, context);
 				}
-
-				//if (Actions != null)
-				//{
-				//	foreach (var action in Actions)
-				//	{
-				//		if (_actionDefinitions.ContainsKey(action.ActionName))
-				//		{
-				//			// @TODO: Sort out consecutive hits stuff here?
-				//			var a = _actionDefinitions[action.ActionName];
-				//			if (a != null)
-				//			{
-				//				if (FigureOutConsecutiveHits(context))
-				//				{
-				//					a.Execute(action, context);
-				//				}
-				//			}
-				//		}
-				//	}
-				//}
 			}
 
 			return result;
 		}
 
 
-		public static IRunConfiguration For(string actionName)
+		public static IExecuteConfiguration ForAction(string actionName)
 		{
 			var cfg = new RuleConfiguration();
 
@@ -125,6 +106,7 @@ namespace Swampnet.Rules
 		}
 
 
+		// @todo: This is working, but it sure is ugly!
 		private IEnumerable<ActionDefinition> GetValidActionDefinitions(IContext context)
 		{
 			if (_history.ContainsKey(context.Id))
@@ -133,45 +115,32 @@ namespace Swampnet.Rules
 
 				if(Actions != null)
 				{
-					foreach (var action in Actions.OrderByDescending(a => a.ConsecutiveHits.HasValue ? a.ConsecutiveHits.Value : 0))
+					// I don't think it actually matters which order we look at these in. As it stands we're looking at the one requiring the most consecutive hits
+					// first, but that only really matters if we stop after returning that one...
+					foreach (var actionDefinition in Actions.OrderByDescending(a => a.ConsecutiveHits.HasValue ? a.ConsecutiveHits.Value : 0))
 					{
-						if (_actionDefinitions.ContainsKey(action.ActionName))
+						if (_actionDefinitions.ContainsKey(actionDefinition.ActionName))
 						{
-							if(!action.ConsecutiveHits.HasValue || history.Count() >= action.ConsecutiveHits.Value)
+							// We don't care about history, or we have enough history to process it
+							if (!actionDefinition.ConsecutiveHits.HasValue || history.Count() >= actionDefinition.ConsecutiveHits.Value)
 							{
-								var range = history.Take(action.ConsecutiveHits.HasValue ? Math.Max(action.ConsecutiveHits.Value, 1) : 1); // Consecutive hits of 'zero' en. What does that mean?
+								// grab exactly enough history to satisfy the consecutive hits value
+								var range = history.Take(actionDefinition.ConsecutiveHits.HasValue ? Math.Max(actionDefinition.ConsecutiveHits.Value, 1) : 1); // Consecutive hits of 'zero' en. What does that mean?
 
 								// All true, return this action																										   // All true. Use this modifier
 								if (range.All(x => x.Result))
 								{
-									yield return action;
+									yield return actionDefinition;
+
+									// Don't process any more...
+									//break;	// Don't like that. It means we will only execute a single action, which was ok when
+												// we we're just modifying the dash status, but this needs to be a more generic solution...
 								}
 							}
 						}
 					}
 				}
 			}
-		}
-	}
-
-	public interface IRunConfiguration
-	{
-		void Run(Action<ActionDefinition, IContext> action);
-	}
-
-	internal class RuleConfiguration :
-		IRunConfiguration
-	{
-		private Action<ActionDefinition, IContext> _action;
-
-		public void Run(Action<ActionDefinition, IContext> action)
-		{
-			_action = action;
-		}
-
-		internal void Execute(ActionDefinition def, IContext context)
-		{
-			_action.Invoke(def, context);
 		}
 	}
 }
