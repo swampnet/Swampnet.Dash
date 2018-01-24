@@ -31,7 +31,7 @@ namespace Swampnet.Dash
 				var state = ctx as ElementState;
 				if(state != null)
 				{
-					state.Status = Status.Alert;
+					state.Status = (Status)Enum.Parse(typeof(Status), def.Parameters.Value("state", "Ok"));
 				}
 			});
         }

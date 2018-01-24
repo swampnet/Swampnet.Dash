@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Linq;
+using System.Xml.Serialization;
 
 namespace Swampnet.Rules
 {
@@ -63,6 +64,8 @@ namespace Swampnet.Rules
 		/// List of actions to perform if expression is true
 		/// </summary>
 		public List<ActionDefinition> Actions { get; set; }
+
+		[XmlAttribute]
 		public int Order { get; set; }
 
 		/// <summary>

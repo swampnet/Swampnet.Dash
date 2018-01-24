@@ -14,6 +14,8 @@ namespace Swampnet.Dash.Services
 	{
 		public Task ProcessAsync(Element definition, ElementState result)
 		{
+			result.Status = Status.Ok;
+
 			var rules = new Rules.Rules(definition.StateRules);
 
 			rules.Run(result);
@@ -27,6 +29,8 @@ namespace Swampnet.Dash.Services
 
 			foreach (var result in states)
 			{
+				result.Status = Status.Ok;
+
 				rules.Run(result);
 			}
 
