@@ -46,8 +46,8 @@ namespace Swampnet.Dash.Services
 					// Run instance
 					var result = await instance.RunAsync();
 
-					await _stateProcessor.ProcessAsync(instance.Definition, instance.State);
-					await _ruleProcessor.ProcessAsync(instance.Definition, instance.State);
+					await _stateProcessor.ProcessAsync(instance.Definition, result.Items);
+					await _ruleProcessor.ProcessAsync(instance.Definition, result.Items);
 
 					// Check if state has changed since last time
 					ArgosResult previous = null;
