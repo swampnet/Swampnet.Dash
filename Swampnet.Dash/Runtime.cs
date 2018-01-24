@@ -77,7 +77,7 @@ namespace Swampnet.Dash
 									Id = tr.Id,
 									ElementId = tr.Id, // Tests item definition id always == the test id. @TODO: Yeah, this is messy.
 									Status = tr.Status,
-									TimestampUtc = tr.TimestampUtc,
+									Timestamp = tr.Timestamp,
 									Output = tr.Output
 								});
 

@@ -37,7 +37,7 @@ namespace Swampnet.Dash.DAL.Repositories
 							{
 								Name = r.Name,
 								Value = r.Value,
-								TimestampUtc = t.TimestampUtc
+								TimestampUtc = t.Timestamp
 							});
 						}
 					}

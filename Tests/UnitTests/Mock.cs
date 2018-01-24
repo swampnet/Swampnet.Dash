@@ -62,7 +62,7 @@ namespace UnitTests
 		{
 			return new ElementState("test-state", ++_id)
 			{
-				TimestampUtc = date,
+				Timestamp = date,
 				Output = new List<Property>()
 				{
 					new Property("value", value)

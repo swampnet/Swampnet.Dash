@@ -69,7 +69,7 @@ namespace Swampnet.Dash.Service.Controllers
                 {
                     Output = x.Output,
                     Status = x.Status,
-                    TimestampUtc = x.TimestampUtc                    
+                    Timestamp = x.Timestamp                    
                 }));
 			}
 

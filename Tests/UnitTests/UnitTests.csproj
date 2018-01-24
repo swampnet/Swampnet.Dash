@@ -93,6 +93,10 @@
       <Project>{be1eb6e7-ae7c-4d4b-837a-78d91f0eae02}</Project>
       <Name>Swampnet.Dash</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Swampnet.Rules\Swampnet.Rules.csproj">
+      <Project>{26761f3c-c47f-4a7c-8835-04e28b5948e2}</Project>
+      <Name>Swampnet.Rules</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
+using Swampnet.Rules;
 
 namespace Swampnet.Dash.Common.Entities
 {

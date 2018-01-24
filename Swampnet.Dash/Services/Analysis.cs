@@ -39,7 +39,7 @@ namespace Swampnet.Dash.Services
 					_maxHistory = history;
 				}
 
-				var range = _values.Where(s => s.TimestampUtc > DateTime.UtcNow.Subtract(history));
+				var range = _values.Where(s => s.Timestamp > DateTime.UtcNow.Subtract(history));
 				var doubles = range.Select(s => s.Output.DoubleValue(propertyName));
 
 				return doubles;
@@ -51,7 +51,7 @@ namespace Swampnet.Dash.Services
 				// based on _maxHistory;
 				if(_maxHistory != TimeSpan.MaxValue)
 				{
-					var range = _values.Where(s => s.TimestampUtc < DateTime.UtcNow.Subtract(_maxHistory)).ToList();
+					var range = _values.Where(s => s.Timestamp < DateTime.UtcNow.Subtract(_maxHistory)).ToList();
 					foreach (var r in range)
 					{
 						_values.Remove(r);

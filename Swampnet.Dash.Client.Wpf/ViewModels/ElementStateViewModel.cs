@@ -53,7 +53,7 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
 			_element = element;
 			if(_itemDefinition.Plot != null)
 			{
-				var variant = new Variant(element.TimestampUtc, element.Output.DoubleValue(_itemDefinition.Plot.Output, 0.0));
+				var variant = new Variant(element.Timestamp, element.Output.DoubleValue(_itemDefinition.Plot.Output, 0.0));
 
 				// If we're currently loading the history, ignore the update for now (but keep track of the incoming data so we can merge it later)
 				if (_loadingHistory)
@@ -93,7 +93,7 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
 		public SeriesCollection Series { get; set; }
 		public bool DisplayGraph => _itemDefinition.Plot != null;
 		public string Id { get; private set; }
-        public DateTime? Timestamp => _element?.TimestampUtc;
+        public DateTime? Timestamp => _element?.Timestamp;
 		public Status Status => _element == null ? Status.Unknown : _element.Status;
 		public string Order
 		{
@@ -194,7 +194,7 @@ namespace Swampnet.Dash.Client.Wpf.ViewModels
 							break;
 
 						case "timestamputc":
-							value = _element?.TimestampUtc.ToLongTimeString(); // .Format()
+							value = _element?.Timestamp.ToLongTimeString(); // .Format()
 							break;
 
 						case "id":

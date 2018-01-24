@@ -52,6 +52,8 @@ namespace Swampnet.Rules
 		// context-id => history
 		private readonly static Dictionary<string, List<History>> _history = new Dictionary<string, List<History>>();
 
+		public string Description { get; set; }
+
 		/// <summary>
 		/// Rule is true if the expression is true!
 		/// </summary>
@@ -78,17 +80,22 @@ namespace Swampnet.Rules
 			// Store result in history
 			Save(context, result);
 
-			// @todo: Run any actions that qualify
+			// Run any actions that qualify
 			if (result)
 			{
 				if (Actions != null)
 				{
 					foreach (var action in Actions)
 					{
-						var a = _actionDefinitions[action.ActionName];
-						if (a != null)
+						if (_actionDefinitions.ContainsKey(action.ActionName))
 						{
-							a.Execute(action, context);
+							// @T|ODO: Sort out consecutive hits stuff here?
+
+							var a = _actionDefinitions[action.ActionName];
+							if (a != null)
+							{
+								a.Execute(action, context);
+							}
 						}
 					}
 				}
