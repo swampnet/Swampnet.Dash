@@ -22,7 +22,7 @@ namespace Swampnet.Dash
 			builder.RegisterAssemblyTypes(typeof(DashStartup).Assembly).AssignableTo<IArgos>();
             builder.RegisterType<TestRunner>().As<ITestRunner>().SingleInstance();
 			builder.RegisterType<ArgosRunner>().As<IArgosRunner>().SingleInstance();
-            builder.RegisterType<RuleProcessor>().As<IRuleProcessor>().SingleInstance();
+            builder.RegisterType<Services.RuleProcessor>().As<IRuleProcessor>().SingleInstance();
 			builder.RegisterType<StateProcessor>().As<IStateProcessor>().SingleInstance();			
 			builder.RegisterType<Analysis>().As<IAnalysis>().SingleInstance();
 
@@ -31,7 +31,11 @@ namespace Swampnet.Dash
 				var state = ctx as ElementState;
 				if(state != null)
 				{
-					state.Status = (Status)Enum.Parse(typeof(Status), def.Parameters.Value("state", "Ok"));
+					var newState = (Status)Enum.Parse(typeof(Status), def.Parameters.Value("state", "Ok"));
+					if(newState > state.Status)
+					{
+						state.Status = newState;
+					}
 				}
 			});
         }

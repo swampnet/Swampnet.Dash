@@ -6,40 +6,6 @@ using System.Xml.Serialization;
 
 namespace Swampnet.Rules
 {
-	public class Rules
-	{
-		private readonly IEnumerable<Rule> _rules;
-
-		public Rules(IEnumerable<Rule> rules)
-		{
-			_rules = rules;
-		}
-
-
-		public void Run(IContext context)
-		{
-			// GHrab a copy of the rules
-			var rules = new List<Rule>(_rules);
-			var count = int.MaxValue;
-
-			while (count > 0 && rules.Any())
-			{
-				count = 0;
-				foreach (var rule in rules.OrderBy(r => r.Order).ToArray())
-				{
-					if (rule.Run(context))
-					{
-						// @todo: Execute actions here rather than from within Rule?
-
-						rules.Remove(rule);
-						count++;
-					}
-				}
-			}
-		}
-	}
-
-
 	public class Rule
 	{
 		private class History
@@ -86,22 +52,29 @@ namespace Swampnet.Rules
 			// Run any actions that qualify
 			if (result)
 			{
-				if (Actions != null)
+				foreach(var action in GetValidActionDefinitions(context))
 				{
-					foreach (var action in Actions)
-					{
-						if (_actionDefinitions.ContainsKey(action.ActionName))
-						{
-							// @T|ODO: Sort out consecutive hits stuff here?
-
-							var a = _actionDefinitions[action.ActionName];
-							if (a != null)
-							{
-								a.Execute(action, context);
-							}
-						}
-					}
+					_actionDefinitions[action.ActionName].Execute(action, context);
 				}
+
+				//if (Actions != null)
+				//{
+				//	foreach (var action in Actions)
+				//	{
+				//		if (_actionDefinitions.ContainsKey(action.ActionName))
+				//		{
+				//			// @TODO: Sort out consecutive hits stuff here?
+				//			var a = _actionDefinitions[action.ActionName];
+				//			if (a != null)
+				//			{
+				//				if (FigureOutConsecutiveHits(context))
+				//				{
+				//					a.Execute(action, context);
+				//				}
+				//			}
+				//		}
+				//	}
+				//}
 			}
 
 			return result;
@@ -149,6 +122,35 @@ namespace Swampnet.Rules
 			//          - Can we define some kind of ttl? If we don't get an update for (x) seconds then clear it out? Feels hacky, and where do we define that?
 			//          - Also, we'd have to check whenever we added *anything* which could get expensive.
 			//              - We could have a background monitor thread I suppose...
+		}
+
+
+		private IEnumerable<ActionDefinition> GetValidActionDefinitions(IContext context)
+		{
+			if (_history.ContainsKey(context.Id))
+			{
+				var history = _history[context.Id].OrderByDescending(h => h.Timestamp);
+
+				if(Actions != null)
+				{
+					foreach (var action in Actions.OrderByDescending(a => a.ConsecutiveHits.HasValue ? a.ConsecutiveHits.Value : 0))
+					{
+						if (_actionDefinitions.ContainsKey(action.ActionName))
+						{
+							if(!action.ConsecutiveHits.HasValue || history.Count() >= action.ConsecutiveHits.Value)
+							{
+								var range = history.Take(action.ConsecutiveHits.HasValue ? Math.Max(action.ConsecutiveHits.Value, 1) : 1); // Consecutive hits of 'zero' en. What does that mean?
+
+								// All true, return this action																										   // All true. Use this modifier
+								if (range.All(x => x.Result))
+								{
+									yield return action;
+								}
+							}
+						}
+					}
+				}
+			}
 		}
 	}
 
