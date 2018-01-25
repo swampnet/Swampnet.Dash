@@ -12,7 +12,7 @@ namespace Swampnet.Dash.Tests
 		private double _value = 0.0;
 
 
-		protected override Task<ElementState> RunAsync()
+		protected override Task UpdateAsync()
 		{
 			// amplitude * Math.Sin((2 * Math.PI * n * frequency) / sampleRate)
 
@@ -23,16 +23,10 @@ namespace Swampnet.Dash.Tests
 				_value = -_value;
 			}
 
-			return Task.FromResult(
-				new ElementState()
-				{
-					Output = new List<Property>()
-					{
-						new Property("angle", _value),
-						new Property("value", Math.Sin(_value))
-					}
-				}
-			);
+			State.Output.AddOrUpdate("angle", _value);
+			State.Output.AddOrUpdate("value", Math.Sin(_value));
+
+			return Task.CompletedTask;
 		}
 
 		public override TestMeta Meta => new TestMeta()

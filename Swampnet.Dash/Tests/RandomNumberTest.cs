@@ -9,16 +9,15 @@ namespace Swampnet.Dash.Tests
     {
         private readonly Random _rnd = new Random();
 
-        protected override Task<ElementState> RunAsync()
+        protected override Task UpdateAsync()
         {
-            var rs = new ElementState();
             var from = Definition.Parameters.IntValue("min");
             var to = Definition.Parameters.IntValue("max");
             var value = _rnd.Next(from, to);
 
-            rs.Output.Add(new Property("value", value));
+            State.Output.AddOrUpdate("value", value);
 
-            return Task.FromResult(rs);
+			return Task.CompletedTask;
         }
 
 

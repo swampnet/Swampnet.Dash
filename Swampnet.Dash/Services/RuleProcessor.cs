@@ -20,7 +20,7 @@ namespace Swampnet.Dash.Services
 				if (state != null)
 				{
 					var newState = (Status)Enum.Parse(typeof(Status), def.Parameters.Value("state", "Ok"));
-					Log.Debug(">>> ste-state: {state}", newState);
+
 					if (newState != state.Status)
 					{
 						state.PreviousStatus = state.Status;

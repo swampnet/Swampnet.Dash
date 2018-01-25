@@ -12,9 +12,8 @@ namespace Swampnet.Dash.Tests
 {
 	class SqlCommandTest : TestBase
 	{
-		protected async override Task<ElementState> RunAsync()
+		protected async override Task UpdateAsync()
 		{
-			var rs = new ElementState();
 			var connectionName = Definition.Parameters.StringValue("connection-name");
 			var query = Definition.Parameters.StringValue("query");
 			var sw = Stopwatch.StartNew();
@@ -33,14 +32,13 @@ namespace Swampnet.Dash.Tests
 					{
 						foreach(var column in columns)
 						{
-							rs.Output.Add(new Property(column, reader[column]));
+							State.Output.AddOrUpdate(column, reader[column]);
 						}
 					}
 				}
 			}
 
-			rs.Output.Add(new Property("execution-elapsed", sw.ElapsedMilliseconds));
-			return rs;
+			State.Output.AddOrUpdate("execution-elapsed", sw.ElapsedMilliseconds);
 		}
 
 

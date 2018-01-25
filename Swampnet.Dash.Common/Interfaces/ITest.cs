@@ -8,7 +8,7 @@ namespace Swampnet.Dash.Common.Interfaces
 {
     public interface ITest
     {
-        void Configure(Element testDefinition);
+        void Configure(Element definition);
 
         Task<ElementState> ExecuteAsync();
 

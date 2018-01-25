@@ -87,6 +87,7 @@ namespace Swampnet.Dash.Common.Entities
 				ElementId = this.ElementId,
 				Order = this.Order,
 				Status = this.Status,
+				PreviousStatus = this.PreviousStatus,
 				Timestamp = this.Timestamp,
 				Output = this.Output.Select(x => new Property() { Category = x.Category, Name = x.Name, Value = x.Value }).ToList()
 			};

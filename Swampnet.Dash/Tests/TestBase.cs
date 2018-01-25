@@ -28,24 +28,21 @@ namespace Swampnet.Dash.Tests
 		/// <returns></returns>
 		public async Task<ElementState> ExecuteAsync()
 		{
-			var rs = await RunAsync();
+			await UpdateAsync();
 
-			rs.Id = Definition.Id;
 			_lastRunUtc = DateTime.UtcNow;
 
-			State = rs;
-
-			return rs;
+			return State;
 		}
 
 
 		/// <summary>
 		/// Set configuration for test
 		/// </summary>
-		/// <param name="testDefinition"></param>
-		public void Configure(Element testDefinition)
+		/// <param name="definition"></param>
+		public void Configure(Element definition)
 		{
-			_testDefinition = testDefinition;
+			_testDefinition = definition;
 
 			if(Meta.Parameters != null)
 			{
@@ -57,6 +54,8 @@ namespace Swampnet.Dash.Tests
 					}
 				}
 			}
+
+			State = new ElementState(definition.Id, definition.Id);
 		}
 
 
@@ -72,6 +71,6 @@ namespace Swampnet.Dash.Tests
 		}
 		#endregion
 
-		protected abstract Task<ElementState> RunAsync();
+		protected abstract Task UpdateAsync();
     }
 }

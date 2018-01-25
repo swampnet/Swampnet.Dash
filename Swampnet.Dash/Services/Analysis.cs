@@ -28,7 +28,7 @@ namespace Swampnet.Dash.Services
 
 			public void Add(ElementState state)
 			{
-				_values.Add(state);
+				_values.Add(state.Copy());
 				Truncate();
 			}
 
@@ -37,6 +37,7 @@ namespace Swampnet.Dash.Services
 				if(_maxHistory < history || _maxHistory == TimeSpan.MaxValue)
 				{
 					_maxHistory = history;
+					Log.Debug("set maxHistory: {history}", history);
 				}
 
 				var range = _values.Where(s => s.Timestamp > DateTime.UtcNow.Subtract(history));
@@ -49,7 +50,7 @@ namespace Swampnet.Dash.Services
 			private void Truncate()
 			{
 				// based on _maxHistory;
-				if(_maxHistory != TimeSpan.MaxValue)
+				if (_maxHistory != TimeSpan.MaxValue)
 				{
 					var range = _values.Where(s => s.Timestamp < DateTime.UtcNow.Subtract(_maxHistory)).ToList();
 					foreach (var r in range)
@@ -81,7 +82,6 @@ namespace Swampnet.Dash.Services
 
 			var doubles = values.GetValues(propertyName, history);
 			var avg = doubles.Any() ? doubles.Average() : 0.0;
-
 			return avg;
 		}
 

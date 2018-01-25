@@ -10,7 +10,7 @@ namespace Swampnet.Dash.Tests
 {
 	class PingTest : TestBase
 	{
-        protected override async Task<ElementState> RunAsync()
+        protected override async Task UpdateAsync()
         {
             var ping = new Ping();
 
@@ -21,9 +21,7 @@ namespace Swampnet.Dash.Tests
 
             var rs = new ElementState();
 
-            rs.Output.Add(new Property("value", time));
-
-            return rs;
+            State.Output.AddOrUpdate("value", time);
         }
 
 

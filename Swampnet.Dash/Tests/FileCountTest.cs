@@ -11,18 +11,16 @@ namespace Swampnet.Dash.Tests
 {
 	class FileCountTest : TestBase
 	{
-		protected override Task<ElementState> RunAsync()
+		protected override Task UpdateAsync()
 		{
-			var rs = new ElementState();
-
 			var sw = Stopwatch.StartNew();
 
 			var files = Directory.GetFiles(Definition.Parameters.StringValue("path"), Definition.Parameters.StringValue("filter", "*.*"));
+			
+			State.Output.AddOrUpdate("count", files.Count());
+			State.Output.AddOrUpdate("execution-elapsed", sw.ElapsedMilliseconds);
 
-			rs.Output.Add(new Property("count", files.Count()));
-			rs.Output.Add(new Property("execution-elapsed", sw.ElapsedMilliseconds));
-
-			return Task.FromResult(rs);
+			return Task.CompletedTask;
 		}
 
 		public override TestMeta Meta => new TestMeta()
