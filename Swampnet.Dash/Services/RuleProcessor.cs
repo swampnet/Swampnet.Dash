@@ -20,17 +20,27 @@ namespace Swampnet.Dash.Services
 				if (state != null)
 				{
 					var newState = (Status)Enum.Parse(typeof(Status), def.Parameters.Value("state", "Ok"));
-					if (newState > state.Status)
+					Log.Debug(">>> ste-state: {state}", newState);
+					if (newState != state.Status)
 					{
+						state.PreviousStatus = state.Status;
 						state.Status = newState;
+						if(state.PreviousStatus != state.Status)
+						{
+							Log.Debug(">>> Notify {oldState} -> {newState}", state.PreviousStatus, state.Status);
+						}
 					}
+					//if (newState > state.Status)
+					//{
+					//	state.Status = newState;
+					//}
 				}
 			});
 		}
 
 		public Task ProcessAsync(Element definition, ElementState result)
 		{
-			result.Status = Status.Ok;
+			//result.Status = Status.Ok;
 
 			var rules = new Rules.RuleProcessor(definition.StateRules);
 
@@ -45,7 +55,7 @@ namespace Swampnet.Dash.Services
 
 			foreach (var result in states)
 			{
-				result.Status = Status.Ok;
+				//result.Status = Status.Ok;
 
 				rules.Run(result);
 			}

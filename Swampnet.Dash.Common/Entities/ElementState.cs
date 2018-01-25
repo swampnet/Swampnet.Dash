@@ -75,8 +75,9 @@ namespace Swampnet.Dash.Common.Entities
 		public string Order { get; set; }
 
         public Status Status { get; set; }
+		public Status PreviousStatus { get; set; }
 
-        public List<Property> Output { get; set; }
+		public List<Property> Output { get; set; }
 
 		public ElementState Copy()
 		{

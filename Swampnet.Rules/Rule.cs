@@ -29,7 +29,8 @@ namespace Swampnet.Rules
 		/// <summary>
 		/// List of actions to perform if expression is true
 		/// </summary>
-		public List<ActionDefinition> Actions { get; set; }
+		public List<ActionDefinition> WhenTrue { get; set; }
+		public List<ActionDefinition> WhenFalse { get; set; }
 
 		[XmlAttribute]
 		public int Order { get; set; }
@@ -52,7 +53,14 @@ namespace Swampnet.Rules
 			// Run any actions that qualify
 			if (result)
 			{
-				foreach(var action in GetValidActionDefinitions(context))
+				foreach(var action in GetValidActionDefinitions(context, WhenTrue, true))
+				{
+					_actionDefinitions[action.ActionName].Execute(action, context);
+				}
+			}
+			else
+			{
+				foreach (var action in GetValidActionDefinitions(context, WhenFalse, false))
 				{
 					_actionDefinitions[action.ActionName].Execute(action, context);
 				}
@@ -107,17 +115,15 @@ namespace Swampnet.Rules
 
 
 		// @todo: This is working, but it sure is ugly!
-		private IEnumerable<ActionDefinition> GetValidActionDefinitions(IContext context)
+		private IEnumerable<ActionDefinition> GetValidActionDefinitions(IContext context, IEnumerable<ActionDefinition> actions, bool result)
 		{
 			if (_history.ContainsKey(context.Id))
 			{
 				var history = _history[context.Id].OrderByDescending(h => h.Timestamp);
 
-				if(Actions != null)
+				if(actions != null)
 				{
-					// I don't think it actually matters which order we look at these in. As it stands we're looking at the one requiring the most consecutive hits
-					// first, but that only really matters if we stop after returning that one...
-					foreach (var actionDefinition in Actions.OrderByDescending(a => a.ConsecutiveHits.HasValue ? a.ConsecutiveHits.Value : 0))
+					foreach (var actionDefinition in actions.OrderByDescending(a => a.ConsecutiveHits.HasValue ? a.ConsecutiveHits.Value : 0))
 					{
 						if (_actionDefinitions.ContainsKey(actionDefinition.ActionName))
 						{
@@ -128,13 +134,14 @@ namespace Swampnet.Rules
 								var range = history.Take(actionDefinition.ConsecutiveHits.HasValue ? Math.Max(actionDefinition.ConsecutiveHits.Value, 1) : 1); // Consecutive hits of 'zero' en. What does that mean?
 
 								// All true, return this action																										   // All true. Use this modifier
-								if (range.All(x => x.Result))
+								if (range.All(x => x.Result == result))
 								{
 									yield return actionDefinition;
 
-									// Don't process any more...
-									//break;	// Don't like that. It means we will only execute a single action, which was ok when
-												// we we're just modifying the dash status, but this needs to be a more generic solution...
+									if (actionDefinition.HaltOnExecute)
+									{
+										break; // Don't process any more...
+									}
 								}
 							}
 						}

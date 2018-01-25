@@ -189,7 +189,7 @@ namespace UnitTests
 								}
 							}
 						},
-						Actions = new System.Collections.Generic.List<ActionDefinition>()
+						WhenTrue = new System.Collections.Generic.List<ActionDefinition>()
 						{
 							new ActionDefinition()
 							{

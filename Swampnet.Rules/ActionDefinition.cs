@@ -15,6 +15,9 @@ namespace Swampnet.Rules
 		public List<ActionDefinitionParameter> Parameters { get; set; }
 
 		public int? ConsecutiveHits { get; set; }
+
+		[XmlAttribute]
+		public bool HaltOnExecute { get; set; }
 	}
 
 	[XmlType("Parameter")]

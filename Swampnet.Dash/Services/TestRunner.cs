@@ -70,6 +70,7 @@ namespace Swampnet.Dash.Services
 			{
 				try
 				{
+					// [pj] Right, here's our problem. We get a new test result each tim eso we loose our state.
 					var result = await test.ExecuteAsync();
 
 					lock (results)
