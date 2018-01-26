@@ -36,7 +36,7 @@ namespace Swampnet.Dash.DAL.Repositories
 							root.History.Add(new History()
 							{
 								Name = r.Name,
-								Value = r.Value,
+								Value = r.Value ?? "",
 								TimestampUtc = t.Timestamp
 							});
 						}

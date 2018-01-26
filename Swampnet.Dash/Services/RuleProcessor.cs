@@ -27,13 +27,12 @@ namespace Swampnet.Dash.Services
 						state.Status = newState;
 						if(state.PreviousStatus != state.Status)
 						{
-							Log.Debug(">>> Notify {oldState} -> {newState}", state.PreviousStatus, state.Status);
+							Log.Debug(">>> [{id}] Notify {oldState} -> {newState}", 
+								state.ElementId,
+								state.PreviousStatus, 
+								state.Status);
 						}
 					}
-					//if (newState > state.Status)
-					//{
-					//	state.Status = newState;
-					//}
 				}
 			});
 		}

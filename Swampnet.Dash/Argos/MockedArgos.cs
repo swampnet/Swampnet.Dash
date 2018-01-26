@@ -41,7 +41,7 @@ namespace Swampnet.Dash.Argos
 				}
 
 				// Generate new itemsjj
-				if (!_items.Any() || _rnd.NextDouble() < 0.3)
+				if (!_items.Any()/* || _rnd.NextDouble() < 0.3*/)
 				{
 					CreateNewbie(_definition);
 				}
@@ -90,7 +90,7 @@ namespace Swampnet.Dash.Argos
 		private void Update(ElementState item)
 		{
 			// Update stage
-			Move(item);
+			//Move(item);
 
 			var timeInGroup = DateTime.UtcNow - item.Output.DateTimeValue("updated-on");
 			item.Output.AddOrUpdate("time-in-group", timeInGroup.TotalSeconds.ToString("0.0"));

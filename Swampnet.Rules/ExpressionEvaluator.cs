@@ -74,7 +74,10 @@ namespace Swampnet.Rules
 				// It's a {lookup}
 				if (m.Success)
 				{
-					result = context.GetParameterValue(m.Groups["name"].Value).ToString();
+					var r = context.GetParameterValue(m.Groups["name"].Value);
+					result = r == null
+						? ""
+						: r.ToString();
 				}
 			}
 
