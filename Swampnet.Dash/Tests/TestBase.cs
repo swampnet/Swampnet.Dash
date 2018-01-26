@@ -11,7 +11,6 @@ namespace Swampnet.Dash.Tests
     abstract class TestBase : ITest
     {
         private Element _testDefinition;
-        private DateTime _lastRunUtc = DateTime.MinValue;
 
 		#region ITest
 		public Element Definition => _testDefinition;
@@ -30,7 +29,7 @@ namespace Swampnet.Dash.Tests
 		{
 			await UpdateAsync();
 
-			_lastRunUtc = DateTime.UtcNow;
+			State.Timestamp = DateTime.UtcNow;
 
 			return State;
 		}
@@ -66,7 +65,7 @@ namespace Swampnet.Dash.Tests
 		{
 			get
 			{
-				return _testDefinition != null && ((DateTime.UtcNow - _lastRunUtc) > _testDefinition.Heartbeat);
+				return _testDefinition != null && ((DateTime.UtcNow - State.Timestamp) > _testDefinition.Heartbeat);
 			}
 		}
 		#endregion

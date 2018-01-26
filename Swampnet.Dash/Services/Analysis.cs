@@ -37,7 +37,6 @@ namespace Swampnet.Dash.Services
 				if(_maxHistory < history || _maxHistory == TimeSpan.MaxValue)
 				{
 					_maxHistory = history;
-					Log.Debug("set maxHistory: {history}", history);
 				}
 
 				var range = _values.Where(s => s.Timestamp > DateTime.UtcNow.Subtract(history));

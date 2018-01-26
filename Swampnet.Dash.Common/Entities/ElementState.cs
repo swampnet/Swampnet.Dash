@@ -15,7 +15,7 @@ namespace Swampnet.Dash.Common.Entities
         public ElementState()
         {
             Output = new List<Property>();
-            Timestamp = DateTime.UtcNow;
+            Timestamp = DateTime.MinValue;
         }
 
         public ElementState(string itemDefinitionId, object id)
